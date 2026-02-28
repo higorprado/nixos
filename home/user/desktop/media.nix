@@ -1,0 +1,63 @@
+# Media applications - vlc, yt-dlp, mpd, rmpc, cava, pavucontrol
+{ config, lib, pkgs, osConfig, ... }:
+
+lib.mkIf
+  (
+    osConfig.custom.desktop.profile == "dms"
+    || osConfig.custom.desktop.profile == "dms-hyprland"
+    || osConfig.custom.desktop.profile == "caelestia-hyprland"
+      || osConfig.custom.desktop.profile == "noctalia"
+  )
+{
+  programs.cava = {
+    enable = true;
+    settings = {
+      general = {
+        bars = 64;
+        framerate = 60;
+      };
+
+      input = {
+        method = "pulse";
+        source = "auto";
+      };
+
+      output = {
+        method = "ncurses";
+        style = "stereo";
+      };
+
+      smoothing = {
+        noise_reduction = 85;
+        monstercat = 1;
+        waves = 0;
+        gravity = 120;
+      };
+
+      eq = {
+        "1" = 0.8;
+        "2" = 0.9;
+        "3" = 1.0;
+        "4" = 1.1;
+        "5" = 1.2;
+      };
+    };
+  };
+
+  home.packages = with pkgs; [
+    # Video/media player
+    vlc
+
+    # YouTube/video downloader
+    yt-dlp
+
+    # Music Player Daemon
+    mpd
+
+    # Terminal UI for MPD
+    rmpc
+
+    # PulseAudio volume control GUI
+    pavucontrol
+  ];
+}

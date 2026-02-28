@@ -1,0 +1,2 @@
+^(\./)?scripts/check-repo-public-safety\.sh:
+^(\./)?scripts/public-safety-allowlist\.txt:

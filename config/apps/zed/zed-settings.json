@@ -1,0 +1,31 @@
+{
+  "ui_font_size": 16,
+  "buffer_font_size": 14,
+  "buffer_font_family": "JetBrains Mono",
+  "buffer_font_features": {
+    "calt": true,
+    "liga": true
+  },
+  "theme": "Catppuccin Mocha",
+  "base_keymap": "VSCode",
+  "auto_save": "on_focus_change",
+  "tab_size": 4,
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "git": {
+    "enabled": true
+  },
+  "languages": {
+    "Python": {
+      "language_servers": ["pyright", "ruff"]
+    },
+    "Rust": {
+      "language_servers": ["rust-analyzer"]
+    },
+    "Nix": {
+      "language_servers": ["nil"]
+    }
+  }
+}

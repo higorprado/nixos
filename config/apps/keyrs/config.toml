@@ -1,0 +1,101 @@
+[devices]
+only = ["Telink Wireless Gaming Keyboard"]
+
+[[keymap]]
+condition = "wm_class =~ '(?i)alacritty|kitty|wezterm|gnome-terminal|konsole|xfce4-terminal|ghostty|foot'"
+name = "terminal_macos"
+
+[keymap.mappings]
+Alt-Backspace = "Ctrl-w"
+Super-Backspace = "Ctrl-u"
+Super-Delete = "Ctrl-k"
+Super-Shift-n = "Ctrl-Shift-n"
+Super-c = "Ctrl-Shift-c"
+Super-q = "Alt-F4"
+Super-t = "Ctrl-Shift-t"
+Super-v = "Ctrl-Shift-v"
+Super-w = "Ctrl-Shift-w"
+
+[[keymap]]
+condition = "wm_class =~ 'nautilus|dolphin|thunar|nemo|pcmanfm|krusader|spacefm|caja|cosmic|peony'"
+name = "filemanagers_core"
+
+[keymap.mappings]
+Ctrl-Down = ["Combo(Enter)"]
+Ctrl-Left = ["Alt-Left"]
+Ctrl-Right = ["Alt-Right"]
+Ctrl-Up = ["Alt-Up"]
+Shift-Super-dot = "Ctrl-h"
+Super-Backspace = "Delete"
+Super-i = "Alt-Enter"
+
+[[keymap]]
+condition = "wm_class =~ 'firefox|librewolf|waterfox|zen|chrom|chrome|vivaldi|falkon'"
+name = "browsers_core"
+
+[keymap.mappings]
+Super-Shift-T = "Ctrl-Shift-T"
+
+[[keymap]]
+condition = "wm_class =~ 'code|code-oss|vscodium|cursor'"
+name = "editor_vscode_overrides"
+
+[keymap.mappings]
+Super-Grave = "Ctrl-Grave"
+Super-Shift-Esc = "Ctrl-Shift-Esc"
+Super-Shift-P = "Ctrl-Shift-P"
+Super-c = "Ctrl-c"
+Super-dot = "Ctrl-dot"
+Super-f = "Ctrl-f"
+Super-x = "Ctrl-x"
+
+[[keymap]]
+condition = "wm_class =~ '(?i)code|code-oss|vscodium|cursor'"
+name = "editor_vscode_navigation"
+
+[keymap.mappings]
+Alt-Left = "Ctrl-Left"
+Alt-Right = "Ctrl-Right"
+Alt-Shift-Left = "Ctrl-Shift-Left"
+Alt-Shift-Right = "Ctrl-Shift-Right"
+Super-Backspace = [
+    "Shift-Home",
+    "Delete",
+]
+Super-Delete = [
+    "Shift-End",
+    "Delete",
+]
+
+[[keymap]]
+condition = "not (wm_class =~ '(?i)alacritty|kitty|wezterm|gnome-terminal|konsole|xfce4-terminal|ghostty')"
+name = "macos_fallback"
+
+[keymap.mappings]
+Super-a = "Ctrl-a"
+Super-c = "Ctrl-c"
+Super-f = "Ctrl-f"
+Super-n = "Ctrl-n"
+Super-o = "Ctrl-o"
+Super-p = "Ctrl-p"
+Super-q = "Alt-F4"
+Super-r = "Ctrl-r"
+Super-s = "Ctrl-s"
+Super-slash = "Ctrl-slash"
+Super-t = "Ctrl-t"
+Super-v = "Ctrl-v"
+Super-w = "Ctrl-w"
+Super-x = "Ctrl-x"
+Super-y = "Ctrl-y"
+Super-z = "Ctrl-z"
+
+[[keymap]]
+name = "general_fallback"
+
+[keymap.mappings]
+Shift-Esc = "Text(~)"
+
+[window]
+idle_sleep_ms = 5
+poll_timeout_ms = 60
+update_interval_ms = 150

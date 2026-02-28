@@ -1,0 +1,36 @@
+old/
+.migration-audit/
+reports/
+result
+result-*
+
+# Devenv cache files
+.devenv/
+devenv.local.nix
+*.devenv.*
+.devenv.flake.nix
+
+# Editor temp files
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node modules
+node_modules/
+
+# Temporary backups
+*.bak
+*.backup
+
+# Private local overrides (never commit real files)
+hosts/predator/private.nix
+hosts/predator/private/*.nix
+!hosts/predator/private/*.nix.example
+home/*/private.nix
+home/*/private/*.nix
+!home/*/private/*.nix.example
