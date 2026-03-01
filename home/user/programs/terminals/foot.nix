@@ -4,7 +4,7 @@
     enable = true;
     settings = {
       main = {
-        font = "FiraCode Nerd Font Mono:size=12";
+        font = "JetBrains Mono Nerd Font Mono:size=12";
         term = "xterm-256color";
       };
     };

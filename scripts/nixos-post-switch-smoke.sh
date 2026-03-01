@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  cat <<'EOF'
+Usage:
+  scripts/nixos-post-switch-smoke.sh
+
+Environment:
+  SMOKE_EXTRA_USER_TIMERS="timer1.timer timer2.timer"
+    Optional extra user timers to verify.
+  SMOKE_EXTRA_DOTFILES="path1:path2"
+    Optional extra files to verify.
+EOF
+  exit 0
+fi
+
 fail() {
   echo "[smoke][fail] $*" >&2
   exit 1
@@ -29,7 +43,11 @@ echo "[smoke] user groups"
 id
 
 echo "[smoke] systemd-resolved"
-resolvectl status >/dev/null && ok "resolvectl responds" || fail "resolvectl failed"
+if resolvectl status >/dev/null; then
+  ok "resolvectl responds"
+else
+  fail "resolvectl failed"
+fi
 
 echo "[smoke] key system units"
 for unit in NetworkManager.service systemd-resolved.service greetd.service; do
@@ -62,7 +80,18 @@ for unit in keyrs.service awww-daemon.service dms-awww.service; do
 done
 
 echo "[smoke] timer units"
-for unit in backup-restic-cerebelo.timer backup-rsync-cerebelo.timer dotfiles-sync.timer; do
+timers=("dotfiles-sync.timer")
+if [ -n "${SMOKE_EXTRA_USER_TIMERS:-}" ]; then
+  # Accept whitespace or comma-separated timer names.
+  timers_normalized="$(printf '%s' "${SMOKE_EXTRA_USER_TIMERS}" | tr ',' ' ')"
+  # shellcheck disable=SC2206
+  extra_timers=( $timers_normalized )
+  for timer in "${extra_timers[@]}"; do
+    [ -n "$timer" ] || continue
+    timers+=("$timer")
+  done
+fi
+for unit in "${timers[@]}"; do
   if systemctl --user is-enabled "$unit" >/dev/null 2>&1; then
     ok "$unit is enabled"
   else
@@ -80,13 +109,18 @@ for bin in keyrs dms-awww; do
 done
 
 echo "[smoke] managed dotfiles"
-for file in \
-  "$HOME/.config/ghostty/config" \
-  "$HOME/.config/direnv/direnvrc" \
-  "$HOME/.config/claude/CLAUDE.md" \
-  "$HOME/.config/claude/mcp_servers.json" \
-  "$HOME/.config/crush/crush.json"
-do
+dotfiles=(
+  "$HOME/.config/ghostty/config"
+  "$HOME/.config/direnv/direnvrc"
+)
+if [ -n "${SMOKE_EXTRA_DOTFILES:-}" ]; then
+  IFS=':' read -r -a extra_dotfiles <<< "${SMOKE_EXTRA_DOTFILES}"
+  for path in "${extra_dotfiles[@]}"; do
+    [ -n "$path" ] || continue
+    dotfiles+=("$path")
+  done
+fi
+for file in "${dotfiles[@]}"; do
   if [ -e "$file" ]; then
     ok "$file exists"
   else

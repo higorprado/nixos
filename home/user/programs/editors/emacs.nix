@@ -1,12 +1,15 @@
-{ config, lib, pkgs, ... }: {
-    programs.emacs = {
-      enable = true;
-      package = pkgs.emacs-pgtk;
-
-    # home.packages = with pkgs; [
-    #   #Extra Emacs packages can be added here, e.g.:
-    # ];
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacs-pgtk;
   };
+
   home.sessionVariables = {
     DOOMDIR = "${config.xdg.configHome}/doom";
     EMACSDIR = "${config.xdg.configHome}/emacs";
@@ -19,7 +22,6 @@
     socketActivation.enable = true;
   };
 
-
   xdg.desktopEntries.emacs = {
     name = "Emacs";
     genericName = "Text Editor";
@@ -27,7 +29,10 @@
     icon = "emacs";
     type = "Application";
     terminal = false;
-    categories = [ "Development" "TextEditor" ];
+    categories = [
+      "Development"
+      "TextEditor"
+    ];
     mimeType = [
       "text/english"
       "text/plain"

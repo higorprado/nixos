@@ -11,7 +11,7 @@
 
       dofile(catppuccin_plugin).apply_to_config(config, catppuccin_config)
 
-      config.font = wezterm.font("FiraCode Nerd Font Mono")
+      config.font = wezterm.font("JetBrains Mono Nerd Font Mono")
       config.font_size = 12
       config.color_scheme_dirs = { "/usr/share/wezterm/colors" }
 

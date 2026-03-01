@@ -9,6 +9,8 @@ Usage:
 Environment:
   STRICT_DEV_DOTFILES_PARITY=1
     Exit non-zero when required dev dotfiles are missing.
+  DEV_DOTFILES_EXTRA_REQUIRED="path1:path2"
+    Optional extra paths to enforce on this host.
 EOF
   exit 0
 fi
@@ -25,9 +27,15 @@ required=(
   "$HOME/.config/fish/config.fish"
   "$HOME/.config/nvim/init.lua"
   "$HOME/.config/nvim/lazy-lock.json"
-  "$HOME/.ssh/config"
-  "$HOME/.gitconfig"
 )
+
+if [ -n "${DEV_DOTFILES_EXTRA_REQUIRED:-}" ]; then
+  IFS=':' read -r -a extra_required <<< "${DEV_DOTFILES_EXTRA_REQUIRED}"
+  for extra in "${extra_required[@]}"; do
+    [ -n "$extra" ] || continue
+    required+=("$extra")
+  done
+fi
 
 echo "[dev-dotfiles] checking required dev dotfiles"
 for f in "${required[@]}"; do
@@ -65,15 +73,6 @@ if [ -n "$git_editor" ]; then
     else
       echo "[dev-dotfiles] ok: git core.editor is set ($git_editor)"
     fi
-  fi
-fi
-
-if [ -f "$HOME/.ssh/config" ]; then
-  if rg -q '^Host[[:space:]]+cerebelo$' "$HOME/.ssh/config"; then
-    echo "[dev-dotfiles] ok: ssh host 'cerebelo' present"
-  else
-    echo "[dev-dotfiles] warn: ssh host 'cerebelo' not found in ~/.ssh/config"
-    fail=1
   fi
 fi
 

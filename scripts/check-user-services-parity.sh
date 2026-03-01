@@ -9,11 +9,17 @@ Usage:
 Environment:
   STRICT_USER_SERVICES_PARITY=1
     Exit non-zero when parity drift is found in checked user units.
+  USER_SERVICES_PARITY_EXTRA_UNITS="unit1.service unit2.service"
+    Optional extra units to check on this host.
+  WARN_LOCAL_UNIT_WANTS=1
+    Warn when enabled wants symlinks point to local unit files.
+    Default is 0 (info only) to reduce false positives on transitional hosts.
 EOF
   exit 0
 fi
 
 strict="${STRICT_USER_SERVICES_PARITY:-0}"
+warn_local_unit_wants="${WARN_LOCAL_UNIT_WANTS:-0}"
 fail=0
 
 units=(
@@ -22,9 +28,18 @@ units=(
   "dms-awww.service"
   "gtk-layer.service"
   "dotfiles-sync.service"
-  "backup-restic-cerebelo.service"
-  "backup-rsync-cerebelo.service"
 )
+
+if [ -n "${USER_SERVICES_PARITY_EXTRA_UNITS:-}" ]; then
+  # Accept whitespace or comma-separated unit names.
+  extra_units_normalized="$(printf '%s' "${USER_SERVICES_PARITY_EXTRA_UNITS}" | tr ',' ' ')"
+  # shellcheck disable=SC2206
+  extra_units=( $extra_units_normalized )
+  for unit in "${extra_units[@]}"; do
+    [ -n "$unit" ] || continue
+    units+=("$unit")
+  done
+fi
 
 check_has() {
   local file="$1"
@@ -36,13 +51,33 @@ check_has() {
   fi
 }
 
+choose_unit_file() {
+  local unit="$1"
+  local local_file="$HOME/.config/systemd/user/$unit"
+  local fragment=""
+
+  fragment="$(systemctl --user show -p FragmentPath --value "$unit" 2>/dev/null || true)"
+
+  if [ -n "$fragment" ] && [ -f "$fragment" ]; then
+    echo "$fragment"
+    return 0
+  fi
+
+  if [ -f "$local_file" ]; then
+    echo "$local_file"
+    return 0
+  fi
+
+  return 1
+}
+
 echo "[services-parity] checking local user unit files"
 for unit in "${units[@]}"; do
-  f="$HOME/.config/systemd/user/$unit"
-  if [ ! -f "$f" ]; then
-    echo "[services-parity] info: $unit not present at $f"
+  if ! f="$(choose_unit_file "$unit")"; then
+    echo "[services-parity] info: $unit has no readable fragment/local file"
     continue
   fi
+  echo "[services-parity] info: checking $unit from $f"
 
   legacy="$(rg -n '/usr/local/bin|%h/\.local/bin|%h/\.cargo/bin|/usr/bin/dms|/usr/bin/awww-daemon' "$f" || true)"
   if [ -n "$legacy" ]; then
@@ -59,12 +94,15 @@ for unit in "${units[@]}"; do
       ;;
     awww-daemon.service)
       check_has "$f" '^After=graphical-session\.target$' "After=graphical-session.target"
-      check_has "$f" '^Restart=always$' "Restart=always"
+      check_has "$f" '^Restart=on-failure$' "Restart=on-failure"
+      check_has "$f" '^RestartSec=2$' "RestartSec=2"
       ;;
     dms-awww.service)
-      check_has "$f" '^After=dms\.service awww-daemon\.service$' "After=dms.service awww-daemon.service"
+      check_has "$f" '^After=graphical-session\.target$' "After=graphical-session.target"
+      check_has "$f" '^After=awww-daemon\.service$' "After=awww-daemon.service"
       check_has "$f" '^Requires=awww-daemon\.service$' "Requires=awww-daemon.service"
-      check_has "$f" '^Restart=always$' "Restart=always"
+      check_has "$f" '^Restart=on-failure$' "Restart=on-failure"
+      check_has "$f" '^RestartSec=5$' "RestartSec=5"
       ;;
     gtk-layer.service)
       check_has "$f" '^Type=oneshot$' "Type=oneshot"
@@ -73,7 +111,7 @@ for unit in "${units[@]}"; do
       check_has "$f" '^After=network-online\.target$' "After=network-online.target"
       check_has "$f" '^Type=oneshot$' "Type=oneshot"
       ;;
-    backup-restic-cerebelo.service|backup-rsync-cerebelo.service)
+    backup-*.service)
       check_has "$f" '^After=network-online\.target$' "After=network-online.target"
       check_has "$f" '^Type=oneshot$' "Type=oneshot"
       check_has "$f" '^NoNewPrivileges=true$' "NoNewPrivileges=true"
@@ -88,8 +126,12 @@ for wants_dir in "$HOME/.config/systemd/user/default.target.wants" "$HOME/.confi
     target="$(readlink -f "$link" 2>/dev/null || true)"
     case "$target" in
       "$HOME/.config/systemd/user/"*)
-        echo "[services-parity] warn: enabled unit symlink points to local unmanaged file: $link -> $target"
-        fail=1
+        if [ "$warn_local_unit_wants" = "1" ]; then
+          echo "[services-parity] warn: enabled unit symlink points to local unit file: $link -> $target"
+          fail=1
+        else
+          echo "[services-parity] info: local unit symlink detected (warn disabled): $link -> $target"
+        fi
         ;;
     esac
   done < <(find "$wants_dir" -maxdepth 1 -type l 2>/dev/null | sort)

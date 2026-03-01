@@ -28,7 +28,7 @@ while IFS= read -r rel; do
   [ -n "$rel" ] || continue
   expected+=("$HOME/.config/$rel")
 done < <(
-  rg -No 'xdg\.configFile\."[^"]+"(\.|[[:space:]]*=)' "$repo_root/home/$home_user_dir"/*.nix \
+  rg -No --glob '*.nix' 'xdg\.configFile\."[^"]+"(\.|[[:space:]]*=)' "$repo_root/home/$home_user_dir" \
     | sed -E 's#.*xdg\.configFile\."([^"]+)".*#\1#' \
     | sort -u
 )
@@ -40,13 +40,13 @@ while IFS= read -r rel; do
     *) expected+=("$HOME/$rel") ;;
   esac
 done < <(
-  rg -No 'home\.file\."[^"]+"(\.|[[:space:]]*=)' "$repo_root/home/$home_user_dir"/*.nix \
+  rg -No --glob '*.nix' 'home\.file\."[^"]+"(\.|[[:space:]]*=)' "$repo_root/home/$home_user_dir" \
     | sed -E 's#.*home\.file\."([^"]+)".*#\1#' \
     | sort -u
 )
 
 if [ "${#expected[@]}" -eq 0 ]; then
-  echo "[dotfiles-parity] warn: no declared dotfiles discovered in home/$home_user_dir/*.nix"
+  echo "[dotfiles-parity] warn: no declared dotfiles discovered in home/$home_user_dir/**/*.nix"
   exit 0
 fi
 

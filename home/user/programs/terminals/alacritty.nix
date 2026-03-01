@@ -16,7 +16,7 @@
       };
       font = {
         normal = {
-          family = "Fira Code Nerd Font Mono";
+          family = "JetBrains Mono Nerd Font Mono";
           style = "Regular";
         };
         size = 12;

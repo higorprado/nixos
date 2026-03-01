@@ -7,5 +7,8 @@
     sqlite
     tree-sitter
     binutils
+    gnumake
+    cmake
+    libtool
   ];
 }
