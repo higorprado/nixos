@@ -7,5 +7,6 @@
     ./security.nix
     ./keyboard.nix
     ./nix-tools.nix
+    ./nix-cache.nix
   ];
 }

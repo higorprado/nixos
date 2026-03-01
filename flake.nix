@@ -19,11 +19,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    danksearch = {
-      url = "github:AvengeMedia/danksearch";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -48,7 +43,7 @@
       url = "github:catppuccin/nix";
     };
 
-    catppuccinZenBrowserSource = {
+    catppuccin-zen-browser-src = {
       url = "github:catppuccin/zen-browser";
       flake = false;
     };
@@ -63,12 +58,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    keyrsSource = {
+    keyrs-src = {
       url = "github:higorprado/keyrs";
       flake = false;
     };
 
-    dmsAwwwSource = {
+    dms-awww-src = {
       url = "github:higorprado/dms-awww-integration";
       flake = false;
     };
@@ -100,27 +95,12 @@
         inherit system;
         specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
         modules = [
-          {
-            nix.settings.substituters = [ "https://cache.numtide.com" ];
-            nix.settings.trusted-public-keys = [
-              "cache.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-            ];
-          }
           inputs.disko.nixosModules.disko
           inputs.niri.nixosModules.niri
           inputs.hyprland.nixosModules.default
           inputs.dms.nixosModules.dank-material-shell
           inputs.dms.nixosModules.greeter
           inputs.home-manager.nixosModules.home-manager
-
-          {
-            home-manager = {
-              extraSpecialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
-              sharedModules = [
-                inputs.catppuccin.homeModules.catppuccin
-              ];
-            };
-          }
 
           ./hosts/predator/default.nix
         ];

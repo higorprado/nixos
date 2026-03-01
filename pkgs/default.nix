@@ -1,12 +1,17 @@
 { pkgs, inputs }:
-
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
 {
+  # Local derivations
   linuwu-sense = pkgs.callPackage ./linuwu-sense.nix { };
   predator-tui = pkgs.callPackage ./predator-tui.nix { };
-  keyrs = pkgs.callPackage ./keyrs.nix { src = inputs.keyrsSource; };
-  dms-awww = pkgs.callPackage ./dms-awww.nix { src = inputs.dmsAwwwSource; };
-  rmpc = inputs.rmpc.packages.${pkgs.system}.default;
+  keyrs = pkgs.callPackage ./keyrs.nix { src = inputs."keyrs-src"; };
+  dms-awww = pkgs.callPackage ./dms-awww.nix { src = inputs."dms-awww-src"; };
   catppuccin-zen-browser = pkgs.callPackage ./catppuccin-zen-browser.nix {
-    src = inputs.catppuccinZenBrowserSource;
+    src = inputs."catppuccin-zen-browser-src";
   };
+
+  # Upstream flake packages
+  rmpc = inputs.rmpc.packages.${system}.default;
 }

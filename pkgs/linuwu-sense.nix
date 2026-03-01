@@ -5,7 +5,7 @@ stdenv.mkDerivation rec {
   version = "main";
 
   src = fetchFromGitHub {
-    owner = "higorprado";
+    owner = "0x7375646F";
     repo = "Linuwu-Sense";
     rev = "main";
     sha256 = "0nq5ri98h2j8ylqrwmqhdvvj9kkhjxv638qibhkhzrfx5ilwsaxx";

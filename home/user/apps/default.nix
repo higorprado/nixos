@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ./misc.nix # Fcitx5 and other misc application configs
+    ./misc.nix # Shared app config payloads (not tied to a single program domain)
   ];
 }

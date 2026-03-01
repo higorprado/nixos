@@ -13,6 +13,7 @@
 
 let
   cfg = config.custom.desktop;
+  system = pkgs.stdenv.hostPlatform.system;
   userName = config.custom.user.name;
   homeDir = lib.attrByPath [ "users" "users" userName "home" ] "/home/${userName}" config;
   # Ensure portal-launched desktop entries (Exec=firefox, etc.) can resolve binaries.
@@ -108,7 +109,7 @@ in
     (lib.mkIf (cfg.profile == "dms") {
       programs.niri = {
         enable = true;
-        package = inputs.niri.packages.${pkgs.system}.niri-unstable;
+        package = inputs.niri.packages.${system}.niri-unstable;
       };
 
       programs.dank-material-shell = {
@@ -140,12 +141,12 @@ in
     (lib.mkIf (cfg.profile == "niri-only") {
       programs.niri = {
         enable = true;
-        package = inputs.niri.packages.${pkgs.system}.niri-unstable;
+        package = inputs.niri.packages.${system}.niri-unstable;
       };
 
       # Launch niri directly via greetd without any shell/greeter wrapper
       services.greetd.settings.default_session = {
-        command = "${inputs.niri.packages.${pkgs.system}.niri-unstable}/bin/niri --session";
+        command = "${inputs.niri.packages.${system}.niri-unstable}/bin/niri --session";
         user = userName;
       };
 
@@ -167,12 +168,12 @@ in
     (lib.mkIf (cfg.profile == "noctalia") {
       programs.niri = {
         enable = true;
-        package = inputs.niri.packages.${pkgs.system}.niri-unstable;
+        package = inputs.niri.packages.${system}.niri-unstable;
       };
 
       # Launch niri directly via greetd — no DMS greeter
       services.greetd.settings.default_session = {
-        command = "${inputs.niri.packages.${pkgs.system}.niri-unstable}/bin/niri --session";
+        command = "${inputs.niri.packages.${system}.niri-unstable}/bin/niri --session";
         user = userName;
       };
 
@@ -194,7 +195,7 @@ in
     (lib.mkIf (cfg.profile == "dms-hyprland") {
       programs.hyprland = {
         enable = true;
-        package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+        package = inputs.hyprland.packages.${system}.hyprland;
       };
 
       programs.dank-material-shell = {
@@ -235,7 +236,7 @@ in
     (lib.mkIf (cfg.profile == "caelestia-hyprland") {
       programs.hyprland = {
         enable = true;
-        package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+        package = inputs.hyprland.packages.${system}.hyprland;
       };
 
       # Use a graphical greetd greeter instead of direct compositor autologin.
@@ -251,7 +252,7 @@ in
             [Desktop Entry]
             Name=Caelestia Hyprland
             Comment=Hyprland with Caelestia profile configuration
-            Exec=${inputs.hyprland.packages.${pkgs.system}.hyprland}/bin/start-hyprland -- --config ${homeDir}/.config/hypr/hyprland-caelestia.conf
+            Exec=${inputs.hyprland.packages.${system}.hyprland}/bin/start-hyprland -- --config ${homeDir}/.config/hypr/hyprland-caelestia.conf
             Type=Application
             DesktopNames=Hyprland
           '';

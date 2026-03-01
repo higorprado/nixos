@@ -1,6 +1,9 @@
 # Desktop GUI applications
 # Firefox, Chrome, Teams, Meld
 { pkgs, config, lib, osConfig, inputs, ... }:
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
 lib.mkIf
   (
     osConfig.custom.desktop.profile == "dms" ||
@@ -24,7 +27,7 @@ lib.mkIf
 
   home.packages = with pkgs; [
     # Zen Browser from dedicated upstream flake (not in nixpkgs here)
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.zen-browser.packages.${system}.default
 
     # Google Chrome with NVIDIA/Wayland flickering fix
     # Note: Catppuccin browser module does not support google-chrome upstream.

@@ -119,7 +119,7 @@
         "type": "github"
       }
     },
-    "catppuccinZenBrowserSource": {
+    "catppuccin-zen-browser-src": {
       "flake": false,
       "locked": {
         "lastModified": 1759018582,
@@ -132,26 +132,6 @@
       "original": {
         "owner": "catppuccin",
         "repo": "zen-browser",
-        "type": "github"
-      }
-    },
-    "danksearch": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1771867960,
-        "narHash": "sha256-7VK/R3ZkrSlk8WQlQxjP2BJl5PGNkgbPnd9jh/7xbTw=",
-        "owner": "AvengeMedia",
-        "repo": "danksearch",
-        "rev": "55c58870c666a45eeb2fe34180eb886c34e68d0c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AvengeMedia",
-        "repo": "danksearch",
         "type": "github"
       }
     },
@@ -183,11 +163,11 @@
         "quickshell": "quickshell_2"
       },
       "locked": {
-        "lastModified": 1772401900,
-        "narHash": "sha256-X4xcw4rhtqsu3s/KqXA70yBPjY+OxSx7lMfqUrZqvc4=",
+        "lastModified": 1772408053,
+        "narHash": "sha256-GYDVJ9EH3bK8QT+K10ydLN/KNA+r56h1X9auZ+fc1tE=",
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
-        "rev": "537c44e35498776a8a762e7aea4bfcfc49f85bd7",
+        "rev": "39a43f4de5af7e2b73a93a6749bb22fdfc0b3174",
         "type": "github"
       },
       "original": {
@@ -196,7 +176,7 @@
         "type": "github"
       }
     },
-    "dmsAwwwSource": {
+    "dms-awww-src": {
       "flake": false,
       "locked": {
         "lastModified": 1770426926,
@@ -632,7 +612,7 @@
         "type": "github"
       }
     },
-    "keyrsSource": {
+    "keyrs-src": {
       "flake": false,
       "locked": {
         "lastModified": 1771348514,
@@ -806,11 +786,11 @@
         "noctalia-qs": "noctalia-qs"
       },
       "locked": {
-        "lastModified": 1772403599,
-        "narHash": "sha256-HsAllN3jl27Ewa/UoM4yli8TgAEW8X5PMrwUh0awWFw=",
+        "lastModified": 1772404535,
+        "narHash": "sha256-7emTM0IrDqQxuRvWStr80K0nCtOYrj5Un9LPGXGl2e0=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "fcd08289ad8d1334c0f888495a83f98b7867f18b",
+        "rev": "76adaa97d5cdb05f844f7942296b6eb58500492b",
         "type": "github"
       },
       "original": {
@@ -932,14 +912,13 @@
       "inputs": {
         "caelestia-shell": "caelestia-shell",
         "catppuccin": "catppuccin",
-        "catppuccinZenBrowserSource": "catppuccinZenBrowserSource",
-        "danksearch": "danksearch",
+        "catppuccin-zen-browser-src": "catppuccin-zen-browser-src",
         "disko": "disko",
         "dms": "dms",
-        "dmsAwwwSource": "dmsAwwwSource",
+        "dms-awww-src": "dms-awww-src",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
-        "keyrsSource": "keyrsSource",
+        "keyrs-src": "keyrs-src",
         "llm-agents": "llm-agents",
         "niri": "niri",
         "nixpkgs": "nixpkgs_2",
