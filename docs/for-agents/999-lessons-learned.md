@@ -10,3 +10,4 @@
 6. Confirm rollback path before applying login/session/display-manager changes.
 7. Treat user scope constraints literally (for example branch vs new repo).
 8. If a change affects system access/login, prioritize recovery first, then feature work.
+9. When adopting an upstream flake app, verify the flake package actually builds; HEAD can be temporarily broken.

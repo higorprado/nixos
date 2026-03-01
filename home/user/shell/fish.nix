@@ -48,13 +48,13 @@
       gb = "git branch";
 
       # Emacs
-      emacs = "emacsclient -c -a ''"; 
-      e = "emacsclient -c -a ''"; 
+      emacs = "emacsclient -c -a ''";
+      e = "emacsclient -c -a ''";
 
       # Nix Commands
       nu = "nix flake update --flake path:$HOME/nixos && git -C \"$HOME/nixos\" diff flake.lock";
-      nus =
-        "nix flake update --flake path:$HOME/nixos && git -C \"$HOME/nixos\" diff flake.lock && nh os switch path:$HOME/nixos --out-link \"$HOME/nixos/result\"";
+      nus = "nix flake update --flake path:$HOME/nixos && git -C \"$HOME/nixos\" diff flake.lock && nh os switch path:$HOME/nixos --out-link \"$HOME/nixos/result\"";
+      nut = "nix flake update --flake path:$HOME/nixos && git -C \"$HOME/nixos\" diff flake.lock && nh os test path:$HOME/nixos --out-link \"$HOME/nixos/result\"";
     };
 
     interactiveShellInit = ''

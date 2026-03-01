@@ -73,6 +73,11 @@
       flake = false;
     };
 
+    rmpc = {
+      url = "github:mierak/rmpc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zed-editor = {
       url = "github:Rishabh5321/custom-packages-flake";
       inputs.nixpkgs.follows = "nixpkgs";

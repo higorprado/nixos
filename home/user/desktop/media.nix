@@ -1,4 +1,5 @@
-# Media applications - vlc, yt-dlp, mpd, rmpc, cava, pavucontrol
+# Generic media applications
+# vlc, yt-dlp, cava, pavucontrol
 { config, lib, pkgs, osConfig, ... }:
 
 lib.mkIf
@@ -50,12 +51,6 @@ lib.mkIf
 
     # YouTube/video downloader
     yt-dlp
-
-    # Music Player Daemon
-    mpd
-
-    # Terminal UI for MPD
-    rmpc
 
     # PulseAudio volume control GUI
     pavucontrol

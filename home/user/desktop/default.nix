@@ -8,7 +8,8 @@
     ./catppuccin-targets.nix # Centralized Catppuccin per-app enablement
     ./catppuccin-zen-browser.nix # Official Zen Browser Catppuccin CSS integration
     ./themes.nix # Theme files (terminal themes, GTK, Qt, Discord)
-    ./media.nix # Media applications (vlc, yt-dlp, mpd, rmpc, cava, pavucontrol)
+    ./media.nix # Generic media applications (vlc, yt-dlp, cava, pavucontrol)
+    ./music-client.nix # Music client stack (mpd, rmpc, configs)
     ./monitors.nix # btop, bottom, htop configs
     ./shells.nix # niri/custom.kdl, caelestia, noctalia configs
     ./profile-integrations.nix # Profile-specific shell integrations
@@ -36,8 +37,6 @@
     chmod +w ~/.config/hypr/hyprland.conf ~/.config/hypr/hyprland-caelestia.conf
   '';
 
-  # MPD config managed here to keep it consistent with home.services.mpd settings.
-  xdg.configFile."mpd/mpd.conf".source = ../../../config/apps/mpd/mpd.conf;
 
   home.pointerCursor = {
     name = "phinger-cursors";

@@ -87,13 +87,14 @@ in
   # ══════════════════════════════════════════════
 
   environment.etc."logid.cfg".text = builtins.readFile ../../config/apps/logid/logid.cfg;
+  services.dbus.packages = [ pkgs.logiops ];
 
   systemd.services.logid = {
     description = "LogiOps (logid) for Logitech HID++ devices";
     wantedBy = [ "multi-user.target" ];
 
-    after = [ "bluetooth.service" ];
-    wants = [ "bluetooth.service" ];
+    after = [ "dbus.service" "bluetooth.service" ];
+    wants = [ "dbus.service" "bluetooth.service" ];
 
     serviceConfig = {
       Type = "simple";
