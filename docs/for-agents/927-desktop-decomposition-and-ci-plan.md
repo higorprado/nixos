@@ -160,3 +160,22 @@ All phases must be regression-safe and validated after each slice.
 3. CI enforces full validation matrix for Predator + server-example.
 4. For-human and for-agent docs are up to date.
 5. Zero new runtime regressions compared to baseline behavior.
+
+## Execution Status
+1. 2026-03-02: Phase A Slice 1 completed.
+2. Introduced `modules/profiles/desktop/` with aggregator + focused modules:
+   - `default.nix`
+   - `base.nix`
+   - `capability-shared.nix`
+   - `profile-dms.nix`
+   - `profile-niri-only.nix`
+   - `profile-noctalia.nix`
+   - `profile-dms-hyprland.nix`
+   - `profile-caelestia-hyprland.nix`
+3. Rewired `modules/profiles/default.nix` to import `./desktop/default.nix`.
+4. Kept compatibility shims:
+   - `modules/profiles/desktop-base.nix`
+   - `modules/profiles/desktop-capability-shared.nix`
+   - `modules/profiles/desktop.nix`
+5. Updated `scripts/check-desktop-capability-usage.sh` allowlist for new `modules/profiles/desktop/*` layout.
+6. Validation results: all required gates pass (capability script, profile matrix, mandatory Predator gates, server-example eval/build).

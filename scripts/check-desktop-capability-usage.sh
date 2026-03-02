@@ -4,8 +4,8 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-# Raw profile comparisons should live only in capability source (and desktop.nix
-# until the Phase 2 module split is completed).
+# Raw profile comparisons should live only in capability source and desktop
+# profile implementation modules.
 allowlist=(
   "modules/profiles/profile-capabilities.nix"
   "modules/profiles/desktop.nix"
@@ -19,6 +19,9 @@ is_allowed() {
       return 0
     fi
   done
+  if [[ "$candidate" == modules/profiles/desktop/* ]]; then
+    return 0
+  fi
   return 1
 }
 
@@ -46,4 +49,4 @@ if [[ -n "$violations" ]]; then
   exit 1
 fi
 
-echo "[desktop-capabilities] ok: raw profile comparisons limited to capability source/desktop module"
+echo "[desktop-capabilities] ok: raw profile comparisons limited to capability source/desktop modules"
