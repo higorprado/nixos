@@ -145,7 +145,6 @@ in
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 5;
-          ExecStartPre = "${pkgs.bash}/bin/bash -c 'until [ -n \"$WAYLAND_DISPLAY\" ]; do sleep 0.5; done'";
         };
       };
     })
@@ -175,7 +174,6 @@ in
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 5;
-          ExecStartPre = "${pkgs.bash}/bin/bash -c 'until [ -n \"$WAYLAND_DISPLAY\" ]; do sleep 0.5; done'";
         };
       };
     })
@@ -204,7 +202,6 @@ in
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 5;
-          ExecStartPre = "${pkgs.bash}/bin/bash -c 'until [ -n \"$WAYLAND_DISPLAY\" ]; do sleep 0.5; done'";
         };
       };
 
@@ -241,7 +238,6 @@ in
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 5;
-          ExecStartPre = "${pkgs.bash}/bin/bash -c 'until [ -n \"$WAYLAND_DISPLAY\" ]; do sleep 0.5; done'";
         };
       };
 
@@ -300,7 +296,6 @@ in
         serviceConfig = {
           Restart = "on-failure";
           RestartSec = 5;
-          ExecStartPre = "${pkgs.bash}/bin/bash -c 'until [ -n \"$WAYLAND_DISPLAY\" ]; do sleep 0.5; done'";
         };
       };
 
