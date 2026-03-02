@@ -126,10 +126,10 @@ in
     modesetting.enable = true;
     powerManagement.enable = true; # enables nvidia-sleep/hibernate/resume services for GPU state save/restore
     powerManagement.finegrained = false; # no iGPU for offload, dGPU always on
-    # IMPORTANT: CachyOS uses nvidia-open (license: "Dual MIT/GPL").
-    # AD107 (Ada Lovelace) fully supports open kernel modules.
-    # open=true matches CachyOS behavior and is recommended for RTX 40-series.
-    open = true;
+    # NOTE: nvidia-open currently fails to build against linuxPackages_latest
+    # (kernel 6.19.x API change in UVM path), so keep proprietary module mode.
+    # Revisit open=true when NVIDIA open driver supports this kernel line.
+    open = false;
     package = config.boot.kernelPackages.nvidiaPackages.latest;
     dynamicBoost.enable = false; # requires nvidia-powerd which fails with open kernel modules
   };
@@ -226,7 +226,7 @@ in
   # ══════════════════════════════════════════════
 
   # Kernel packages
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Critical blacklists for Acer Predator + linuwu_sense
   boot.blacklistedKernelModules = [

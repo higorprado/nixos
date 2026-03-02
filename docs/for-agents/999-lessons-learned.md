@@ -12,3 +12,4 @@
 8. If a change affects system access/login, prioritize recovery first, then feature work.
 9. When adopting an upstream flake app, verify the flake package actually builds; HEAD can be temporarily broken.
 10. Number `docs/for-agents` by importance: lower numbers for durable/critical rules, higher numbers for plans, audits, and execution logs (`999` remains lessons learned).
+11. For this repo/user, prioritize performance and compatibility over ideology/licensing preferences when choosing technical paths.
