@@ -14,8 +14,8 @@ Move Predator from pinned kernel packages to latest kernel packages while keepin
 2. Run required validation gates:
    - `nix flake metadata`
    - `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-   - `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion`
-   - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path`
+   - `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
+   - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
    - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 3. Confirm `linuwu-sense` build viability:
    - Verify system build succeeds with `boot.extraModulePackages = [ linuwu-sense ]`.

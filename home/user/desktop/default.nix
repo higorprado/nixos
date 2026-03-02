@@ -7,7 +7,7 @@
     ./catppuccin.nix # Catppuccin flavor/accent/icon control plane
     ./catppuccin-targets.nix # Centralized Catppuccin per-app enablement
     ./catppuccin-zen-browser.nix # Official Zen Browser Catppuccin CSS integration
-    ./themes.nix # Theme files (terminal themes, GTK, Qt, Discord)
+    ./themes.nix # Theme runtime helpers (for example matugen tooling)
     ./media.nix # Generic media applications (vlc, yt-dlp, cava, pavucontrol)
     ./music-client.nix # Music client stack (mpd, rmpc, configs)
     ./monitors.nix # btop, bottom, htop configs

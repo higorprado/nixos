@@ -46,8 +46,8 @@ Enable fast project scaffolding from `config/devenv-templates/*` using either na
 1. Run repository validation gates after implementation:
    - `nix flake metadata`
    - `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-   - `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion`
-   - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path`
+   - `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
+   - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
    - `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 2. Template-specific checks:
    - `nix flake show path:$PWD` lists `templates` entries.

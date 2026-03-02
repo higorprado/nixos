@@ -24,7 +24,7 @@ Define the default repo pattern so changes stay consistent and easy to reason ab
 1. Make the smallest coherent slice.
 2. Run `./scripts/check-flake-pattern.sh`.
 3. Run required validation gates.
-4. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](/home/higorprado/nixos/docs/for-agents/919-flake-and-structure-pattern-execution.md).
+4. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
 
 ## Non-goals
 1. This pattern does not force desktop/profile feature changes.

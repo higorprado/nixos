@@ -29,7 +29,7 @@ Keep `flake.nix` and repo wiring predictable, minimal, and easy to review.
 6. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 
 ## Exception Rule
-1. If a rule is intentionally violated, record one exception entry in [919-flake-and-structure-pattern-execution.md](/home/higorprado/nixos/docs/for-agents/919-flake-and-structure-pattern-execution.md).
+1. If a rule is intentionally violated, record one exception entry in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
 
 ## Execution History
-1. Detailed implementation and phase logs live in [919-flake-and-structure-pattern-execution.md](/home/higorprado/nixos/docs/for-agents/919-flake-and-structure-pattern-execution.md).
+1. Detailed implementation and phase logs live in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).

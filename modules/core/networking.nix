@@ -10,7 +10,13 @@
   services.resolved = {
     enable = true;
     settings.Resolve.DNSSEC = "allow-downgrade";
+    # Avoid running two mDNS responders at the same time (resolved + avahi).
+    settings.Resolve.MulticastDNS = false;
   };
+
+  # Some D-Bus policy fragments reference the legacy "netdev" group.
+  # Defining it avoids runtime warning spam on hosts where this group is absent.
+  users.groups.netdev = { };
 
   # mDNS for hostname.local resolution
   services.avahi = {

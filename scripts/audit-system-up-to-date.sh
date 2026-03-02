@@ -4,13 +4,14 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/audit-system-up-to-date.sh [--output <dir>] [--strict] [--exclude-emacs|--include-emacs]
+  scripts/audit-system-up-to-date.sh [--output <dir>] [--strict] [--exclude-emacs|--include-emacs] [--allow-dirty]
 
 Options:
   --output <dir>     Write report artifacts to this directory.
   --strict           Exit non-zero when any inconsistency is found.
   --exclude-emacs    Exclude emacs-related findings/checks (default).
   --include-emacs    Include emacs-related findings/checks.
+  --allow-dirty      Allow running in a dirty git worktree.
   -h, --help         Show this help.
 
 Environment:
@@ -25,6 +26,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STRICT=0
 EXCLUDE_EMACS=1
 OUTPUT_DIR=""
+ALLOW_DIRTY=0
 allow_interactive_sudo="${AUDIT_ALLOW_INTERACTIVE_SUDO:-0}"
 report_context_skips="${AUDIT_REPORT_CONTEXT_SKIPS:-0}"
 
@@ -46,6 +48,10 @@ while [ "$#" -gt 0 ]; do
       EXCLUDE_EMACS=0
       shift
       ;;
+    --allow-dirty)
+      ALLOW_DIRTY=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -57,6 +63,14 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+if [ "$ALLOW_DIRTY" -ne 1 ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  dirty="$(git status --porcelain=v1 || true)"
+  if [ -n "$dirty" ]; then
+    echo "Audit refused: git worktree is dirty. Re-run with --allow-dirty to override." >&2
+    exit 2
+  fi
+fi
 
 if [ -z "$OUTPUT_DIR" ]; then
   ts="$(date +%Y%m%d-%H%M%S)"
