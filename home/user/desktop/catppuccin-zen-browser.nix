@@ -7,11 +7,7 @@
   ...
 }:
 let
-  desktopProfileEnabled =
-    osConfig.custom.desktop.profile == "dms"
-    || osConfig.custom.desktop.profile == "dms-hyprland"
-    || osConfig.custom.desktop.profile == "caelestia-hyprland"
-    || osConfig.custom.desktop.profile == "noctalia";
+  desktopProfileEnabled = osConfig.custom.desktop.capabilities.desktopUserApps;
 
   capitalize =
     s:

@@ -34,3 +34,5 @@ hosts/predator/private/*.nix
 home/*/private.nix
 home/*/private/*.nix
 !home/*/private/*.nix.example
+.nvimlog
+.claude/settings.local.json

@@ -10,13 +10,7 @@
 let
   system = pkgs.stdenv.hostPlatform.system;
 in
-lib.mkIf
-  (
-    osConfig.custom.desktop.profile == "dms"
-    || osConfig.custom.desktop.profile == "dms-hyprland"
-    || osConfig.custom.desktop.profile == "caelestia-hyprland"
-    || osConfig.custom.desktop.profile == "noctalia"
-  )
+lib.mkIf osConfig.custom.desktop.capabilities.desktopUserApps
   {
     programs.firefox = {
       enable = true;

@@ -4,18 +4,20 @@
   osConfig,
   ...
 }:
+let
+  mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
+in
 lib.mkIf osConfig.custom.desktop.keyrs.enable {
 
   # Provision ~/.config/keyrs/config.toml as a mutable copy on first deploy.
   # The file is never overwritten by subsequent rebuilds, so you can edit it
   # freely without triggering a system rebuild.
-  home.activation.provisionKeyrsConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    if [ ! -f "$HOME/.config/keyrs/config.toml" ]; then
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/keyrs"
-      $DRY_RUN_CMD cp ${../../../config/apps/keyrs/config.toml} "$HOME/.config/keyrs/config.toml"
-      $DRY_RUN_CMD chmod 644 "$HOME/.config/keyrs/config.toml"
-    fi
-  '';
+  home.activation.provisionKeyrsConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+    mutableCopy.mkCopyOnce {
+      source = ../../../config/apps/keyrs/config.toml;
+      target = "$HOME/.config/keyrs/config.toml";
+    }
+  );
 
   # Remove old manually-installed keyrs binaries (now managed via Nix package)
   home.activation.cleanupOldKeyrsBinaries = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

@@ -6,11 +6,7 @@
   ...
 }:
 let
-  desktopProfileEnabled =
-    osConfig.custom.desktop.profile == "dms"
-    || osConfig.custom.desktop.profile == "dms-hyprland"
-    || osConfig.custom.desktop.profile == "caelestia-hyprland"
-    || osConfig.custom.desktop.profile == "noctalia";
+  desktopProfileEnabled = osConfig.custom.desktop.capabilities.desktopUserApps;
   # Single local toggle for GTK Catppuccin integration.
   # Set to false to disable GTK theme wiring while keeping other Catppuccin targets.
   gtkThemeEnabled = true;
@@ -80,7 +76,7 @@ in
     (lib.mkIf gtkThemeEnabled {
       gtk = {
         enable = true;
-        gtk4.enable = false;
+        gtk4.enable = true;
         theme = {
           name = gtkThemeName;
           package = gtkThemePackage;

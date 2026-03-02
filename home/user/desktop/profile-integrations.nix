@@ -4,13 +4,10 @@
   inputs,
   ...
 }:
-let
-  profile = osConfig.custom.desktop.profile;
-in
 {
   # Profile-specific Home Manager integrations belong in the home layer.
   imports =
-    lib.optionals (profile == "noctalia") [
+    lib.optionals osConfig.custom.desktop.capabilities.noctalia [
       inputs.noctalia.homeModules.default
       (
         { ... }:
@@ -22,7 +19,7 @@ in
         }
       )
     ]
-    ++ lib.optionals (profile == "caelestia-hyprland") [
+    ++ lib.optionals osConfig.custom.desktop.capabilities.caelestiaHyprland [
       inputs.caelestia-shell.homeManagerModules.default
       (
         { ... }:

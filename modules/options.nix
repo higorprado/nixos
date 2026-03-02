@@ -7,6 +7,15 @@
     description = "Primary local username for system and Home Manager wiring";
   };
 
+  options.custom.host.role = lib.mkOption {
+    type = lib.types.enum [
+      "desktop"
+      "server"
+    ];
+    default = "desktop";
+    description = "Host role used to gate desktop-only behavior";
+  };
+
   options.custom.desktop.keyrs.enable = lib.mkOption {
     type = lib.types.bool;
     default = false;

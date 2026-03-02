@@ -17,6 +17,9 @@
   # Hostname
   networking.hostName = "predator";
 
+  # Host role
+  custom.host.role = "desktop";
+
   # Desktop profile
   custom.desktop.profile = "dms";
 

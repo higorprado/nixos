@@ -13,3 +13,6 @@
 9. When adopting an upstream flake app, verify the flake package actually builds; HEAD can be temporarily broken.
 10. Number `docs/for-agents` by importance: lower numbers for durable/critical rules, higher numbers for plans, audits, and execution logs (`999` remains lessons learned).
 11. For this repo/user, prioritize performance and compatibility over ideology/licensing preferences when choosing technical paths.
+12. For local matrix/validation scripts, prefer `builtins.getFlake "path:$PWD"` over git URL refs when you need live working-tree behavior; git/index snapshots can hide unstaged fixes.
+13. Even when role-gating desktop behavior, keep option-provider modules imported (or split declarations) if shared modules reference those options; otherwise server eval can fail on unknown options.
+14. In Nix modules, use `mkIf` (not eager `optionalAttrs`) for conditions that depend on `config`, otherwise fixed-point evaluation can recurse.

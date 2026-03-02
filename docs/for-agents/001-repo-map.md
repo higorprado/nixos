@@ -3,6 +3,7 @@
 ## Active Topology
 1. `flake.nix`: entrypoint, inputs, host wiring, home-manager module wiring.
 2. `hosts/<host>/`: host-specific imports and selections.
+   - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).
 4. `home/<user>/`: user environment (core, shell, programs, desktop, dev, services).
 5. `config/`: payload configs consumed by symlink/sync/copy-once logic.

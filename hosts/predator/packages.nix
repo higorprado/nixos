@@ -12,7 +12,10 @@
   ]
   ++
     lib.optionals
-      (config.custom.desktop.profile == "dms" || config.custom.desktop.profile == "dms-hyprland")
+      (
+        config.custom.host.role == "desktop"
+        && (config.custom.desktop.profile == "dms" || config.custom.desktop.profile == "dms-hyprland")
+      )
       (
         with pkgs;
         [
@@ -22,7 +25,7 @@
         ]
       )
   # NVIDIA GPU monitoring
-  ++ lib.optionals (config.custom.desktop.profile != "server") (
+  ++ lib.optionals (config.custom.host.role == "desktop") (
     with pkgs;
     [
       nvtopPackages.nvidia

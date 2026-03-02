@@ -1,16 +1,8 @@
 # Desktop file-stack system settings
 # Shared by desktop-capable profiles
 { config, lib, ... }:
-let
-  profile = config.custom.desktop.profile;
-  desktopFilesEnabled =
-    profile == "dms"
-    || profile == "dms-hyprland"
-    || profile == "caelestia-hyprland"
-    || profile == "noctalia";
-in
 {
-  config = lib.mkIf desktopFilesEnabled {
+  config = lib.mkIf config.custom.desktop.capabilities.desktopFiles {
     # gvfs daemon: required for nemo trash, network mounts, MTP, etc.
     services.gvfs.enable = true;
 

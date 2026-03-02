@@ -121,5 +121,13 @@
           ./hosts/predator/default.nix
         ];
       };
+
+      nixosConfigurations.server-example = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
+        modules = [
+          ./hosts/server-example/default.nix
+        ];
+      };
     };
 }

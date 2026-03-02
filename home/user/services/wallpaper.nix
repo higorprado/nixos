@@ -5,9 +5,11 @@
   osConfig,
   ...
 }:
+let
+  mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
+in
 
-lib.mkIf
-  (osConfig.custom.desktop.profile == "dms" || osConfig.custom.desktop.profile == "dms-hyprland")
+lib.mkIf osConfig.custom.desktop.capabilities.dms
   {
     # Provision ~/.config/dms-awww/config.toml as a mutable copy on first deploy.
     # Edit this file to tune log level, monitor list, matugen scheme, etc.
@@ -38,13 +40,12 @@ lib.mkIf
     # Provision ~/.config/DankMaterialShell/settings.json as a mutable file.
     # DMS reads AND writes to this file (wallpaper, theme changes via the UI).
     # A symlink to the nix store would be read-only and prevent saving changes.
-    home.activation.provisionDmsSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ ! -f "$HOME/.config/DankMaterialShell/settings.json" ]; then
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/DankMaterialShell"
-        $DRY_RUN_CMD cp ${../../../config/apps/dms/settings.json} "$HOME/.config/DankMaterialShell/settings.json"
-        $DRY_RUN_CMD chmod 644 "$HOME/.config/DankMaterialShell/settings.json"
-      fi
-    '';
+    home.activation.provisionDmsSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+      mutableCopy.mkCopyOnce {
+        source = ../../../config/apps/dms/settings.json;
+        target = "$HOME/.config/DankMaterialShell/settings.json";
+      }
+    );
 
     systemd.user.services = {
       # swww wallpaper daemon — provides the "awww-daemon" binary used by dms-awww.

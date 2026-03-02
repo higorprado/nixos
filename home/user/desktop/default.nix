@@ -1,9 +1,13 @@
 { pkgs, lib, ... }:
+let
+  mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
+in
 {
   imports = [
     ./wayland.nix # Wayland tools (waybar, swww, wl-clipboard, etc.)
     ./apps.nix # Desktop GUI applications (firefox, chrome, teams, meld)
     ./files.nix # File management (nemo, thumbnails, archive tools)
+    ./viewers.nix # Image/PDF viewers and MIME associations
     ./catppuccin.nix # Catppuccin flavor/accent/icon control plane
     ./catppuccin-targets.nix # Centralized Catppuccin per-app enablement
     ./catppuccin-zen-browser.nix # Official Zen Browser Catppuccin CSS integration
@@ -26,15 +30,18 @@
   # - hyprland.conf: legacy/default Hyprland profile config (DMS-oriented)
   # - hyprland-caelestia.conf: dedicated config for the caelestia-hyprland profile
   home.activation.copyHyprlandConfigs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    mkdir -p ~/.config/hypr
-    # Preserve edits by copying only on first provision.
-    if [ ! -f ~/.config/hypr/hyprland.conf ]; then
-      cp ${../../../config/apps/hyprland/hyprland.conf} ~/.config/hypr/hyprland.conf
-    fi
-    if [ ! -f ~/.config/hypr/hyprland-caelestia.conf ]; then
-      cp ${../../../config/apps/hyprland/hyprland-caelestia.conf} ~/.config/hypr/hyprland-caelestia.conf
-    fi
-    chmod +w ~/.config/hypr/hyprland.conf ~/.config/hypr/hyprland-caelestia.conf
+    ${mutableCopy.mkCopyOnce {
+      source = ../../../config/apps/hyprland/hyprland.conf;
+      target = "$HOME/.config/hypr/hyprland.conf";
+    }}
+
+    ${mutableCopy.mkCopyOnce {
+      source = ../../../config/apps/hyprland/hyprland-caelestia.conf;
+      target = "$HOME/.config/hypr/hyprland-caelestia.conf";
+    }}
+
+    # Keep both configs user-editable even when they already exist.
+    $DRY_RUN_CMD chmod u+w "$HOME/.config/hypr/hyprland.conf" "$HOME/.config/hypr/hyprland-caelestia.conf" 2>/dev/null || true
   '';
 
   home.pointerCursor = {

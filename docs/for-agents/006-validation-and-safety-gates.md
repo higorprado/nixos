@@ -7,6 +7,11 @@
 4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
 5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 
+## Optional Pattern Gates
+1. `./scripts/check-flake-pattern.sh`
+2. `./scripts/check-desktop-capability-usage.sh`
+3. `./scripts/check-profile-matrix.sh`
+
 ## Rollback
 1. Prefer reverting the last slice rather than broad resets.
 2. If migration/cleanup, ensure backup exists before deletion.

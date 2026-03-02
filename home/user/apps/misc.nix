@@ -1,4 +1,7 @@
 { lib, ... }:
+let
+  mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
+in
 
 {
   i18n.inputMethod = {
@@ -12,9 +15,10 @@
 
   # Fcitx5 input method (mutable - user configuration)
   home.activation.provisionFcitx5 = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    if [ ! -f "$HOME/.config/fcitx5/profile" ]; then
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/fcitx5/conf"
-      $DRY_RUN_CMD cp ${../../../config/apps/fcitx5/profile} "$HOME/.config/fcitx5/profile"
-    fi
+    $DRY_RUN_CMD mkdir -p "$HOME/.config/fcitx5/conf"
+    ${mutableCopy.mkCopyOnce {
+      source = ../../../config/apps/fcitx5/profile;
+      target = "$HOME/.config/fcitx5/profile";
+    }}
   '';
 }
