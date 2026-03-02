@@ -1,6 +1,6 @@
 -- Rust IDE support via rustaceanvim.
 -- Only active when rust-analyzer, cargo, and rustc are all in PATH (Nix devshell/cargo).
--- DAP: prefers lldb-dap from Nix; falls back to codelldb if available.
+-- DAP: prefer codelldb (Nix wrapper) on NixOS, then fallback to lldb-dap.
 return {
   {
     "mrcjkb/rustaceanvim",
@@ -10,39 +10,29 @@ return {
     config = function(_, opts)
       opts = opts or {}
 
-      -- Prefer lldb-dap from Nix (stable on NixOS). Fallback to codelldb if available.
-      local lldb_dap = vim.fn.exepath("lldb-dap")
-      if lldb_dap ~= "" then
+      -- Prefer codelldb when available, but avoid Mason's dynamic binary on NixOS.
+      local codelldb = vim.fn.exepath("codelldb")
+      if codelldb ~= "" and not codelldb:find("/mason/") then
         opts.dap = {
           adapter = {
-            type = "executable",
-            command = lldb_dap,
-            name = "lldb",
+            type = "server",
+            port = "${port}",
+            executable = {
+              command = codelldb,
+              args = { "--port", "${port}" },
+            },
           },
         }
       else
-        local codelldb = vim.fn.exepath("codelldb")
-        if codelldb ~= "" then
-          local ext = (vim.uv or vim.loop).os_uname().sysname == "Darwin" and ".dylib" or ".so"
-          local candidates = {
-            vim.fs.dirname(codelldb) .. "/../lib/liblldb" .. ext,
-            vim.fs.dirname(codelldb) .. "/liblldb" .. ext,
+        local lldb_dap = vim.fn.exepath("lldb-dap")
+        if lldb_dap ~= "" then
+          opts.dap = {
+            adapter = {
+              type = "executable",
+              command = lldb_dap,
+              name = "lldb",
+            },
           }
-          if vim.env.MASON and vim.env.MASON ~= "" then
-            table.insert(candidates, vim.env.MASON .. "/opt/lldb/lib/liblldb" .. ext)
-          end
-          local library_path
-          for _, path in ipairs(candidates) do
-            if vim.fn.filereadable(path) == 1 then
-              library_path = path
-              break
-            end
-          end
-          if library_path then
-            opts.dap = {
-              adapter = require("rustaceanvim.config").get_codelldb_adapter(codelldb, library_path),
-            }
-          end
         end
       end
 

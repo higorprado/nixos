@@ -84,6 +84,16 @@
     inputs@{ nixpkgs, llm-agents, ... }:
     let
       system = "x86_64-linux";
+      lib = nixpkgs.lib;
+      devenvTemplateRoot = ./config/devenv-templates;
+      devenvTemplateDirs = lib.filterAttrs (_: fileType: fileType == "directory") (
+        builtins.readDir devenvTemplateRoot
+      );
+      devenvTemplateNames = builtins.attrNames devenvTemplateDirs;
+      devenvTemplates = lib.genAttrs devenvTemplateNames (name: {
+        path = devenvTemplateRoot + "/${name}";
+        description = "devenv project template (${name})";
+      });
       customPkgs = import ./pkgs {
         pkgs = nixpkgs.legacyPackages.${system};
         inherit inputs;
@@ -91,6 +101,12 @@
       llm-agents-pkgs = llm-agents.packages.${system};
     in
     {
+      templates =
+        devenvTemplates
+        // lib.optionalAttrs (devenvTemplateDirs ? python) {
+          default = devenvTemplates.python;
+        };
+
       nixosConfigurations.predator = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
