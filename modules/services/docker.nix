@@ -1,5 +1,5 @@
 # Docker container runtime (all machines)
-{ config, lib, pkgs, ... }:
+{ ... }:
 {
   # Enable Docker
   virtualisation.docker = {

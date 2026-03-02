@@ -1,4 +1,12 @@
-{ lib, rustPlatform, pkg-config, wayland, libxkbcommon, systemd, src }:
+{
+  lib,
+  rustPlatform,
+  pkg-config,
+  wayland,
+  libxkbcommon,
+  systemd,
+  src,
+}:
 
 rustPlatform.buildRustPackage rec {
   pname = "keyrs";
@@ -6,14 +14,27 @@ rustPlatform.buildRustPackage rec {
 
   inherit src;
 
-  cargoLock = { lockFile = "${src}/Cargo.lock"; };
+  cargoLock = {
+    lockFile = "${src}/Cargo.lock";
+  };
 
   nativeBuildInputs = [ pkg-config ];
   # libudev-sys expects libudev.pc; on NixOS this comes from systemd.
-  buildInputs = [ wayland libxkbcommon systemd ];
+  buildInputs = [
+    wayland
+    libxkbcommon
+    systemd
+  ];
 
-  cargoBuildFlags = [ "--features" "pure-rust" "--bins" ];
-  cargoTestFlags = [ "--features" "pure-rust" ];
+  cargoBuildFlags = [
+    "--features"
+    "pure-rust"
+    "--bins"
+  ];
+  cargoTestFlags = [
+    "--features"
+    "pure-rust"
+  ];
 
   # Install the keyrs-service shell script and companion data directories so
   # `keyrs-service` is available in PATH for service/profile management.

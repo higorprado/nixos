@@ -1,4 +1,10 @@
-{ config, lib, inputs, pkgs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  pkgs,
+  ...
+}:
 # Desktop shell profile abstraction.
 #
 # Profiles:
@@ -62,7 +68,10 @@ in
 
       # Portal services configuration
       systemd.user.services.xdg-desktop-portal = {
-        after = [ "dbus.service" "graphical-session.target" ];
+        after = [
+          "dbus.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         wantedBy = [ "graphical-session.target" ];
         serviceConfig.Environment = [ "PATH=${portalExecPath}" ];
@@ -120,14 +129,18 @@ in
           configHome = homeDir;
           configFiles = [ "${homeDir}/.config/DankMaterialShell/settings.json" ];
         };
-      } // dmsCommonSettings;
+      }
+      // dmsCommonSettings;
 
       programs.dsearch.enable = true;
 
       xdg.portal.config.niri.default = [ "gtk" ];
 
       systemd.user.services.xdg-desktop-portal-gtk = {
-        after = [ "niri.service" "graphical-session.target" ];
+        after = [
+          "niri.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -154,7 +167,10 @@ in
       xdg.portal.config.niri.default = [ "gtk" ];
 
       systemd.user.services.xdg-desktop-portal-gtk = {
-        after = [ "niri.service" "graphical-session.target" ];
+        after = [
+          "niri.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -180,7 +196,10 @@ in
       xdg.portal.config.niri.default = [ "gtk" ];
 
       systemd.user.services.xdg-desktop-portal-gtk = {
-        after = [ "niri.service" "graphical-session.target" ];
+        after = [
+          "niri.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -206,14 +225,18 @@ in
           configHome = homeDir;
           configFiles = [ "${homeDir}/.config/DankMaterialShell/settings.json" ];
         };
-      } // dmsCommonSettings;
+      }
+      // dmsCommonSettings;
 
       programs.dsearch.enable = true;
 
       xdg.portal.config.hyprland.default = [ "gtk" ];
 
       systemd.user.services.xdg-desktop-portal-gtk = {
-        after = [ "hyprland.service" "graphical-session.target" ];
+        after = [
+          "hyprland.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -223,7 +246,10 @@ in
       };
 
       systemd.user.services.xdg-desktop-portal-hyprland = {
-        after = [ "hyprland.service" "graphical-session.target" ];
+        after = [
+          "hyprland.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -252,7 +278,9 @@ in
             [Desktop Entry]
             Name=Caelestia Hyprland
             Comment=Hyprland with Caelestia profile configuration
-            Exec=${inputs.hyprland.packages.${system}.hyprland}/bin/start-hyprland -- --config ${homeDir}/.config/hypr/hyprland-caelestia.conf
+            Exec=${
+              inputs.hyprland.packages.${system}.hyprland
+            }/bin/start-hyprland -- --config ${homeDir}/.config/hypr/hyprland-caelestia.conf
             Type=Application
             DesktopNames=Hyprland
           '';
@@ -264,7 +292,10 @@ in
       xdg.portal.config.hyprland.default = [ "gtk" ];
 
       systemd.user.services.xdg-desktop-portal-gtk = {
-        after = [ "hyprland.service" "graphical-session.target" ];
+        after = [
+          "hyprland.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";
@@ -274,7 +305,10 @@ in
       };
 
       systemd.user.services.xdg-desktop-portal-hyprland = {
-        after = [ "hyprland.service" "graphical-session.target" ];
+        after = [
+          "hyprland.service"
+          "graphical-session.target"
+        ];
         partOf = [ "graphical-session.target" ];
         serviceConfig = {
           Restart = "on-failure";

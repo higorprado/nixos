@@ -1,4 +1,10 @@
-{ config, lib, osConfig, pkgs, ... }:
+{
+  config,
+  lib,
+  osConfig,
+  pkgs,
+  ...
+}:
 let
   desktopProfileEnabled =
     osConfig.custom.desktop.profile == "dms"

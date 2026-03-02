@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   # Theme packages
@@ -16,19 +16,24 @@
   # =============================================================================
 
   # Kitty non-color tab styling extras
-  xdg.configFile."kitty/dank-tabs.conf".source = ../../../config/themes/terminals/kitty/dank-tabs.conf;
+  xdg.configFile."kitty/dank-tabs.conf".source =
+    ../../../config/themes/terminals/kitty/dank-tabs.conf;
 
   # GTK 3.0 theme customizations
-  xdg.configFile."gtk-3.0/dank-colors.css".source = ../../../config/themes/gtk/gtk-3.0/dank-colors.css;
+  xdg.configFile."gtk-3.0/dank-colors.css".source =
+    ../../../config/themes/gtk/gtk-3.0/dank-colors.css;
   xdg.configFile."gtk-3.0/gtk.css".source = ../../../config/themes/gtk/gtk-3.0/gtk.css;
 
   # GTK 4.0 theme customizations
-  xdg.configFile."gtk-4.0/dank-colors.css".source = ../../../config/themes/gtk/gtk-4.0/dank-colors.css;
+  xdg.configFile."gtk-4.0/dank-colors.css".source =
+    ../../../config/themes/gtk/gtk-4.0/dank-colors.css;
   xdg.configFile."gtk-4.0/gtk.css".source = ../../../config/themes/gtk/gtk-4.0/gtk.css;
 
   # Qt theming
-  xdg.configFile."qt5ct/colors/caelestia.colors".source = ../../../config/themes/qt/qt5ct/colors/caelestia.colors;
-  xdg.configFile."qt6ct/colors/caelestia.colors".source = ../../../config/themes/qt/qt6ct/colors/caelestia.colors;
+  xdg.configFile."qt5ct/colors/caelestia.colors".source =
+    ../../../config/themes/qt/qt5ct/colors/caelestia.colors;
+  xdg.configFile."qt6ct/colors/caelestia.colors".source =
+    ../../../config/themes/qt/qt6ct/colors/caelestia.colors;
 
   # =============================================================================
   # App Launcher & Audio Visualizer - Symlinked

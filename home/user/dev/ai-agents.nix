@@ -1,7 +1,13 @@
-{ config, pkgs, llm-agents-pkgs, ... }:
+{ llm-agents-pkgs, ... }:
 
 {
-  home.packages = with llm-agents-pkgs; [ kilocode-cli codex claude-code opencode crush ];
+  home.packages = with llm-agents-pkgs; [
+    kilocode-cli
+    codex
+    claude-code
+    opencode
+    crush
+  ];
 
   # Claude Code global configuration
   xdg.configFile."claude/CLAUDE.md".text = ''
@@ -34,10 +40,16 @@
   # Crush configuration
   xdg.configFile."crush/crush.json".text = builtins.toJSON {
     api = {
-      anthropic = { apiKey = "$ANTHROPIC_API_KEY"; };
-      openai = { apiKey = "$OPENAI_API_KEY"; };
+      anthropic = {
+        apiKey = "$ANTHROPIC_API_KEY";
+      };
+      openai = {
+        apiKey = "$OPENAI_API_KEY";
+      };
     };
-    ui = { theme = "catppuccin_mocha"; };
+    ui = {
+      theme = "catppuccin_mocha";
+    };
   };
 
   # MCP configuration for NixOS context

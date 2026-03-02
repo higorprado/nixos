@@ -1,9 +1,8 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, ... }:
 
 let
   # Call package with kernelPackages to ensure kernel is injected
-  linuwu-sense =
-    config.boot.kernelPackages.callPackage ../../pkgs/linuwu-sense.nix { };
+  linuwu-sense = config.boot.kernelPackages.callPackage ../../pkgs/linuwu-sense.nix { };
 
   setPlatformProfileScript = pkgs.writeShellScript "set-platform-profile" ''
     set -euo pipefail
@@ -64,7 +63,10 @@ in
     description = "Set ACPI platform_profile (balanced-performance)";
     wantedBy = [ "multi-user.target" ];
 
-    after = [ "systemd-modules-load.service" "sysinit.target" ];
+    after = [
+      "systemd-modules-load.service"
+      "sysinit.target"
+    ];
     wants = [ "systemd-modules-load.service" ];
 
     serviceConfig = {
@@ -93,8 +95,14 @@ in
     description = "LogiOps (logid) for Logitech HID++ devices";
     wantedBy = [ "multi-user.target" ];
 
-    after = [ "dbus.service" "bluetooth.service" ];
-    wants = [ "dbus.service" "bluetooth.service" ];
+    after = [
+      "dbus.service"
+      "bluetooth.service"
+    ];
+    wants = [
+      "dbus.service"
+      "bluetooth.service"
+    ];
 
     serviceConfig = {
       Type = "simple";
@@ -108,8 +116,7 @@ in
     description = "Restart logid when Logitech device appears (%I)";
     serviceConfig = {
       Type = "oneshot";
-      ExecStart =
-        "${pkgs.systemd}/bin/systemctl --no-block restart logid.service";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --no-block restart logid.service";
     };
   };
 
@@ -235,7 +242,7 @@ in
   ];
 
   # Hibernation via btrfs swapfile on @swap subvolume inside cryptroot
-  swapDevices = [{ device = "/swap/swapfile"; }];
+  swapDevices = [ { device = "/swap/swapfile"; } ];
   boot.resumeDevice = "/dev/mapper/cryptroot";
   # resume_offset: included in boot.kernelParams above
 
@@ -276,7 +283,7 @@ in
   services.pipewire.wireplumber.extraConfig."52-reserve-dsp" = {
     "reserve.device" = [
       {
-        matches = [{ "device.name" = "alsa_card.pci-0000_01_00.1"; }];
+        matches = [ { "device.name" = "alsa_card.pci-0000_01_00.1"; } ];
         "reserve.device" = "Audio";
         "reserve.priority" = 0;
       }

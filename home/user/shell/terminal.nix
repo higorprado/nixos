@@ -1,4 +1,8 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 
 {
   # Terminal emulators are enabled via their respective Home Manager modules
@@ -6,13 +10,19 @@
   # Switch the default at the module level with: custom.terminal.default = "ghostty";
 
   options.custom.terminal.default = lib.mkOption {
-    type = lib.types.enum [ "foot" "ghostty" "kitty" "alacritty" "wezterm" ];
+    type = lib.types.enum [
+      "foot"
+      "ghostty"
+      "kitty"
+      "alacritty"
+      "wezterm"
+    ];
     default = "foot";
     description = "Default terminal emulator. Sets the TERMINAL session variable.";
   };
 
   config = {
-    home.packages = with pkgs; [ ];
+    home.packages = [ ];
 
     # Set default terminal for the system
     home.sessionVariables.TERMINAL = config.custom.terminal.default;
@@ -68,11 +78,11 @@
 
     # Fish abbreviations for terminal switching
     programs.fish.shellAbbrs = {
-      tf  = "switch-terminal foot";
-      tg  = "switch-terminal ghostty";
-      tk  = "switch-terminal kitty";
-      ta  = "switch-terminal alacritty";
-      tw  = "switch-terminal wezterm";
+      tf = "switch-terminal foot";
+      tg = "switch-terminal ghostty";
+      tk = "switch-terminal kitty";
+      ta = "switch-terminal alacritty";
+      tw = "switch-terminal wezterm";
     };
   };
 }

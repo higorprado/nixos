@@ -1,6 +1,6 @@
 # Core system settings
 # Timezone, locale, user account, state version, zram swap, Nix settings
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 let
   userName = config.custom.user.name;
 in
@@ -25,8 +25,13 @@ in
 
   # Locale
   i18n.defaultLocale = "en_US.UTF-8";
-  i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" "pt_BR.UTF-8/UTF-8" ];
-  i18n.extraLocaleSettings = { LC_CTYPE = "pt_BR.UTF-8"; };
+  i18n.supportedLocales = [
+    "en_US.UTF-8/UTF-8"
+    "pt_BR.UTF-8/UTF-8"
+  ];
+  i18n.extraLocaleSettings = {
+    LC_CTYPE = "pt_BR.UTF-8";
+  };
 
   # User account
   users.users.${userName} = {
@@ -52,9 +57,15 @@ in
 
   # Nix package manager settings
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     auto-optimise-store = true;
-    trusted-users = [ "root" userName ];
+    trusted-users = [
+      "root"
+      userName
+    ];
     extra-substituters = [
       "https://devenv.cachix.org"
       "https://nixpkgs-python.cachix.org"

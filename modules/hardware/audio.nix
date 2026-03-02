@@ -1,6 +1,6 @@
 # Audio configuration (generic PipeWire setup)
 # All machines, no NVIDIA-specific fixes
-{ config, ... }:
+{ ... }:
 {
   # PipeWire audio system
   services.pipewire = {
@@ -14,7 +14,7 @@
     wireplumber.extraConfig."50-alsa-reservation" = {
       "monitor.alsa.rules" = [
         {
-          matches = [{ "device.name" = "~alsa_card.*"; }];
+          matches = [ { "device.name" = "~alsa_card.*"; } ];
           actions.update-props = {
             "api.alsa.reserve-device" = true;
           };

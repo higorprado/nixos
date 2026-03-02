@@ -1,4 +1,9 @@
-{ lib, rustPlatform, pkg-config, src }:
+{
+  lib,
+  rustPlatform,
+  pkg-config,
+  src,
+}:
 
 rustPlatform.buildRustPackage rec {
   pname = "dms-awww";
@@ -6,7 +11,9 @@ rustPlatform.buildRustPackage rec {
 
   inherit src;
 
-  cargoLock = { lockFile = "${src}/Cargo.lock"; };
+  cargoLock = {
+    lockFile = "${src}/Cargo.lock";
+  };
 
   nativeBuildInputs = [ pkg-config ];
 

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, customPkgs, osConfig, ... }:
+{
+  lib,
+  customPkgs,
+  osConfig,
+  ...
+}:
 lib.mkIf osConfig.custom.desktop.keyrs.enable {
 
   # Provision ~/.config/keyrs/config.toml as a mutable copy on first deploy.

@@ -37,7 +37,6 @@
     chmod +w ~/.config/hypr/hyprland.conf ~/.config/hypr/hyprland-caelestia.conf
   '';
 
-
   home.pointerCursor = {
     name = "phinger-cursors";
     package = pkgs.phinger-cursors;
@@ -45,46 +44,48 @@
     gtk.enable = true;
   };
 
-  xdg.mimeApps = let
-    nonFirefoxWebHandlers = [
-      "brave-browser.desktop"
-      "com.brave.Browser.desktop"
-      "chromium-browser.desktop"
-      "com.google.Chrome.desktop"
-      "google-chrome.desktop"
-      "zen.desktop"
-      "dms-open.desktop"
-    ];
-  in {
-    enable = true;
-    defaultApplications = {
-      "text/html" = [ "firefox.desktop" ];
-      "application/xhtml+xml" = [ "firefox.desktop" ];
-      "x-scheme-handler/http" = [ "firefox.desktop" ];
-      "x-scheme-handler/https" = [ "firefox.desktop" ];
-      "x-scheme-handler/about" = [ "firefox.desktop" ];
-      "x-scheme-handler/unknown" = [ "firefox.desktop" ];
-      "application/json" = [ "code.desktop" ];
-      # File manager — makes nemo appear in launchers and handle directory opens.
-      "inode/directory" = [ "nemo.desktop" ];
-      "application/x-gnome-saved-search" = [ "nemo.desktop" ];
-    };
-
-    associations = {
-      added = {
+  xdg.mimeApps =
+    let
+      nonFirefoxWebHandlers = [
+        "brave-browser.desktop"
+        "com.brave.Browser.desktop"
+        "chromium-browser.desktop"
+        "com.google.Chrome.desktop"
+        "google-chrome.desktop"
+        "zen.desktop"
+        "dms-open.desktop"
+      ];
+    in
+    {
+      enable = true;
+      defaultApplications = {
         "text/html" = [ "firefox.desktop" ];
         "application/xhtml+xml" = [ "firefox.desktop" ];
         "x-scheme-handler/http" = [ "firefox.desktop" ];
         "x-scheme-handler/https" = [ "firefox.desktop" ];
+        "x-scheme-handler/about" = [ "firefox.desktop" ];
+        "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+        "application/json" = [ "code.desktop" ];
+        # File manager — makes nemo appear in launchers and handle directory opens.
+        "inode/directory" = [ "nemo.desktop" ];
+        "application/x-gnome-saved-search" = [ "nemo.desktop" ];
       };
-      removed = {
-        "text/html" = nonFirefoxWebHandlers;
-        "application/xhtml+xml" = nonFirefoxWebHandlers;
-        "x-scheme-handler/http" = nonFirefoxWebHandlers;
-        "x-scheme-handler/https" = nonFirefoxWebHandlers;
+
+      associations = {
+        added = {
+          "text/html" = [ "firefox.desktop" ];
+          "application/xhtml+xml" = [ "firefox.desktop" ];
+          "x-scheme-handler/http" = [ "firefox.desktop" ];
+          "x-scheme-handler/https" = [ "firefox.desktop" ];
+        };
+        removed = {
+          "text/html" = nonFirefoxWebHandlers;
+          "application/xhtml+xml" = nonFirefoxWebHandlers;
+          "x-scheme-handler/http" = nonFirefoxWebHandlers;
+          "x-scheme-handler/https" = nonFirefoxWebHandlers;
+        };
       };
     };
-  };
 
   xdg.userDirs = {
     enable = true;

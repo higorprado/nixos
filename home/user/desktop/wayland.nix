@@ -1,6 +1,6 @@
 # Wayland-specific tools for desktop environment
 # wlr-randr, waybar, swww, wl-clipboard, libnotify
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 {
   home.packages = with pkgs; [
     # Output management for wlroots-based compositors

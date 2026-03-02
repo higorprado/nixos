@@ -1,6 +1,10 @@
-{ lib, stdenvNoCC, src }:
+{
+  lib,
+  stdenvNoCC,
+  src,
+}:
 
-stdenvNoCC.mkDerivation rec {
+stdenvNoCC.mkDerivation {
   pname = "catppuccin-zen-browser";
   version = "unstable-2025-09-28";
 

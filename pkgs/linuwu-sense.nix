@@ -1,6 +1,10 @@
-{ stdenv, kernel, fetchFromGitHub }:
+{
+  stdenv,
+  kernel,
+  fetchFromGitHub,
+}:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "linuwu-sense";
   version = "main";
 

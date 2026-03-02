@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 let
   backupScript = pkgs.writeShellScriptBin "backup-critical" ''

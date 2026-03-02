@@ -1,4 +1,7 @@
-{ inputs, config, lib, pkgs, customPkgs, ... }:
+{
+  lib,
+  ...
+}:
 {
   imports = [
     ./hardware-configuration.nix
@@ -8,7 +11,8 @@
     ./performance.nix
     ../../modules
     ../../home/user
-  ] ++ lib.optional (builtins.pathExists ./private.nix) ./private.nix;
+  ]
+  ++ lib.optional (builtins.pathExists ./private.nix) ./private.nix;
 
   # Hostname
   networking.hostName = "predator";
@@ -23,10 +27,13 @@
   nixpkgs.overlays = [
     (_: prev: {
       khal = prev.khal.overrideAttrs (old: {
-        nativeBuildInputs = builtins.filter
-          (p: !(prev.lib.hasInfix "sphinx" (p.name or "")))
-          old.nativeBuildInputs;
-        outputs = [ "out" "dist" ];
+        nativeBuildInputs = builtins.filter (
+          p: !(prev.lib.hasInfix "sphinx" (p.name or ""))
+        ) old.nativeBuildInputs;
+        outputs = [
+          "out"
+          "dist"
+        ];
       });
     })
   ];

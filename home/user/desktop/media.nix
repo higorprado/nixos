@@ -1,58 +1,63 @@
 # Generic media applications
 # vlc, yt-dlp, cava, pavucontrol
-{ config, lib, pkgs, osConfig, ... }:
+{
+  lib,
+  pkgs,
+  osConfig,
+  ...
+}:
 
 lib.mkIf
   (
     osConfig.custom.desktop.profile == "dms"
     || osConfig.custom.desktop.profile == "dms-hyprland"
     || osConfig.custom.desktop.profile == "caelestia-hyprland"
-      || osConfig.custom.desktop.profile == "noctalia"
+    || osConfig.custom.desktop.profile == "noctalia"
   )
-{
-  programs.cava = {
-    enable = true;
-    settings = {
-      general = {
-        bars = 64;
-        framerate = 60;
-      };
+  {
+    programs.cava = {
+      enable = true;
+      settings = {
+        general = {
+          bars = 64;
+          framerate = 60;
+        };
 
-      input = {
-        method = "pulse";
-        source = "auto";
-      };
+        input = {
+          method = "pulse";
+          source = "auto";
+        };
 
-      output = {
-        method = "ncurses";
-        style = "stereo";
-      };
+        output = {
+          method = "ncurses";
+          style = "stereo";
+        };
 
-      smoothing = {
-        noise_reduction = 85;
-        monstercat = 1;
-        waves = 0;
-        gravity = 120;
-      };
+        smoothing = {
+          noise_reduction = 85;
+          monstercat = 1;
+          waves = 0;
+          gravity = 120;
+        };
 
-      eq = {
-        "1" = 0.8;
-        "2" = 0.9;
-        "3" = 1.0;
-        "4" = 1.1;
-        "5" = 1.2;
+        eq = {
+          "1" = 0.8;
+          "2" = 0.9;
+          "3" = 1.0;
+          "4" = 1.1;
+          "5" = 1.2;
+        };
       };
     };
-  };
 
-  home.packages = with pkgs; [
-    # Video/media player
-    vlc
+    home.packages = with pkgs; [
+      # Video/media player
+      vlc
 
-    # YouTube/video downloader
-    yt-dlp
+      # YouTube/video downloader
+      yt-dlp
 
-    # PulseAudio volume control GUI
-    pavucontrol
-  ];
-}
+      # PulseAudio volume control GUI
+      pavucontrol
+    ];
+  }
