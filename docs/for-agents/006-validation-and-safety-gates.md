@@ -11,6 +11,7 @@
 1. `./scripts/check-flake-pattern.sh`
 2. `./scripts/check-desktop-capability-usage.sh`
 3. `./scripts/check-profile-matrix.sh`
+4. `./scripts/check-option-declaration-boundary.sh`
 
 ## Rollback
 1. Prefer reverting the last slice rather than broad resets.

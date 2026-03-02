@@ -179,3 +179,17 @@ All phases must be regression-safe and validated after each slice.
    - `modules/profiles/desktop.nix`
 5. Updated `scripts/check-desktop-capability-usage.sh` allowlist for new `modules/profiles/desktop/*` layout.
 6. Validation results: all required gates pass (capability script, profile matrix, mandatory Predator gates, server-example eval/build).
+7. 2026-03-02: Phase B Slice 1 completed.
+8. Centralized option declarations into dedicated option modules:
+   - `modules/options/default.nix`
+   - `modules/options/core-options.nix`
+   - `modules/options/desktop-options.nix`
+   - `modules/options/desktop-capabilities-options.nix`
+   - `home/user/options/default.nix`
+   - `home/user/options/terminal-options.nix`
+   - `home/user/options/theme-options.nix`
+9. Converted legacy declaration files to implementation-only:
+   - `modules/profiles/profile-capabilities.nix` now computes values only
+   - `home/user/shell/terminal.nix` and `home/user/desktop/catppuccin-targets.nix` no longer declare options
+10. Added `scripts/check-option-declaration-boundary.sh` to enforce declaration boundaries.
+11. Validation results: all required gates pass including new option-boundary gate.

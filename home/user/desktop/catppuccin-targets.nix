@@ -22,12 +22,6 @@ let
   gtkThemeName = "catppuccin-${gtkVariant}-${gtkAccent}-${gtkSize}";
 in
 {
-  options.custom.theme.zen.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = true;
-    description = "Enable official Catppuccin Zen Browser CSS theme sync.";
-  };
-
   config = lib.mkMerge [
     {
       # Centralized Catppuccin target registry.

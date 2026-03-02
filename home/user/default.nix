@@ -34,6 +34,7 @@ in
 
         imports =
           [
+            ./options # Home Manager custom option declarations
             ./core # Essential CLI tools
             ./shell # fish, starship, terminal utilities
             ./programs # editors, terminals, shells, tools, gui apps

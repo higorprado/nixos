@@ -8,19 +8,6 @@
   # Terminal emulators are enabled via their respective Home Manager modules
   # in foot.nix, kitty.nix, alacritty.nix, wezterm.nix, and ghostty.nix.
   # Switch the default at the module level with: custom.terminal.default = "ghostty";
-
-  options.custom.terminal.default = lib.mkOption {
-    type = lib.types.enum [
-      "foot"
-      "ghostty"
-      "kitty"
-      "alacritty"
-      "wezterm"
-    ];
-    default = "foot";
-    description = "Default terminal emulator. Sets the TERMINAL session variable.";
-  };
-
   config = {
     home.packages = [ ];
 

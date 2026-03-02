@@ -8,6 +8,6 @@
     ./hardware
     ./packages
     ./profiles
-    ./options.nix
+    ./options
   ];
 }
