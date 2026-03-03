@@ -73,11 +73,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zed-editor = {
-      url = "github:Rishabh5321/custom-packages-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
   };
 
   outputs =
