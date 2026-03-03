@@ -30,3 +30,12 @@ require_cmd() {
     return 1
   fi
 }
+
+require_cmds() {
+  local scope="$1"
+  shift
+  local cmd
+  for cmd in "$@"; do
+    require_cmd "$scope" "$cmd"
+  done
+}

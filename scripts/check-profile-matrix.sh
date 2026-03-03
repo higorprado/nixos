@@ -4,11 +4,20 @@ set -euo pipefail
 # shellcheck source=lib/common.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
-repo_root="$(repo_root_from_script "${BASH_SOURCE[0]}")"
-cd "$repo_root"
+# shellcheck source=lib/nix_eval.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/nix_eval.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+repo_root="$(pwd)"
+
+report_fail() {
+  log_fail "profile-matrix" "$1"
+}
+
+require_cmds "profile-matrix" "jq" "nix"
 
 mapfile -t profiles < <(
-  nix eval --json --impure --expr "builtins.attrNames (import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\")" \
+  nix_eval_json_expr "builtins.attrNames (import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\")" \
     | jq -r '.[]'
 )
 
@@ -17,7 +26,7 @@ check_profile() {
 
   local json
   json="$(
-    nix eval --json --impure --expr "
+    nix_eval_json_expr "
       let
         flake = builtins.getFlake \"path:${repo_root}\";
         base = flake.nixosConfigurations.predator;
@@ -49,7 +58,7 @@ check_profile() {
     expected="$(jq -r ".expected.${key}" <<<"$json")"
     actual="$(jq -r ".capabilities.${key}" <<<"$json")"
     if [[ "$actual" != "$expected" ]]; then
-      echo "[profile-matrix] fail: ${profile} capability '${key}' expected '${expected}', got '${actual}'" >&2
+      report_fail "${profile} capability '${key}' expected '${expected}', got '${actual}'"
       return 1
     fi
   done
@@ -58,11 +67,11 @@ check_profile() {
   missing_keys="$(jq -r '[.expected | keys[]] - [.capabilities | keys[]] | join(",")' <<<"$json")"
   extra_keys="$(jq -r '[.capabilities | keys[]] - [.expected | keys[]] | join(",")' <<<"$json")"
   if [[ -n "$missing_keys" ]]; then
-    echo "[profile-matrix] fail: ${profile} missing capability keys: ${missing_keys}" >&2
+    report_fail "${profile} missing capability keys: ${missing_keys}"
     return 1
   fi
   if [[ -n "$extra_keys" ]]; then
-    echo "[profile-matrix] fail: ${profile} unexpected capability keys: ${extra_keys}" >&2
+    report_fail "${profile} unexpected capability keys: ${extra_keys}"
     return 1
   fi
 
@@ -71,11 +80,11 @@ check_profile() {
   home_drv="$(jq -r '.homeDrv' <<<"$json")"
 
   if [[ "$system_drv" != /nix/store/* ]]; then
-    echo "[profile-matrix] fail: invalid system drv path for $profile: $system_drv" >&2
+    report_fail "invalid system drv path for ${profile}: ${system_drv}"
     return 1
   fi
   if [[ "$home_drv" != /nix/store/* ]]; then
-    echo "[profile-matrix] fail: invalid home drv path for $profile: $home_drv" >&2
+    report_fail "invalid home drv path for ${profile}: ${home_drv}"
     return 1
   fi
 

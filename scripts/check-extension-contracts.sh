@@ -4,6 +4,9 @@ set -euo pipefail
 # shellcheck source=lib/common.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+# shellcheck source=lib/set_ops.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/set_ops.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
@@ -13,7 +16,7 @@ report_fail() {
   fail=1
 }
 
-require_cmd "extension-contracts" "rg"
+require_cmds "extension-contracts" "awk" "find" "rg" "sed"
 
 is_allowed_host_role_assignment() {
   local file="$1"
@@ -39,12 +42,6 @@ check_assignment_scope() {
   done < <(rg -n --glob '*.nix' "$pattern" hosts modules home flake.nix || true)
 }
 
-mkset() {
-  local out="$1"
-  shift
-  printf '%s\n' "$@" | sed '/^$/d' | sort -u >"$out"
-}
-
 check_set_sync() {
   local left_label="$1"
   local left_file="$2"
@@ -52,8 +49,8 @@ check_set_sync() {
   local right_file="$4"
 
   local missing extra
-  missing="$(comm -23 "$left_file" "$right_file" || true)"
-  extra="$(comm -13 "$left_file" "$right_file" || true)"
+  missing="$(set_missing_entries "$left_file" "$right_file")"
+  extra="$(set_extra_entries "$left_file" "$right_file")"
 
   if [[ -n "$missing" ]]; then
     report_fail "${right_label} missing entries present in ${left_label}: $(tr '\n' ' ' <<<"$missing")"
