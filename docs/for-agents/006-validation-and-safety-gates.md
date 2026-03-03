@@ -45,6 +45,7 @@ nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.
    - `./scripts/run-validation-gates.sh predator`
    - `./scripts/run-validation-gates.sh server-example`
    - `./scripts/run-validation-gates.sh runtime-smoke`
+5. CI trigger policy for fast/full lanes is defined in `016-ci-lane-policy.md`.
 
 ## Rollback
 

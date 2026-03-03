@@ -25,8 +25,11 @@
 1. Fast local feedback (during development):
    - `./scripts/check-changed-files-quality.sh [origin/main]`
    - `./scripts/run-validation-gates.sh structure`
-2. Full pre-merge validation:
+2. Fast CI lane (default on push/PR):
+   - `.github/workflows/validate.yml` job: `lint-structure`
+3. Full pre-merge validation:
    - `./scripts/run-validation-gates.sh all`
    - `./scripts/check-repo-public-safety.sh`
-3. Desktop runtime regression checks (when relevant):
+   - CI full lane via manual dispatch (`run_full = true`) or weekday schedule.
+4. Desktop runtime regression checks (when relevant):
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
