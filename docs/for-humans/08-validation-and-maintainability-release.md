@@ -29,11 +29,15 @@
    - `./scripts/run-validation-gates.sh structure`
 2. Fast CI lane (default on push/PR):
    - `.github/workflows/validate.yml` job: `lint-structure`
-3. Full pre-merge validation:
+3. Docs-only CI lane:
+   - `.github/workflows/validate.yml` job: `docs-drift-only`
+   - Runs when changed paths are only under `docs/**`.
+   - Skips `lint-structure` for docs-only changes.
+4. Full pre-merge validation:
    - `./scripts/run-validation-gates.sh all`
    - `./scripts/check-repo-public-safety.sh`
    - CI full lane via manual dispatch (`run_full = true`) or weekday schedule.
-4. Desktop runtime regression checks (when relevant):
+5. Desktop runtime regression checks (when relevant):
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
-5. Runtime warning artifact capture (when relevant):
+6. Runtime warning artifact capture (when relevant):
    - `./scripts/capture-runtime-warning-report.sh`
