@@ -43,3 +43,4 @@
 4. User resolution and username indirection contract is defined in `014-user-resolution-contract.md`.
 5. Profile/pack schema and versioning contract is defined in `015-profile-pack-schema.md`.
 6. CI lane trigger policy is defined in `016-ci-lane-policy.md`.
+7. Config test-pyramid contract is defined in `017-config-test-pyramid.md`.

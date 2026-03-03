@@ -1,0 +1,12 @@
+{
+  "packs": {
+    "synthetic-pack": {
+      "module": "tests/fixtures/pack-addition/synthetic-pack.nix"
+    }
+  },
+  "packSets": {
+    "synthetic-set": [
+      "synthetic-pack"
+    ]
+  }
+}

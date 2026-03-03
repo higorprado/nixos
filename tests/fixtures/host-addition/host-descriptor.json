@@ -1,0 +1,8 @@
+{
+  "host": "synthetic-host",
+  "role": "server",
+  "desktopProfile": "dms",
+  "integrations": {
+    "homeManager": false
+  }
+}

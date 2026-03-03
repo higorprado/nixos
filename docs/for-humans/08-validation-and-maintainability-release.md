@@ -8,8 +8,9 @@
 4. A fast branch gate exists: `./scripts/check-changed-files-quality.sh [origin/main]`.
 5. Option deprecation/removal safety is enforced by `./scripts/check-option-migrations.sh`.
 6. Synthetic extension checks are enforced by `./scripts/check-extension-simulations.sh`.
-7. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
-8. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
+7. Test-pyramid layer/category coverage is enforced by `./scripts/check-test-pyramid-contracts.sh`.
+8. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
+9. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
 
 ## What Is Enforced Now
 

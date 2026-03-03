@@ -12,6 +12,7 @@ run_structure_gates() {
   ./scripts/check-option-declaration-boundary.sh
   ./scripts/check-option-migrations.sh
   ./scripts/check-extension-contracts.sh
+  ./scripts/check-test-pyramid-contracts.sh
   ./scripts/check-validation-source-of-truth.sh
   ./scripts/check-docs-drift.sh
 }

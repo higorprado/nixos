@@ -1,0 +1,19 @@
+{
+  "profile": "synthetic-profile",
+  "capabilities": {
+    "desktopFiles": false,
+    "desktopUserApps": false,
+    "niri": true,
+    "hyprland": false,
+    "dms": false,
+    "noctalia": false,
+    "caelestiaHyprland": false
+  },
+  "requiredIntegrations": [
+    "niri"
+  ],
+  "optionalIntegrations": [],
+  "packSets": [
+    "base"
+  ]
+}

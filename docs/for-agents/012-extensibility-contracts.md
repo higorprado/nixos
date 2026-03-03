@@ -52,3 +52,4 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 4. `./scripts/check-option-migrations.sh`
 5. `./scripts/check-desktop-capability-usage.sh`
 6. `./scripts/check-config-contracts.sh`
+7. Layer/category mapping is governed by `017-config-test-pyramid.md` and enforced by `./scripts/check-test-pyramid-contracts.sh`.

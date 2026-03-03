@@ -17,6 +17,10 @@ targets=(
   docs/for-agents/011-module-ownership-boundaries.md
   docs/for-agents/012-extensibility-contracts.md
   docs/for-agents/013-option-migration-playbook.md
+  docs/for-agents/014-user-resolution-contract.md
+  docs/for-agents/015-profile-pack-schema.md
+  docs/for-agents/016-ci-lane-policy.md
+  docs/for-agents/017-config-test-pyramid.md
   docs/for-agents/929-extensibility-maximization-plan.md
   docs/for-humans/00-start-here.md
   docs/for-humans/03-multi-host-philosophy.md
