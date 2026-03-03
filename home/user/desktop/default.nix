@@ -89,9 +89,9 @@ in
         "x-scheme-handler/about" = [ "firefox.desktop" ];
         "x-scheme-handler/unknown" = [ "firefox.desktop" ];
         "application/json" = [ "code.desktop" ];
-        # File manager — makes nemo appear in launchers and handle directory opens.
-        "inode/directory" = [ "nemo.desktop" ];
-        "application/x-gnome-saved-search" = [ "nemo.desktop" ];
+        # File manager defaults.
+        "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
+        "application/x-gnome-saved-search" = [ "org.gnome.Nautilus.desktop" ];
       };
 
       associations = {

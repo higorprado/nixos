@@ -30,7 +30,9 @@
 1. `./scripts/check-changed-files-quality.sh [origin/main]`
 2. `./scripts/run-validation-gates.sh structure`
 3. `./scripts/run-validation-gates.sh all`
-4. Optional runtime checks:
+4. Search for source-app leftovers in the owner module:
+   - example command: `rg -n "nemo|Nemo|org\\.nemo|cinnamon" home/user/desktop`
+5. Optional runtime checks:
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
    - validate MIME result in session: `xdg-mime query default inode/directory`
 
