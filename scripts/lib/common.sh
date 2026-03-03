@@ -22,6 +22,18 @@ log_fail() {
   printf '[%s] fail: %s\n' "$scope" "$msg" >&2
 }
 
+log_warn() {
+  local scope="$1"
+  local msg="$2"
+  printf '[%s] warn: %s\n' "$scope" "$msg" >&2
+}
+
+log_ok() {
+  local scope="$1"
+  local msg="$2"
+  printf '[%s] ok: %s\n' "$scope" "$msg"
+}
+
 require_cmd() {
   local scope="$1"
   local cmd="$2"
@@ -38,4 +50,14 @@ require_cmds() {
   for cmd in "$@"; do
     require_cmd "$scope" "$cmd"
   done
+}
+
+mktemp_dir_scoped() {
+  local scope="${1:-tmp-dir}"
+  mktemp -d "${TMPDIR:-/tmp}/${scope}-XXXXXX"
+}
+
+mktemp_file_scoped() {
+  local scope="${1:-tmp-file}"
+  mktemp "${TMPDIR:-/tmp}/${scope}-XXXXXX"
 }

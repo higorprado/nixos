@@ -41,3 +41,11 @@ Each category must map to at least one layer and one executable check, with at l
 2. Changes that alter categories/layers/fixtures must update both:
    - `tests/pyramid/config-test-pyramid.json`
    - this document.
+
+## Deterministic Script Fixtures
+1. Script-orchestration fixture tests are maintained in:
+   - `tests/scripts/run-validation-gates-fixture-test.sh`
+   - `tests/scripts/gate-cli-contracts-test.sh`
+   - `tests/scripts/runtime-warning-budget-lib-test.sh`
+2. Canonical runner:
+   - `./scripts/check-script-fixture-tests.sh`

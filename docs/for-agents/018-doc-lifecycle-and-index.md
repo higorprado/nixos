@@ -30,10 +30,12 @@
 16. Profile/pack schema contract: `015-profile-pack-schema.md`
 17. CI lane policy: `016-ci-lane-policy.md`
 18. Config test pyramid: `017-config-test-pyramid.md`
-19. Lessons learned: `999-lessons-learned.md`
+19. Script architecture contract: `020-script-architecture-contract.md`
+20. Maintainer change map: `021-maintainer-change-map.md`
+21. Lessons learned: `999-lessons-learned.md`
 
 ## Active Plan
-1. `930-definitive-maintainability-extensibility-plan.md`
+1. `932-maintainability-excellence-plan.md`
 
 ## Historical Plan Rule
 1. When a plan is complete or superseded, move it to `docs/for-agents/historical/`.
