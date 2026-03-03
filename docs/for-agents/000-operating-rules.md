@@ -1,30 +1,28 @@
 # Agent Operating Rules
 
 ## Primary Objective
-Make correct, minimal, reversible changes with explicit validation.
+Ship correct, minimal, reversible changes with explicit validation evidence.
 
 ## Non-Negotiables
-1. Never guess ownership; verify in code.
-2. One focused change slice at a time.
-3. Run the five Nix gates after each meaningful slice.
-4. Preserve mutable-copy semantics where repo intentionally uses them.
-5. If uncertain about intent, ask user before destructive/structural change.
+1. Verify ownership before editing.
+2. Work in small slices.
+3. Run required validation after each meaningful slice.
+4. Keep public-safe boundaries intact.
+5. Never commit real private override files.
 
-## Safety
-1. Back up/mirror before large cleanup/moves.
-2. Do not remove files without reference proof.
-3. Do not rewrite broad areas when a local fix is enough.
+## Mandatory First Reads
+1. `docs/for-agents/001-repo-map.md`
+2. `docs/for-agents/007-private-overrides-and-public-safety.md`
+3. `docs/for-agents/009-private-ops-scripts.md`
+4. `docs/for-agents/018-doc-lifecycle-and-index.md`
+5. `docs/for-agents/999-lessons-learned.md`
 
-## Required Companion Doc
-1. Read `007-private-overrides-and-public-safety.md` before touching paths, identity, networking, or secrets.
-2. Read `011-module-ownership-boundaries.md` before moving logic across `hosts/`, `modules/`, `home/`, and `scripts/`.
-3. Read `012-extensibility-contracts.md` before adding/changing hosts, desktop profiles, or desktop packs.
-4. Read `013-option-migration-playbook.md` before renaming/removing options in `modules/options/` or `home/user/options/`.
-5. Read `014-user-resolution-contract.md` before changing host identity/user wiring, CI username references, or private override behavior.
-6. Read `015-profile-pack-schema.md` before changing profile metadata or desktop pack registry structures.
-7. Read `016-ci-lane-policy.md` before changing CI/workflow behavior or validation trigger conditions.
-8. Read `017-config-test-pyramid.md` before changing validation layering, fixture coverage, or regression policy.
-9. Read `018-doc-lifecycle-and-index.md` before reorganizing docs or changing source-of-truth references.
-10. Read `019-runtime-warning-budget.md` before changing runtime-smoke warning thresholds or warning acceptance policy.
-11. Read `020-script-architecture-contract.md` before changing script boundaries, shared helpers, or gate/orchestration split.
-12. Read `021-maintainer-change-map.md` before scoping edits; use it to choose minimum validation for each change type.
+## Required Validation Baseline
+1. `./scripts/check-changed-files-quality.sh [origin/main]`
+2. `./scripts/run-validation-gates.sh structure`
+3. If change is high-impact, run `./scripts/run-validation-gates.sh all`.
+4. Before publish, run `./scripts/check-repo-public-safety.sh`.
+
+## Decision Rule
+1. If uncertain about destructive/structural impact, stop and ask.
+2. Prefer local fix over broad rewrite unless plan explicitly requires reorganization.

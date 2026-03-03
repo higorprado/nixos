@@ -128,7 +128,7 @@ Unify copy-once activation snippets under a reusable helper and explicit registr
    - `home/user/lib/mutable-copy.nix`
    - Function pattern: `mkCopyOnce { source; target; mode ? "0644"; }`
 2. Registry document:
-   - `docs/for-agents/926-mutable-config-registry.md`
+   - `docs/for-agents/reference/926-mutable-config-registry.md`
    - Columns: target path, source path, owner module, rationale, overwrite policy.
 
 ### Migration Targets (first wave)
@@ -292,7 +292,7 @@ Reason: reduce predicate drift first, then split modules safely, then standardiz
       - `home/user/desktop/default.nix` (`copyHyprlandConfigs`)
       - `home/user/desktop/shells.nix` (`provisionNoctaliaSettings`)
       - `home/user/apps/misc.nix` (`provisionFcitx5`)
-    - Added `docs/for-agents/926-mutable-config-registry.md` with mutable target inventory and policy.
+    - Added `docs/for-agents/reference/926-mutable-config-registry.md` with mutable target inventory and policy.
     - Mandatory five gates passed after migration.
     - Post-checks:
       - `./scripts/check-desktop-capability-usage.sh` passes.

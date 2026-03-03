@@ -27,53 +27,31 @@ The goal is reproducible, explicit, and maintainable configuration with clear ow
 ## Host Role Model
 
 1. `custom.host.role = "desktop" | "server"` controls desktop stack activation.
-2. Desktop profile selection is still done with `custom.desktop.profile`.
+2. Desktop profile selection is done with `custom.desktop.profile`.
 3. `hosts/server-example/` is a minimal server-role reference host.
 
 ## Documentation
 
-Documentation is split by audience:
-
-1. `docs/for-humans/`
-   - Conceptual docs and decision guidance.
-   - Start at: `docs/for-humans/00-start-here.md`
-
-2. `docs/for-agents/`
-   - Operational docs optimized for AI/code agents.
-   - Start at: `docs/for-agents/000-operating-rules.md`
-
-3. `docs/README.md`
-   - Documentation index and entrypoints.
-
-Historical/previous docs are not part of the active docs set.
+1. Human workflows and explanations:
+   - start: `docs/for-humans/00-start-here.md`
+   - workflows: `docs/for-humans/workflows/100-workflows-index.md`
+2. Agent operations and contracts:
+   - start: `docs/for-agents/000-operating-rules.md`
+   - lifecycle/index: `docs/for-agents/018-doc-lifecycle-and-index.md`
 
 ## Validation Commands
 
-Use two levels of checks:
-
-1. Fast feedback on current branch changes:
+1. Fast feedback:
    - `./scripts/check-changed-files-quality.sh [origin/main]`
    - `./scripts/run-validation-gates.sh structure`
 2. Full required validation before merge:
    - `./scripts/run-validation-gates.sh all`
-   - `./scripts/run-full-validation.sh` (compat wrapper)
-3. Desktop runtime smoke (local machine/session):
+3. Desktop runtime smoke (when relevant):
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
-
-`all` runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
 
 ## CI
 
 1. CI workflow: `.github/workflows/validate.yml`
-2. Default automatic job (push/PR fast feedback):
-   - `lint-structure`
-3. Heavy eval/build jobs are manual-dispatch only:
-   - `predator-eval-build`
-   - `server-example-eval-build`
-4. Full validation remains mandatory locally before merge:
-   - `./scripts/run-validation-gates.sh all`
-
-## Troubleshooting
-
-1. Known warning: `catppuccin.firefox` warning in `niri-only` profile when Firefox HM module is intentionally disabled.
-2. Known warning: `xorg.libxcb` deprecation rename warning during eval/build.
+2. Default push/PR lane: `lint-structure`
+3. Docs-only lane: `docs-drift-only`
+4. Heavy eval/build lanes are manual-dispatch + schedule controlled.

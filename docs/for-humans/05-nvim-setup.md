@@ -10,10 +10,10 @@
 2. Changes to `config/apps/nvim/` require rebuild/sync to apply.
 3. LSP/debug tooling is Nix-managed, not Mason-auto-managed.
 
-## Safe Change Workflow
+## Change Workflow
 1. Edit files under `config/apps/nvim/`.
-2. Rebuild (or run equivalent sync path if needed).
-3. Run health/smoke checks used by repo workflow.
+2. Apply safely via: `workflows/102-switch-and-rollback.md`.
+3. Validate before merge via: `workflows/104-validation-before-merge.md`.
 
 ## Keep It Stable
 1. Avoid unmanaged runtime drift in live nvim config.

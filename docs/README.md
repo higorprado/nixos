@@ -1,15 +1,20 @@
 # Documentation
 
-This repo uses two active documentation sets:
+## Audience Split
+1. Human docs: `docs/for-humans/`
+   - Start: `docs/for-humans/00-start-here.md`
+   - Workflow index: `docs/for-humans/workflows/100-workflows-index.md`
+2. Agent docs: `docs/for-agents/`
+   - Start: `docs/for-agents/000-operating-rules.md`
 
-1. **For humans**: `docs/for-humans/`
-   - Ordered, conceptual, decision-focused.
-2. **For agents**: `docs/for-agents/`
-   - Compact, operational, execution-focused.
+## Agent Docs Layout
+1. Root: critical operating docs only.
+2. `reference/`: supporting contracts and guides.
+3. `plans/`: active plans.
+4. `current-work/`: active execution notes.
+5. `historical/`: completed/superseded records.
 
-Start points:
-
-1. Human onboarding: `docs/for-humans/00-start-here.md`
-2. Agent operations: `docs/for-agents/000-operating-rules.md`
-3. Private/public safety model: `docs/for-humans/06-private-overrides.md`
-4. Validation + release notes: `docs/for-humans/08-validation-and-maintainability-release.md`
+## Templates
+1. `docs/templates/for-agents-plan-template.md`
+2. `docs/templates/for-agents-current-work-template.md`
+3. `docs/templates/for-humans-workflow-template.md`

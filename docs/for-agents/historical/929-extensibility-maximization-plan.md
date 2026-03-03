@@ -195,7 +195,7 @@ When desktop/session behavior is touched, also run:
    - Optional pack extension is lower friction (2-3 edits depending on capability needs).
 4. 2026-03-03: Phase 1 completed.
 5. Phase 1 changes:
-   - Added extension contract doc: `docs/for-agents/012-extensibility-contracts.md`.
+   - Added extension contract doc: `docs/for-agents/reference/012-extensibility-contracts.md`.
    - Added machine checker: `scripts/check-extension-contracts.sh`.
    - Integrated into structure gates via `scripts/run-validation-gates.sh`.
    - Linked contract doc from `000-operating-rules.md`, `001-repo-map.md`, and enforcement docs.
@@ -290,7 +290,7 @@ When desktop/session behavior is touched, also run:
       - `modules/options/default.nix` import wiring
     - Added migration contract gate: `scripts/check-option-migrations.sh`.
     - Integrated migration gate into structure stage (`scripts/run-validation-gates.sh`).
-    - Added migration playbook doc: `docs/for-agents/013-option-migration-playbook.md`.
+    - Added migration playbook doc: `docs/for-agents/reference/013-option-migration-playbook.md`.
 28. Phase 7 slice 1 validation evidence:
     - `shellcheck scripts/check-option-migrations.sh scripts/run-validation-gates.sh`: PASS
     - `./scripts/check-option-migrations.sh`: PASS

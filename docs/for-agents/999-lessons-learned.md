@@ -20,3 +20,4 @@
 16. Runtime smoke checks should fail only on high-confidence regressions and treat noisy warnings as thresholded signals.
 17. Docs drift checks should target a bounded "living docs" set; scanning all historical docs creates false failures and discourages maintenance.
 18. For option renames/removals, require a migration-registry entry first; then apply declaration changes so structure gates can prevent silent breaks.
+19. Keep `docs/for-agents/` root high-signal only; place supporting contracts in `reference/`, active plans in `plans/`, and execution notes in `current-work/`.

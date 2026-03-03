@@ -22,4 +22,9 @@
 1. Immutable (preferred): symlink/sync from repo when app is config-consumer only.
 2. Mutable (exception): copy-once when app modifies config itself or user edits must persist.
 
-If unsure, default to immutable and justify any mutable exception in the module comment.
+## How To Apply This
+1. Host/profile edits: `workflows/101-host-and-profile-changes.md`
+2. Safe apply/rollback: `workflows/102-switch-and-rollback.md`
+3. Private values setup: `workflows/103-private-overrides.md`
+
+If unsure, default to immutable and justify any mutable exception in module comments.

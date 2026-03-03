@@ -41,11 +41,11 @@ audit_write_decision_baseline() {
     printf 'D001\tdocs/for-agents/009-private-ops-scripts.md\tRepo scripts should be shared/reproducible; personal ops scripts must stay private\tNo personal host identifiers or private backup endpoints in shared scripts\thigh\n'
     printf 'D002\tdocs/for-agents/006-validation-and-safety-gates.md\tFive Nix validation gates are mandatory after meaningful slices\tflake metadata + eval stateVersion + build home.path + build system.toplevel\thigh\n'
     printf 'D003\tdocs/for-agents/007-private-overrides-and-public-safety.md\tPublic safety gate must detect sensitive/path leakage\tNo unallowlisted local paths/private IP/personal email/tokens\thigh\n'
-    printf 'D004\tAGENT.md\tMutable copy-once files can intentionally diverge\tParity checks must distinguish mutable drift from hard failures\tmedium\n'
-    printf 'D005\tdocs/for-agents/003-multi-host-model.md\tShared scripts should avoid single-host hardcoding when not required\tAvoid fixed host/profile identifiers unless explicitly host-scoped\tmedium\n'
-    printf 'D006\tdocs/for-agents/903-catppuccin-centralization-execution.md\tCatppuccin decisions are centralized and should remain consistent\tNo contradictory per-module catppuccin toggles outside central registry\tmedium\n'
+    printf 'D004\tAGENTS.md\tMutable copy-once files can intentionally diverge\tParity checks must distinguish mutable drift from hard failures\tmedium\n'
+    printf 'D005\tdocs/for-agents/reference/003-multi-host-model.md\tShared scripts should avoid single-host hardcoding when not required\tAvoid fixed host/profile identifiers unless explicitly host-scoped\tmedium\n'
+    printf 'D006\tdocs/for-agents/historical/903-catppuccin-centralization-execution.md\tCatppuccin decisions are centralized and should remain consistent\tNo contradictory per-module catppuccin toggles outside central registry\tmedium\n'
     if [ "$exclude_emacs" -eq 1 ]; then
-      printf 'D007\tdocs/for-agents/905-system-up-to-date-audit-plan.md\tEmacs checks excluded for this audit\tSkip emacs-specific findings\tlow\n'
+      printf 'D007\tdocs/for-agents/plans/905-system-up-to-date-audit-plan.md\tEmacs checks excluded for this audit\tSkip emacs-specific findings\tlow\n'
     fi
   } >"$out_file"
 }

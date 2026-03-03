@@ -30,7 +30,7 @@ This plan is for the next agent to execute.
 4. `docs/for-agents/006-validation-and-safety-gates.md`
 5. `docs/for-agents/007-private-overrides-and-public-safety.md`
 6. `docs/for-agents/009-private-ops-scripts.md`
-7. `docs/for-agents/903-catppuccin-centralization-execution.md`
+7. `docs/for-agents/historical/903-catppuccin-centralization-execution.md`
 8. `docs/for-humans/01-repo-philosophy.md`
 9. `docs/for-humans/02-decision-framework.md`
 10. `docs/for-humans/05-nvim-setup.md` (reference only; skip Emacs checks)

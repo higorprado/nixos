@@ -5,17 +5,28 @@
 2. `docs/for-agents/001-repo-map.md`
 3. `docs/for-agents/007-private-overrides-and-public-safety.md`
 4. `docs/for-agents/009-private-ops-scripts.md`
-5. `docs/for-agents/014-user-resolution-contract.md`
-6. `docs/for-agents/015-profile-pack-schema.md`
-7. `docs/for-agents/016-ci-lane-policy.md`
-8. `docs/for-agents/017-config-test-pyramid.md`
-9. `docs/for-agents/018-doc-lifecycle-and-index.md`
-10. `docs/for-agents/019-runtime-warning-budget.md`
+5. `docs/for-agents/018-doc-lifecycle-and-index.md`
+6. `docs/for-agents/reference/014-user-resolution-contract.md`
+7. `docs/for-agents/reference/015-profile-pack-schema.md`
+8. `docs/for-agents/reference/016-ci-lane-policy.md`
+9. `docs/for-agents/reference/017-config-test-pyramid.md`
+10. `docs/for-agents/reference/019-runtime-warning-budget.md`
 11. `docs/for-agents/999-lessons-learned.md`
 
+## Agent Docs Organization Rule
+1. Root (`docs/for-agents/`) is only for critical operating docs.
+2. Supporting contracts/guides go in `docs/for-agents/reference/`.
+3. Active plans go in `docs/for-agents/plans/`.
+4. Active execution notes go in `docs/for-agents/current-work/`.
+5. Completed/superseded docs go in `docs/for-agents/historical/`.
+6. Non-trivial work must be document-driven:
+   - create/update a plan doc + matching current-work log before major execution,
+   - update current-work after each validated slice,
+   - move both to historical when complete.
+
 ## Docs Naming Rule
-1. Agent docs use `NNN-name.md` (three digits), for example `000-...`, `009-...`, `903-...`.
-2. Keep numbering consistent when adding new files.
+1. Agent docs use `NNN-name.md` (three digits).
+2. Keep numbering stable and consistent when adding files.
 
 ## Safety Rules
 1. Never commit real private override files (`hosts/*/private*.nix`, `home/*/private*.nix`); only `*.example` should be tracked.

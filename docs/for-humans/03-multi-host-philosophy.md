@@ -13,7 +13,7 @@
 3. Feature flags belong in options/modules, not ad-hoc host conditionals.
 4. Host class should be expressed with `custom.host.role` (`desktop` or `server`).
 5. Desktop behavior differences should be expressed through `custom.desktop.profile`.
-6. Keep ownership boundaries explicit (see `docs/for-agents/011-module-ownership-boundaries.md`).
+6. Keep ownership boundaries explicit (see `docs/for-agents/reference/011-module-ownership-boundaries.md`).
 
 ## Current Pattern
 

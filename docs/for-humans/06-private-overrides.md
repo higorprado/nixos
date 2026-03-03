@@ -4,8 +4,8 @@
 Keep secrets, personal identity, private network details, and machine-local paths out of tracked files.
 
 ## Files
-- Host entrypoint (untracked): `hosts/predator/private.nix`
-- Home entrypoint (untracked): `home/<user>/private.nix`
+1. Host entrypoint (untracked): `hosts/predator/private.nix`
+2. Home entrypoint (untracked): `home/<user>/private.nix`
 
 ## Structure Rule
 1. Entrypoints must be import-only.
@@ -14,13 +14,12 @@ Keep secrets, personal identity, private network details, and machine-local path
    - home: `env.nix`, `git.nix`, `paths.nix`, `ssh.nix`, `theme-paths.nix`
 3. Keep values only in private modules. Avoid complex logic.
 
-## Setup
-1. Copy each `*.example` to the same name without `.example`.
-2. Fill your local values.
-3. Never commit real private files.
+## Setup Workflow
+1. Follow `workflows/103-private-overrides.md`.
+2. Run `./scripts/check-repo-public-safety.sh` before publish.
 
 ## What Must Be Private
-- personal email/name identity
-- LAN IPs, local hostnames, private DNS
-- absolute personal filesystem paths
-- keys/tokens/secrets
+1. personal email/name identity
+2. LAN IPs, local hostnames, private DNS
+3. absolute personal filesystem paths
+4. keys/tokens/secrets
