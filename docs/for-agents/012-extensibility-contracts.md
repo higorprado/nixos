@@ -6,12 +6,18 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 ## Contracts
 
 ### Host Extension Contract
-1. Host role/profile selections are declared in `hosts/<host>/default.nix`.
-2. Shared defaults remain in options modules only:
+1. Host descriptor registry is centralized in `hosts/host-descriptors.nix`.
+2. Host role/profile selections in `hosts/<host>/default.nix` must match descriptor values.
+3. Shared defaults remain in options modules only:
    - `modules/options/core-options.nix`
    - `modules/options/desktop-options.nix`
-3. Host registration is centralized in `flake.nix` host registry (`hostRegistry`).
-4. New host onboarding should not require edits in shared behavior modules.
+4. `flake.nix` composes host modules from descriptors via `mkHostModules` and `hostRegistry = lib.mapAttrs mkHostModules hostDescriptors;`.
+5. New host onboarding should require only:
+   - `hosts/<host>/default.nix`
+   - one descriptor entry in `hosts/host-descriptors.nix`
+6. New host onboarding should not require edits in shared behavior modules.
+7. Preferred bootstrap helper:
+   - `scripts/new-host-skeleton.sh <host-name> [desktop|server] [desktop-profile]`
 
 ### Desktop Profile Extension Contract
 1. Every profile has one implementation module:

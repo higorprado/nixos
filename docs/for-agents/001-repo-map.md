@@ -3,9 +3,10 @@
 ## Active Topology
 
 1. `flake.nix`: entrypoint, inputs, host wiring, home-manager module wiring.
-   - Host composition registry lives in `flake.nix` (`hostRegistry`).
+   - Host composition registry is derived from `hosts/host-descriptors.nix` via `hostRegistry`.
    - `keyrs` is consumed as an upstream flake module (`inputs.keyrs.nixosModules.default`), wired at host level.
 2. `hosts/<host>/`: host-specific imports and selections.
+   - `hosts/host-descriptors.nix` is the canonical host descriptor registry.
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
    - Desktop hosts enable `services.keyrs` when keyrs remapping is required.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).

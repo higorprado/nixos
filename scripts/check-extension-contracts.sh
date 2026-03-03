@@ -16,7 +16,7 @@ report_fail() {
   fail=1
 }
 
-require_cmds "extension-contracts" "awk" "find" "rg" "sed"
+require_cmds "extension-contracts" "awk" "find" "jq" "nix" "rg" "sed"
 
 is_allowed_host_role_assignment() {
   local file="$1"
@@ -130,22 +130,48 @@ mapfile -t host_dirs < <(
     | sort -u
 )
 
-mapfile -t host_registry_entries < <(
-  awk '/hostRegistry = \{/,/^[[:space:]]*\};/' flake.nix \
-    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\[.*/\1/p' \
+mapfile -t host_descriptor_entries < <(
+  nix eval --json --impure --expr "builtins.attrNames (import ${PWD}/hosts/host-descriptors.nix)" \
+    | jq -r '.[]' \
     | sort -u
 )
 
 mkset "$tmpdir/host_dirs" "${host_dirs[@]}"
-mkset "$tmpdir/host_registry" "${host_registry_entries[@]}"
-check_set_sync "host directories" "$tmpdir/host_dirs" "host registry entries" "$tmpdir/host_registry"
+mkset "$tmpdir/host_descriptors" "${host_descriptor_entries[@]}"
+check_set_sync "host directories" "$tmpdir/host_dirs" "host descriptor entries" "$tmpdir/host_descriptors"
+
+if ! rg -q 'hostDescriptors = import ./hosts/host-descriptors.nix;' flake.nix; then
+  report_fail "flake.nix must import hosts/host-descriptors.nix"
+fi
+if ! rg -q 'hostRegistry = lib.mapAttrs mkHostModules hostDescriptors;' flake.nix; then
+  report_fail "flake.nix must derive hostRegistry from hostDescriptors via mkHostModules"
+fi
+if [[ ! -x scripts/new-host-skeleton.sh ]]; then
+  report_fail "scripts/new-host-skeleton.sh must exist and be executable"
+fi
 
 for host in "${host_dirs[@]}"; do
   if [[ ! -f "hosts/${host}/default.nix" ]]; then
     report_fail "host '${host}' missing hosts/${host}/default.nix"
   fi
-  if ! rg -q "\./hosts/${host}/default\.nix" flake.nix; then
-    report_fail "host '${host}' missing ./hosts/${host}/default.nix reference in flake hostRegistry"
+
+  descriptor_role="$(
+    nix eval --raw --impure --expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".role" 2>/dev/null || true
+  )"
+  descriptor_profile="$(
+    nix eval --raw --impure --expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".desktopProfile" 2>/dev/null || true
+  )"
+
+  if [[ -z "$descriptor_role" ]]; then
+    report_fail "host '${host}' missing descriptor role in hosts/host-descriptors.nix"
+  elif ! rg -q "custom\\.host\\.role = \"${descriptor_role}\";" "hosts/${host}/default.nix"; then
+    report_fail "host '${host}' default.nix must set custom.host.role = \"${descriptor_role}\" from descriptor"
+  fi
+
+  if [[ -z "$descriptor_profile" ]]; then
+    report_fail "host '${host}' missing descriptor desktopProfile in hosts/host-descriptors.nix"
+  elif ! rg -q "custom\\.desktop\\.profile = \"${descriptor_profile}\";" "hosts/${host}/default.nix"; then
+    report_fail "host '${host}' default.nix must set custom.desktop.profile = \"${descriptor_profile}\" from descriptor"
   fi
 done
 

@@ -99,6 +99,7 @@
         inherit inputs;
       };
       llm-agents-pkgs = llm-agents.packages.${system};
+      hostDescriptors = import ./hosts/host-descriptors.nix;
 
       mkHostSystem =
         modules:
@@ -108,23 +109,30 @@
           inherit modules;
         };
 
-      hostRegistry = {
-        predator = [
+      mkHostModules =
+        hostName: descriptor:
+        (lib.optionals (descriptor.integrations.disko or false) [
           inputs.disko.nixosModules.disko
+        ])
+        ++ (lib.optionals (descriptor.integrations.niri or false) [
           inputs.niri.nixosModules.niri
+        ])
+        ++ (lib.optionals (descriptor.integrations.hyprland or false) [
           inputs.hyprland.nixosModules.default
+        ])
+        ++ (lib.optionals (descriptor.integrations.dms or false) [
           inputs.dms.nixosModules.dank-material-shell
           inputs.dms.nixosModules.greeter
+        ])
+        ++ (lib.optionals (descriptor.integrations.homeManager or false) [
           inputs.home-manager.nixosModules.home-manager
+        ])
+        ++ (lib.optionals (descriptor.integrations.keyrs or false) [
           inputs.keyrs.nixosModules.default
+        ])
+        ++ [ (./hosts + "/${hostName}/default.nix") ];
 
-          ./hosts/predator/default.nix
-        ];
-
-        server-example = [
-          ./hosts/server-example/default.nix
-        ];
-      };
+      hostRegistry = lib.mapAttrs mkHostModules hostDescriptors;
     in
     {
       templates =

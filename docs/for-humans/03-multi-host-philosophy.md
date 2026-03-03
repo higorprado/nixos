@@ -17,16 +17,17 @@
 
 ## Current Pattern
 
-1. `hosts/predator/default.nix` chooses host identity, role, and desktop profile.
-2. `hosts/server-example/default.nix` is a minimal server-role reference host.
-3. `modules/options/` defines system option declarations.
-4. `modules/profiles/desktop/` implements desktop behavior by concern and profile.
+1. `hosts/host-descriptors.nix` is the canonical host descriptor registry.
+2. `hosts/predator/default.nix` chooses host identity, role, and desktop profile.
+3. `hosts/server-example/default.nix` is a minimal server-role reference host.
+4. `modules/options/` defines system option declarations.
+5. `modules/profiles/desktop/` implements desktop behavior by concern and profile.
 
 ## When Adding a New Host
 
-1. Copy a minimal host skeleton under `hosts/<new-host>/`.
+1. Create a skeleton with `scripts/new-host-skeleton.sh <host-name> [desktop|server] [desktop-profile]`.
 2. Set `custom.host.role` first (`desktop` or `server`).
-3. Register the host in `flake.nix` `hostRegistry`.
+3. Add one descriptor entry in `hosts/host-descriptors.nix`.
 4. Import shared `modules` and `home` modules only as needed for that role.
 5. Set host-only values there (hostname, hardware, profile selection when desktop).
 6. Do not fork shared logic into host files.
@@ -36,7 +37,7 @@
 
 1. Add host:
    - `hosts/<host>/default.nix`
-   - `flake.nix` (`hostRegistry` only)
+   - `hosts/host-descriptors.nix`
 2. Add desktop profile:
    - `modules/profiles/desktop/profile-<name>.nix`
    - `modules/profiles/desktop/profile-registry.nix`
