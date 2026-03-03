@@ -22,6 +22,7 @@ run_predator_gates() {
 
   ./scripts/check-config-contracts.sh
   ./scripts/check-profile-matrix.sh
+  ./scripts/check-extension-simulations.sh
   nix flake metadata
   nix eval "path:$PWD#nixosConfigurations.predator.config.system.stateVersion"
   nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"

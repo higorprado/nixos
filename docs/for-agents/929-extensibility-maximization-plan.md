@@ -270,3 +270,15 @@ When desktop/session behavior is touched, also run:
     - `./scripts/run-validation-gates.sh predator`: PASS
     - `./scripts/run-validation-gates.sh server-example`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+23. 2026-03-03: Phase 6 slice 1 completed (synthetic extension simulation gates).
+24. Phase 6 slice 1 changes:
+    - Added `scripts/check-extension-simulations.sh` to verify synthetic host/profile extension invariants.
+    - Integrated simulation checks into predator validation stage in `scripts/run-validation-gates.sh`.
+    - Updated extension and validation docs to include the new gate.
+25. Phase 6 slice 1 validation evidence:
+    - `shellcheck scripts/check-extension-simulations.sh scripts/run-validation-gates.sh scripts/check-docs-drift.sh scripts/check-extension-contracts.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS

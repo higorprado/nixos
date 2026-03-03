@@ -17,9 +17,10 @@
 5. `./scripts/check-extension-contracts.sh`
 6. `./scripts/check-validation-source-of-truth.sh`
 7. `./scripts/check-config-contracts.sh`
-8. `./scripts/check-changed-files-quality.sh [origin/main]`
-9. `./scripts/check-docs-drift.sh`
-10. `./scripts/check-runtime-smoke.sh` (local desktop session only)
+8. `./scripts/check-extension-simulations.sh`
+9. `./scripts/check-changed-files-quality.sh [origin/main]`
+10. `./scripts/check-docs-drift.sh`
+11. `./scripts/check-runtime-smoke.sh` (local desktop session only)
 
 ## Fast Feedback (Local Iteration)
 

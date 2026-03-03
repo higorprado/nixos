@@ -39,6 +39,7 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 
 ## Enforcement
 1. `./scripts/check-extension-contracts.sh`
-2. `./scripts/check-option-declaration-boundary.sh`
-3. `./scripts/check-desktop-capability-usage.sh`
-4. `./scripts/check-config-contracts.sh`
+2. `./scripts/check-extension-simulations.sh`
+3. `./scripts/check-option-declaration-boundary.sh`
+4. `./scripts/check-desktop-capability-usage.sh`
+5. `./scripts/check-config-contracts.sh`
