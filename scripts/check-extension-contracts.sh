@@ -64,6 +64,24 @@ check_set_sync() {
 check_assignment_scope "custom.host.role" '^[[:space:]]*custom\.host\.role[[:space:]]*=' is_allowed_host_role_assignment
 check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.profile[[:space:]]*=' is_allowed_desktop_profile_assignment
 
+if ! rg -q 'packRegistry = import ./pack-registry.nix;' home/user/desktop/default.nix; then
+  report_fail "home/user/desktop/default.nix must import pack-registry.nix"
+fi
+if ! rg -q '\+\+ packRegistry\.packModules;' home/user/desktop/default.nix; then
+  report_fail "home/user/desktop/default.nix must compose imports with packRegistry.packModules"
+fi
+
+mapfile -t pack_modules < <(
+  sed -nE 's/^[[:space:]]*\.\/([a-z0-9-]+\.nix)[[:space:]]*$/\1/p' home/user/desktop/pack-registry.nix \
+    | sort -u
+)
+
+for module in "${pack_modules[@]}"; do
+  if [[ ! -f "home/user/desktop/${module}" ]]; then
+    report_fail "pack registry references missing module: home/user/desktop/${module}"
+  fi
+done
+
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 

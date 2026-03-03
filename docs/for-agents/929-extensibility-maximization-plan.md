@@ -220,3 +220,16 @@ When desktop/session behavior is touched, also run:
    - `./scripts/run-validation-gates.sh predator`: PASS
    - `./scripts/run-validation-gates.sh server-example`: PASS
    - `./scripts/check-repo-public-safety.sh`: PASS
+10. 2026-03-03: Phase 2 slice 2 completed (optional pack registry).
+11. Phase 2 slice 2 changes:
+    - Added optional desktop pack registry: `home/user/desktop/pack-registry.nix`.
+    - Refactored `home/user/desktop/default.nix` imports to compose with `packRegistry.packModules`.
+    - Extended `scripts/check-extension-contracts.sh` to enforce pack registry wiring/integrity.
+12. Phase 2 slice 2 validation evidence:
+    - `shellcheck scripts/check-extension-contracts.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+13. Phase 2 status: COMPLETE (host/profile/pack registries established).

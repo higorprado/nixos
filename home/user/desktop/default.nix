@@ -1,23 +1,20 @@
 { pkgs, lib, ... }:
 let
   mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
+  packRegistry = import ./pack-registry.nix;
 in
 {
-  imports = [
-    ./wayland.nix # Wayland tools (waybar, swww, wl-clipboard, etc.)
-    ./apps.nix # Desktop GUI applications (firefox, chrome, teams, meld)
-    ./files.nix # File management (nemo, thumbnails, archive tools)
-    ./viewers.nix # Image/PDF viewers and MIME associations
-    ./catppuccin.nix # Catppuccin flavor/accent/icon control plane
-    ./catppuccin-targets.nix # Centralized Catppuccin per-app enablement
-    ./catppuccin-zen-browser.nix # Official Zen Browser Catppuccin CSS integration
-    ./themes.nix # Theme runtime helpers (for example matugen tooling)
-    ./media.nix # Generic media applications (vlc, yt-dlp, cava, pavucontrol)
-    ./music-client.nix # Music client stack (mpd, rmpc, configs)
-    ./monitors.nix # btop, bottom, htop configs
-    ./shells.nix # niri/custom.kdl, caelestia, noctalia configs
-    ./profile-integrations.nix # Profile-specific shell integrations
-  ];
+  imports =
+    [
+      ./wayland.nix # Wayland tools (waybar, swww, wl-clipboard, etc.)
+      ./catppuccin.nix # Catppuccin flavor/accent/icon control plane
+      ./catppuccin-targets.nix # Centralized Catppuccin per-app enablement
+      ./catppuccin-zen-browser.nix # Official Zen Browser Catppuccin CSS integration
+      ./themes.nix # Theme runtime helpers (for example matugen tooling)
+      ./shells.nix # niri/custom.kdl, caelestia, noctalia configs
+      ./profile-integrations.nix # Profile-specific shell integrations
+    ]
+    ++ packRegistry.packModules;
 
   xdg.enable = true;
 

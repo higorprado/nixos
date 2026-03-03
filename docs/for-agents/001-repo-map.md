@@ -12,6 +12,7 @@
    - Desktop profile registry lives in `modules/profiles/desktop/profile-registry.nix`.
 4. `home/<user>/`: user environment (core, shell, programs, desktop, dev, services).
    - Home option declarations live under `home/user/options/`.
+   - Desktop optional pack registry lives in `home/user/desktop/pack-registry.nix`.
 5. `config/`: payload configs consumed by symlink/sync/copy-once logic.
 6. `pkgs/`: custom derivations.
 7. `scripts/`: shared validation/safety scripts (public-repo scope only).
