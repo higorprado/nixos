@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
+require_cmd "desktop-capabilities" "rg"
 
 # Raw profile comparisons should live only in capability source and desktop
 # profile implementation modules.

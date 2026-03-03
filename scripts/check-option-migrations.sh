@@ -13,6 +13,8 @@ report_fail() {
   fail=1
 }
 
+require_cmd "option-migrations" "rg"
+
 if ! rg -q './option-migrations.nix' modules/options/default.nix; then
   report_fail "modules/options/default.nix must import ./option-migrations.nix"
 fi

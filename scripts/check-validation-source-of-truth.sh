@@ -17,6 +17,8 @@ report_fail() {
   fail=1
 }
 
+require_cmd "validation-source" "rg"
+
 require_workflow_line() {
   local snippet="$1"
   if ! rg -q --fixed-strings "$snippet" "$workflow_file"; then

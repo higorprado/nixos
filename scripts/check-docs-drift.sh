@@ -6,6 +6,8 @@ set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
+require_cmd "docs-drift" "rg"
+
 targets=(
   README.md
   docs/README.md

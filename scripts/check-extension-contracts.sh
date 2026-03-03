@@ -13,6 +13,8 @@ report_fail() {
   fail=1
 }
 
+require_cmd "extension-contracts" "rg"
+
 is_allowed_host_role_assignment() {
   local file="$1"
   [[ "$file" == "modules/options/core-options.nix" ]] || [[ "$file" == hosts/*/default.nix ]]

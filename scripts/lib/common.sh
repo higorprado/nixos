@@ -21,3 +21,12 @@ log_fail() {
   local msg="$2"
   printf '[%s] fail: %s\n' "$scope" "$msg" >&2
 }
+
+require_cmd() {
+  local scope="$1"
+  local cmd="$2"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    log_fail "$scope" "required command not found: $cmd"
+    return 1
+  fi
+}

@@ -23,6 +23,11 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
+      - name: Install CI dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
       - name: Structure Gates
         run: |
           ./scripts/check-changed-files-quality.sh
@@ -43,6 +48,11 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
+      - name: Install CI dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
       - name: Predator Validation Gates
         run: |
           ./scripts/run-validation-gates.sh predator
@@ -61,6 +71,11 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
+
+      - name: Install CI dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
 
       - name: Server Example Validation Gates
         run: |
