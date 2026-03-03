@@ -1,17 +1,22 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 {
   languages.rust = {
     enable = true;
+    components = [
+      "rustc"
+      "cargo"
+      "rust-analyzer"
+      "rustfmt"
+      "clippy"
+    ];
   };
 
-  packages = with pkgs; [
-    rustc
-    cargo
-    rust-analyzer
-    rustfmt
-    clippy
-    lldb
-    vscode-extensions.vadimcn.vscode-lldb
+  packages = [
+    pkgs.lldb
+    pkgs.vscode-extensions.vadimcn.vscode-lldb
   ];
 
   scripts.codelldb.exec = ''

@@ -1,21 +1,20 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 {
   languages.python = {
     enable = true;
-    package = pkgs.python312;
-    venv.enable = true;
-    venv.requirements = "";
+    uv.enable = true;
   };
 
-  # uv is the recommended Python package manager
-  # debugpy is required for Python debugging in Neovim
   packages = [
-    pkgs.uv
-    pkgs.python312Packages.debugpy
-    pkgs.python312Packages.isort 
-    pkgs.python312Packages.pytest
-    pkgs.python312Packages.debugpy 
+    pkgs.python3Packages.debugpy
+    pkgs.python3Packages.pytest
+    pkgs.isort
   ];
+
+  dotenv.enable = true;
 
   enterShell = ''
     echo "🐍 Python devenv environment loaded"
