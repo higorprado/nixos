@@ -9,7 +9,7 @@ enter_repo_root "${BASH_SOURCE[0]}"
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/check-runtime-smoke.sh [--boot current|previous] [--allow-non-graphical] [--strict-backends] [--strict-logs]
+  scripts/check-runtime-smoke.sh [--boot current|previous] [--allow-non-graphical] [--strict-backends] [--strict-logs] [--skip-log-budget]
 
 Environment:
   RUNTIME_SMOKE_PORTAL_PIDNS_WARN_MAX=<n>   # override L101 max from warning budget file
@@ -24,6 +24,7 @@ boot="current"
 allow_non_graphical=0
 strict_backends=0
 strict_logs=0
+skip_log_budget=0
 warning_overruns=0
 budget_expired=0
 scope="runtime-smoke"
@@ -44,6 +45,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --strict-logs)
       strict_logs=1
+      shift
+      ;;
+    --skip-log-budget)
+      skip_log_budget=1
       shift
       ;;
     -h|--help)
@@ -215,6 +220,12 @@ if [ "$sys_code" -ne 0 ] && [ "$usr_code" -ne 0 ]; then
 fi
 
 warning_budget_file="config/validation/runtime-warning-budget.json"
+if [ "$skip_log_budget" -eq 1 ]; then
+  warn "log warning-budget scan skipped by flag"
+  ok "runtime smoke passed"
+  exit 0
+fi
+
 if [[ ! -f "$warning_budget_file" ]]; then
   fail "missing warning budget file: ${warning_budget_file}"
 fi

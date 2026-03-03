@@ -17,6 +17,8 @@ Keep runtime warning noise controlled while preventing normalization of new regr
    - optional environment override
 3. Expired warning budgets must be reviewed; with `--strict-logs` they fail immediately.
 4. Threshold overruns are warnings by default and become failures with `--strict-logs`.
+5. For core-runtime-only diagnostics (without warning-budget scan), use:
+   - `./scripts/check-runtime-smoke.sh --skip-log-budget`
 
 ## Governance
 1. Every accepted warning entry must have an owner and expiration date.
