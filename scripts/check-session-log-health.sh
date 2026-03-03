@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -13,6 +18,7 @@ Environment:
 EOF
 }
 
+scope="session-log-health"
 boot="current"
 since=""
 output=""
@@ -39,8 +45,8 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
-      usage
+      log_fail "$scope" "unknown argument: $1"
+      usage >&2
       exit 2
       ;;
   esac
@@ -49,17 +55,18 @@ done
 case "$boot" in
   current|previous) ;;
   *)
-    echo "Invalid --boot value: $boot (use current|previous)" >&2
+    log_fail "$scope" "invalid --boot value: $boot (use current|previous)"
     exit 2
     ;;
 esac
 
+require_cmds "$scope" "journalctl" "rg" "sed" "wc"
+
 if [ -z "$output" ]; then
-  output="$(mktemp "${TMPDIR:-/tmp}/session-log-health-XXXXXX.tsv")"
+  output="$(mktemp_file_scoped session-log-health)"
 fi
 
-tmp_all="$(mktemp "${TMPDIR:-/tmp}/session-log-all-XXXXXX.log")"
-trap 'rm -f "$tmp_all"' EXIT
+tmp_all="$(mktemp_file_scoped session-log-all)"
 
 sys_args=(journalctl -p 0..4 --no-pager)
 usr_args=(journalctl --user -p 0..4 --no-pager)
@@ -76,8 +83,8 @@ else
   fi
 fi
 
-sys_log="$(mktemp "${TMPDIR:-/tmp}/session-log-system-XXXXXX.log")"
-usr_log="$(mktemp "${TMPDIR:-/tmp}/session-log-user-XXXXXX.log")"
+sys_log="$(mktemp_file_scoped session-log-system)"
+usr_log="$(mktemp_file_scoped session-log-user)"
 trap 'rm -f "$tmp_all" "$sys_log" "$usr_log"' EXIT
 
 set +e
@@ -88,10 +95,10 @@ usr_code=$?
 set -e
 
 if [ "$sys_code" -ne 0 ] && [ "$usr_code" -ne 0 ]; then
-  echo "[session-log-health] fail: unable to read both system and user logs" >&2
-  echo "[session-log-health] system journal error:" >&2
+  log_fail "$scope" "unable to read both system and user logs"
+  log_warn "$scope" "system journal error:"
   sed -n '1,8p' "$sys_log" >&2 || true
-  echo "[session-log-health] user journal error:" >&2
+  log_warn "$scope" "user journal error:"
   sed -n '1,8p' "$usr_log" >&2 || true
   exit 1
 fi
@@ -129,8 +136,8 @@ EOF
 } >"$output"
 
 if [ "$status" -ne 0 ]; then
-  echo "[session-log-health] FAIL: threshold violations found (see $output)"
+  log_fail "$scope" "threshold violations found (see $output)"
   exit 1
 fi
 
-echo "[session-log-health] PASS: no threshold violations (see $output)"
+log_ok "$scope" "no threshold violations (see $output)"

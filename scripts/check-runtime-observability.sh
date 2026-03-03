@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -8,6 +13,7 @@ Usage:
 EOF
 }
 
+scope="runtime-observability"
 artifact_dir=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -20,15 +26,17 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
-      usage
+      log_fail "$scope" "unknown argument: $1"
+      usage >&2
       exit 2
       ;;
   esac
 done
 
+require_cmds "$scope" "dmesg" "journalctl"
+
 if [ -z "$artifact_dir" ]; then
-  artifact_dir="$(mktemp -d "${TMPDIR:-/tmp}/runtime-observability-XXXXXX")"
+  artifact_dir="$(mktemp_dir_scoped runtime-observability)"
 else
   mkdir -p "$artifact_dir"
 fi
@@ -57,14 +65,14 @@ set -e
 } >"$summary"
 
 if [ "$jc" -eq 0 ]; then
-  echo "[runtime-observability] PASS: kernel signal accessible via journalctl (see $summary)"
+  log_ok "$scope" "kernel signal accessible via journalctl (see $summary)"
   exit 0
 fi
 
 if [ "$dc" -eq 0 ]; then
-  echo "[runtime-observability] PASS: kernel signal accessible via dmesg fallback (see $summary)"
+  log_ok "$scope" "kernel signal accessible via dmesg fallback (see $summary)"
   exit 0
 fi
 
-echo "[runtime-observability] FAIL: neither journalctl -k nor dmesg is accessible (see $summary)"
+log_fail "$scope" "neither journalctl -k nor dmesg is accessible (see $summary)"
 exit 1

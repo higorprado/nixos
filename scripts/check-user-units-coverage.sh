@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -14,12 +19,11 @@ Environment:
 EOF
 }
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+scope="user-units-coverage"
 
 host="${USER_UNITS_COVERAGE_HOST:-predator}"
 hm_user="${USER_UNITS_COVERAGE_USER:-}"
-allowlist="${USER_UNITS_COVERAGE_ALLOWLIST:-$repo_root/scripts/user-units-coverage-allowlist.txt}"
+allowlist="${USER_UNITS_COVERAGE_ALLOWLIST:-$REPO_ROOT/scripts/user-units-coverage-allowlist.txt}"
 artifact_dir=""
 include_emacs="${USER_UNITS_INCLUDE_EMACS:-0}"
 
@@ -50,20 +54,17 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
-      usage
+      log_fail "$scope" "unknown argument: $1"
+      usage >&2
       exit 2
       ;;
   esac
 done
 
-if ! command -v jq >/dev/null 2>&1; then
-  echo "[user-units-coverage] fail: jq is required for JSON parsing" >&2
-  exit 1
-fi
+require_cmds "$scope" "awk" "grep" "jq" "nix" "rg" "sed" "sort" "systemctl"
 
 if [ -z "$artifact_dir" ]; then
-  artifact_dir="$(mktemp -d "${TMPDIR:-/tmp}/user-units-coverage-XXXXXX")"
+  artifact_dir="$(mktemp_dir_scoped user-units-coverage)"
 else
   mkdir -p "$artifact_dir"
 fi
@@ -73,10 +74,10 @@ nixf() {
 }
 
 if [ -z "$hm_user" ]; then
-  hm_user="$(nixf eval --raw "path:$repo_root#nixosConfigurations.${host}.config.custom.user.name" 2>/dev/null || true)"
+  hm_user="$(nixf eval --raw "path:$REPO_ROOT#nixosConfigurations.${host}.config.custom.user.name" 2>/dev/null || true)"
 fi
 if [ -z "$hm_user" ]; then
-  echo "[user-units-coverage] fail: unable to determine Home Manager user" >&2
+  log_fail "$scope" "unable to determine Home Manager user"
   exit 1
 fi
 
@@ -98,7 +99,7 @@ collect_declared() {
   local attr="$1"
   local ext="$2"
   set +e
-  nixf eval --json "path:$repo_root#nixosConfigurations.${host}.${attr}" --apply builtins.attrNames \
+  nixf eval --json "path:$REPO_ROOT#nixosConfigurations.${host}.${attr}" --apply builtins.attrNames \
     | jq -r '.[]' \
     | while IFS= read -r name; do
         [ -n "$name" ] || continue
@@ -148,8 +149,8 @@ status=0
 } >"$result_file"
 
 if [ "$status" -ne 0 ]; then
-  echo "[user-units-coverage] FAIL: undeclared enabled units found (see $result_file)"
+  log_fail "$scope" "undeclared enabled units found (see $result_file)"
   exit 1
 fi
 
-echo "[user-units-coverage] PASS: all enabled user units are covered/allowlisted (see $result_file)"
+log_ok "$scope" "all enabled user units are covered/allowlisted (see $result_file)"

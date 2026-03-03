@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -12,8 +17,7 @@ Environment:
 EOF
 }
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+scope="home-profile-drift"
 
 host="${HOME_PROFILE_DRIFT_HOST:-predator}"
 hm_user="${HOME_PROFILE_DRIFT_USER:-}"
@@ -38,15 +42,17 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
-      usage
+      log_fail "$scope" "unknown argument: $1"
+      usage >&2
       exit 2
       ;;
   esac
 done
 
+require_cmds "$scope" "head" "nix" "readlink" "sed" "systemctl"
+
 if [ -z "$artifact_dir" ]; then
-  artifact_dir="$(mktemp -d "${TMPDIR:-/tmp}/home-profile-drift-XXXXXX")"
+  artifact_dir="$(mktemp_dir_scoped home-profile-drift)"
 else
   mkdir -p "$artifact_dir"
 fi
@@ -56,15 +62,15 @@ nixf() {
 }
 
 if [ -z "$hm_user" ]; then
-  hm_user="$(nixf eval --raw "path:$repo_root#nixosConfigurations.${host}.config.custom.user.name" 2>/dev/null || true)"
+  hm_user="$(nixf eval --raw "path:$REPO_ROOT#nixosConfigurations.${host}.config.custom.user.name" 2>/dev/null || true)"
 fi
 
 if [ -z "$hm_user" ]; then
-  echo "[home-profile-drift] fail: unable to determine Home Manager user" >&2
+  log_fail "$scope" "unable to determine Home Manager user"
   exit 1
 fi
 
-expected_home="$(nixf build --no-link --print-out-paths "path:$repo_root#nixosConfigurations.${host}.config.home-manager.users.${hm_user}.home.path")"
+expected_home="$(nixf build --no-link --print-out-paths "path:$REPO_ROOT#nixosConfigurations.${host}.config.home-manager.users.${hm_user}.home.path")"
 printf '%s\n' "$expected_home" >"$artifact_dir/expected-home-path.txt"
 
 active_profile=""
@@ -98,7 +104,7 @@ if [ -z "$active_generation" ]; then
 fi
 
 if [ -z "$active_generation" ]; then
-  echo "[home-profile-drift] fail: unable to determine active Home Manager generation for $hm_user" >&2
+  log_fail "$scope" "unable to determine active Home Manager generation for $hm_user"
   exit 1
 fi
 
@@ -115,14 +121,14 @@ if [ -z "$active_home_path" ] && [[ "$active_generation" == *"-home-manager-path
 fi
 
 if [ -z "$active_home_path" ]; then
-  echo "[home-profile-drift] fail: unable to resolve active home-path from $active_generation" >&2
+  log_fail "$scope" "unable to resolve active home-path from $active_generation"
   exit 1
 fi
 
 printf '%s\n' "$active_home_path" >"$artifact_dir/active-home-path.txt"
 
 if [ "$active_home_path" = "$expected_home" ]; then
-  echo "[home-profile-drift] PASS: active home-path matches expected ($active_home_path)"
+  log_ok "$scope" "active home-path matches expected ($active_home_path)"
   exit 0
 fi
 
@@ -131,8 +137,8 @@ nixf store diff-closures "$active_home_path" "$expected_home" >"$artifact_dir/ho
 _diff_code=$?
 set -e
 
-echo "[home-profile-drift] FAIL: active home-path differs from expected"
-echo "[home-profile-drift] active:   $active_home_path"
-echo "[home-profile-drift] expected: $expected_home"
-echo "[home-profile-drift] diff:     $artifact_dir/home-path-closure-diff.log"
+log_fail "$scope" "active home-path differs from expected"
+log_warn "$scope" "active:   $active_home_path"
+log_warn "$scope" "expected: $expected_home"
+log_warn "$scope" "diff:     $artifact_dir/home-path-closure-diff.log"
 exit 1
