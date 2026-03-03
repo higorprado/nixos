@@ -243,3 +243,22 @@ When desktop/session code is touched, also run:
 3. Run required validation set.
 4. Record concise evidence in commit message/body or execution log.
 5. If regression appears, revert slice and add note in this plan.
+
+## Phase Status
+1. 2026-03-03: Phase 0 completed.
+2. Baseline artifacts created at `reports/nixos/artifacts/928-repo-quality/`:
+   - `00-baseline-meta.txt`
+   - `01-script-size-map.txt`
+   - `02-duplication-hotspots.txt`
+   - `03-runtime-warning-snapshot.txt`
+   - `04-full-validation.txt`
+   - `05-public-safety.txt`
+   - `06-metrics-targets.txt`
+3. Validation status:
+   - `./scripts/run-full-validation.sh`: PASS
+   - `./scripts/check-repo-public-safety.sh`: PASS
+4. Baseline warnings captured for future comparison:
+   - `xdg-desktop-portal` realtime `pidns` warnings (`Could not get pidns ...`).
+   - `xorg.libxcb` deprecation warning during evaluation.
+   - Firefox Catppuccin warning in `niri-only` profile matrix evaluation.
+5. Note: `reports/` artifacts are local runtime evidence (gitignored) by design.
