@@ -273,3 +273,21 @@ When desktop/session code is touched, also run:
    - `./scripts/run-validation-gates.sh structure`: PASS
    - `./scripts/run-full-validation.sh`: PASS
    - `./scripts/check-repo-public-safety.sh`: PASS
+9. 2026-03-03: Phase 2 slice 1 completed (shared script library).
+10. Phase 2 changes:
+    - Added shared helper library: `scripts/lib/common.sh`.
+    - Migrated high-churn scripts to shared helpers:
+      - `scripts/run-validation-gates.sh`
+      - `scripts/check-validation-source-of-truth.sh`
+      - `scripts/check-profile-matrix.sh`
+      - `scripts/check-repo-public-safety.sh`
+      - `scripts/check-flake-pattern.sh`
+      - `scripts/run-full-validation.sh`
+    - Preserved behavior while reducing duplicated bootstrap and failure logging patterns.
+11. Phase 2 validation evidence:
+    - `shellcheck` on migrated scripts: PASS
+    - `./scripts/check-validation-source-of-truth.sh`: PASS
+    - `./scripts/check-flake-pattern.sh`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+# shellcheck source=scripts/lib/common.sh
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
 
 workflow_file=".github/workflows/validate.yml"
 local_runner_file="scripts/run-full-validation.sh"
@@ -11,7 +12,7 @@ gate_runner="./scripts/run-validation-gates.sh"
 fail=0
 
 report_fail() {
-  printf '[validation-source] fail: %s\n' "$1"
+  log_fail "validation-source" "$1"
   fail=1
 }
 

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+# shellcheck source=scripts/lib/common.sh
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+SCRIPT_DIR="$(script_dir "${BASH_SOURCE[0]}")"
+enter_repo_root "${BASH_SOURCE[0]}"
 ALLOWLIST="$SCRIPT_DIR/public-safety-allowlist.txt"
 ARTIFACT_DIR="${PUBLIC_SAFETY_ARTIFACT_DIR:-${TMPDIR:-/tmp}/nixos-public-safety}"
 PUBLIC_USER_NAME="${PUBLIC_USER_NAME:-$(id -un)}"

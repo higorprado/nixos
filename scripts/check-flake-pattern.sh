@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+# shellcheck source=scripts/lib/common.sh
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
 
 report_fail() {
-  printf '[flake-pattern] fail: %s\n' "$1"
+  log_fail "flake-pattern" "$1"
   fail=1
 }
 

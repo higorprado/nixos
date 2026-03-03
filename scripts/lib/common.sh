@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+script_dir() {
+  cd -- "$(dirname -- "$1")" && pwd
+}
+
+repo_root_from_script() {
+  local dir
+  dir="$(script_dir "$1")"
+  cd -- "$dir/.." && pwd
+}
+
+enter_repo_root() {
+  REPO_ROOT="$(repo_root_from_script "$1")"
+  export REPO_ROOT
+  cd "$REPO_ROOT" || return 1
+}
+
+log_fail() {
+  local scope="$1"
+  local msg="$2"
+  printf '[%s] fail: %s\n' "$scope" "$msg" >&2
+}
