@@ -19,6 +19,9 @@
 
   # Host role
   custom.host.role = "desktop";
+  # Keep a safe tracked fallback for CI/eval-only contexts; local private
+  # overrides can still set the real username with higher priority.
+  custom.user.name = lib.mkDefault "ops";
 
   # Desktop profile
   custom.desktop.profile = "dms";
