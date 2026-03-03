@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+# shellcheck source=lib/system_up_to_date_audit.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/system_up_to_date_audit.sh"
+enter_repo_root "${BASH_SOURCE[0]}"
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -22,7 +30,6 @@ Environment:
 EOF
 }
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STRICT=0
 EXCLUDE_EMACS=1
 OUTPUT_DIR=""
@@ -57,8 +64,8 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
-      usage
+      log_fail "system-up-to-date-audit" "unknown argument: $1"
+      usage >&2
       exit 2
       ;;
   esac
@@ -67,7 +74,7 @@ done
 if [ "$ALLOW_DIRTY" -ne 1 ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   dirty="$(git status --porcelain=v1 || true)"
   if [ -n "$dirty" ]; then
-    echo "Audit refused: git worktree is dirty. Re-run with --allow-dirty to override." >&2
+    log_fail "system-up-to-date-audit" "git worktree is dirty; re-run with --allow-dirty to override"
     exit 2
   fi
 fi
@@ -171,38 +178,6 @@ mark_skipped() {
   printf '%s\t%s\t%s\t%s\n' "$name" "skipped" "-" "$log" >>"$checks_tsv"
 }
 
-deps_for_script() {
-  case "$1" in
-    scripts/check-declarative-paths.sh) echo "rg" ;;
-    scripts/check-dev-dotfiles-parity.sh) echo "find sort head git sed rg" ;;
-    scripts/check-dotfiles-parity.sh) echo "find sort head rg sed" ;;
-    scripts/check-flake-tracked.sh) echo "git rg cut" ;;
-    scripts/check-logid-parity.sh) echo "diff cat" ;;
-    scripts/check-nix-deprecations.sh) echo "rg" ;;
-    scripts/check-nvim-contract.sh) echo "rg ps nvim pyright ruff lua-language-server vtsls node rust-analyzer lldb-dap" ;;
-    scripts/check-repo-public-safety.sh) echo "rg grep mkdir mktemp wc cp id" ;;
-    scripts/check-runtime-config-parity.sh) echo "cmp basename" ;;
-    scripts/check-user-services-parity.sh) echo "rg readlink find sort" ;;
-    scripts/nixos-post-switch-smoke.sh) echo "sudo nixos-rebuild id grep resolvectl systemctl command" ;;
-    scripts/validate-host.sh) echo "nix sudo nixos-rebuild date hostname grep chmod" ;;
-    *) echo "" ;;
-  esac
-}
-
-class_for_script() {
-  case "$1" in
-    scripts/check-dev-dotfiles-parity.sh|scripts/check-user-services-parity.sh|scripts/nixos-post-switch-smoke.sh)
-      echo "move-private"
-      ;;
-    scripts/check-dotfiles-parity.sh|scripts/check-runtime-config-parity.sh|scripts/validate-host.sh)
-      echo "repair"
-      ;;
-    *)
-      echo "keep"
-      ;;
-  esac
-}
-
 is_nixos_host=0
 if [ -f /etc/os-release ] && rg -q '^ID=nixos$' /etc/os-release; then
   is_nixos_host=1
@@ -213,18 +188,7 @@ if command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
   sudo_noninteractive=1
 fi
 
-{
-  printf 'decision_id\tsource_doc\trule\texpected_pattern\tseverity_if_broken\n'
-  printf 'D001\tdocs/for-agents/009-private-ops-scripts.md\tRepo scripts should be shared/reproducible; personal ops scripts must stay private\tNo personal host identifiers or private backup endpoints in shared scripts\thigh\n'
-  printf 'D002\tdocs/for-agents/006-validation-and-safety-gates.md\tFive Nix validation gates are mandatory after meaningful slices\tflake metadata + eval stateVersion + build home.path + build system.toplevel\thigh\n'
-  printf 'D003\tdocs/for-agents/007-private-overrides-and-public-safety.md\tPublic safety gate must detect sensitive/path leakage\tNo unallowlisted local paths/private IP/personal email/tokens\thigh\n'
-  printf 'D004\tAGENT.md\tMutable copy-once files can intentionally diverge\tParity checks must distinguish mutable drift from hard failures\tmedium\n'
-  printf 'D005\tdocs/for-agents/003-multi-host-model.md\tShared scripts should avoid single-host hardcoding when not required\tAvoid fixed host/profile identifiers unless explicitly host-scoped\tmedium\n'
-  printf 'D006\tdocs/for-agents/903-catppuccin-centralization-execution.md\tCatppuccin decisions are centralized and should remain consistent\tNo contradictory per-module catppuccin toggles outside central registry\tmedium\n'
-  if [ "$EXCLUDE_EMACS" -eq 1 ]; then
-    printf 'D007\tdocs/for-agents/905-system-up-to-date-audit-plan.md\tEmacs checks excluded for this audit\tSkip emacs-specific findings\tlow\n'
-  fi
-} >"$RAW_DIR/decision-baseline.tsv"
+audit_write_decision_baseline "$RAW_DIR/decision-baseline.tsv" "$EXCLUDE_EMACS"
 
 printf 'id\tseverity\tlocation\tevidence\twhy_inconsistent\trecommended_action\n' >"$findings_tsv"
 printf 'check\tstatus\texit_code\tlog_path\n' >"$checks_tsv"
@@ -250,7 +214,7 @@ for script_rel in "${scripts[@]}"; do
     note_finding "S-MISSING-$base" "high" "$script_rel" "$RAW_DIR/scripts-list.txt" \
       "Script listed in plan is missing from repository." \
       "Restore script or update audit plan inventory."
-    printf '%s,%s,%s,%s,%s\n' "$script_rel" "fail" "$(class_for_script "$script_rel")" "$script_incons" "\"${notes[*]}\"" >>"$matrix_file"
+    printf '%s,%s,%s,%s,%s\n' "$script_rel" "fail" "$(audit_class_for_script "$script_rel")" "$script_incons" "\"${notes[*]}\"" >>"$matrix_file"
     continue
   fi
 
@@ -283,7 +247,7 @@ for script_rel in "${scripts[@]}"; do
   deps_log="$RAW_DIR/${base}.deps.log"
   : >"$deps_log"
   missing_deps=0
-  for dep in $(deps_for_script "$script_rel"); do
+  for dep in $(audit_deps_for_script "$script_rel"); do
     if command -v "$dep" >/dev/null 2>&1; then
       printf 'ok %s -> %s\n' "$dep" "$(command -v "$dep")" >>"$deps_log"
     else
@@ -422,7 +386,7 @@ for script_rel in "${scripts[@]}"; do
   joined_notes="$(printf '%s; ' "${notes[@]}")"
   joined_notes="${joined_notes%; }"
   printf '%s,%s,%s,%s,"%s"\n' \
-    "$script_rel" "$script_status" "$(class_for_script "$script_rel")" "$script_incons" "$joined_notes" >>"$matrix_file"
+    "$script_rel" "$script_status" "$(audit_class_for_script "$script_rel")" "$script_incons" "$joined_notes" >>"$matrix_file"
 done
 
 {
