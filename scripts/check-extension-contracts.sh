@@ -67,23 +67,28 @@ check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.p
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
-mapfile -t enum_profiles < <(
-  awk '/types\.enum[[:space:]]*\[/,/\];/' modules/options/desktop-options.nix \
-    | rg -o '"[a-z0-9-]+"' \
-    | tr -d '"' \
-    | sort -u
-)
-
 mapfile -t module_profiles < <(
-  find modules/profiles/desktop -maxdepth 1 -type f -name 'profile-*.nix' -printf '%f\n' \
+  find modules/profiles/desktop -maxdepth 1 -type f -name 'profile-*.nix' ! -name 'profile-registry.nix' -printf '%f\n' \
     | sed -E 's/^profile-(.*)\.nix$/\1/' \
     | sort -u
 )
 
-mapfile -t imported_profiles < <(
-  rg -No './profile-[a-z0-9-]+\.nix' modules/profiles/desktop/default.nix \
-    | sed -E 's#\./profile-([a-z0-9-]+)\.nix#\1#' \
+mapfile -t registry_profiles < <(
+  sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\.\/profile-[a-z0-9-]+\.nix;/\1/p' modules/profiles/desktop/profile-registry.nix \
     | sort -u
+)
+
+while IFS= read -r line; do
+  [[ -z "$line" ]] && continue
+  profile_key="${line%%=*}"
+  profile_module="${line#*=}"
+  profile_module="${profile_module#./profile-}"
+  profile_module="${profile_module%.nix}"
+  if [[ "$profile_key" != "$profile_module" ]]; then
+    report_fail "profile registry key/path mismatch: ${line}"
+  fi
+done < <(
+  sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*(\.\/profile-[a-z0-9-]+\.nix);/\1=\2/p' modules/profiles/desktop/profile-registry.nix
 )
 
 mapfile -t matrix_profiles < <(
@@ -93,16 +98,22 @@ mapfile -t matrix_profiles < <(
     | sort -u
 )
 
-mkset "$tmpdir/enum" "${enum_profiles[@]}"
+if ! rg -q 'profileModules = import ../profiles/desktop/profile-registry.nix;' modules/options/desktop-options.nix; then
+  report_fail "modules/options/desktop-options.nix must import desktop profile registry"
+fi
+if ! rg -q 'type = lib.types.enum profileNames;' modules/options/desktop-options.nix; then
+  report_fail "modules/options/desktop-options.nix must derive enum from profileNames"
+fi
+
+mkset "$tmpdir/expected" "${registry_profiles[@]}"
 mkset "$tmpdir/modules" "${module_profiles[@]}"
-mkset "$tmpdir/imports" "${imported_profiles[@]}"
+mkset "$tmpdir/registry" "${registry_profiles[@]}"
 mkset "$tmpdir/matrix" "${matrix_profiles[@]}"
 
-check_set_sync "desktop option enum" "$tmpdir/enum" "profile modules" "$tmpdir/modules"
-check_set_sync "desktop option enum" "$tmpdir/enum" "desktop profile imports" "$tmpdir/imports"
-check_set_sync "desktop option enum" "$tmpdir/enum" "profile matrix list" "$tmpdir/matrix"
+check_set_sync "profile registry" "$tmpdir/expected" "profile modules" "$tmpdir/modules"
+check_set_sync "profile registry" "$tmpdir/expected" "profile matrix list" "$tmpdir/matrix"
 
-for profile in "${enum_profiles[@]}"; do
+for profile in "${registry_profiles[@]}"; do
   if ! rg -q "\"${profile}\"" modules/profiles/profile-capabilities.nix; then
     report_fail "profile '${profile}' missing from modules/profiles/profile-capabilities.nix"
   fi

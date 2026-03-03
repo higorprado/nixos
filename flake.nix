@@ -99,18 +99,17 @@
         inherit inputs;
       };
       llm-agents-pkgs = llm-agents.packages.${system};
-    in
-    {
-      templates =
-        devenvTemplates
-        // lib.optionalAttrs (devenvTemplateDirs ? python) {
-          default = devenvTemplates.python;
+
+      mkHostSystem =
+        modules:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
+          inherit modules;
         };
 
-      nixosConfigurations.predator = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
-        modules = [
+      hostRegistry = {
+        predator = [
           inputs.disko.nixosModules.disko
           inputs.niri.nixosModules.niri
           inputs.hyprland.nixosModules.default
@@ -120,14 +119,19 @@
 
           ./hosts/predator/default.nix
         ];
-      };
 
-      nixosConfigurations.server-example = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs customPkgs llm-agents-pkgs; };
-        modules = [
+        server-example = [
           ./hosts/server-example/default.nix
         ];
       };
+    in
+    {
+      templates =
+        devenvTemplates
+        // lib.optionalAttrs (devenvTemplateDirs ? python) {
+          default = devenvTemplates.python;
+        };
+
+      nixosConfigurations = lib.mapAttrs (_: modules: mkHostSystem modules) hostRegistry;
     };
 }

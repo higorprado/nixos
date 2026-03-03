@@ -1,4 +1,8 @@
 { lib, ... }:
+let
+  profileModules = import ../profiles/desktop/profile-registry.nix;
+  profileNames = builtins.attrNames profileModules;
+in
 {
   options.custom.desktop.keyrs.enable = lib.mkOption {
     type = lib.types.bool;
@@ -7,7 +11,7 @@
   };
 
   options.custom.desktop.profile = lib.mkOption {
-    type = lib.types.enum [ "dms" "niri-only" "noctalia" "dms-hyprland" "caelestia-hyprland" ];
+    type = lib.types.enum profileNames;
     default = "dms";
     description = "Desktop profile to use";
   };

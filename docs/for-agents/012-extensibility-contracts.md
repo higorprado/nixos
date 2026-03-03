@@ -10,18 +10,21 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 2. Shared defaults remain in options modules only:
    - `modules/options/core-options.nix`
    - `modules/options/desktop-options.nix`
-3. New host onboarding should not require edits in shared behavior modules.
+3. Host registration is centralized in `flake.nix` host registry (`hostRegistry`).
+4. New host onboarding should not require edits in shared behavior modules.
 
 ### Desktop Profile Extension Contract
 1. Every profile has one implementation module:
    - `modules/profiles/desktop/profile-<name>.nix`
-2. Every profile module is imported in:
-   - `modules/profiles/desktop/default.nix`
+2. Every profile is registered in:
+   - `modules/profiles/desktop/profile-registry.nix`
 3. Every profile name is declared in:
    - `modules/options/desktop-options.nix` enum
-4. Every profile is represented in capability mapping:
+4. Desktop profile aggregator consumes the registry:
+   - `modules/profiles/desktop/default.nix`
+5. Every profile is represented in capability mapping:
    - `modules/profiles/profile-capabilities.nix`
-5. Validation profile matrix list must stay synchronized:
+6. Validation profile matrix list must stay synchronized:
    - `scripts/check-profile-matrix.sh`
 
 ### Optional Pack Extension Contract

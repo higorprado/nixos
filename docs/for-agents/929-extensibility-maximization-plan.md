@@ -206,3 +206,17 @@ When desktop/session behavior is touched, also run:
    - `./scripts/run-validation-gates.sh predator`: PASS
    - `./scripts/run-validation-gates.sh server-example`: PASS
    - `./scripts/check-repo-public-safety.sh`: PASS
+7. 2026-03-03: Phase 2 slice 1 completed (host/profile registries).
+8. Phase 2 slice 1 changes:
+   - Added desktop profile registry: `modules/profiles/desktop/profile-registry.nix`.
+   - Refactored desktop profile aggregator to consume profile registry.
+   - Refactored desktop profile option enum to derive from profile registry names.
+   - Refactored `flake.nix` host wiring into explicit `hostRegistry` + `mapAttrs` composition.
+   - Updated extension contract checks for registry-based model.
+9. Phase 2 slice 1 validation evidence:
+   - `shellcheck scripts/check-extension-contracts.sh`: PASS
+   - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+   - `./scripts/run-validation-gates.sh structure`: PASS
+   - `./scripts/run-validation-gates.sh predator`: PASS
+   - `./scripts/run-validation-gates.sh server-example`: PASS
+   - `./scripts/check-repo-public-safety.sh`: PASS
