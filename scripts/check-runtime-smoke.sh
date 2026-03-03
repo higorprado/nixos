@@ -4,6 +4,9 @@ set -euo pipefail
 # shellcheck source=lib/common.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+# shellcheck source=lib/runtime_warning_budget.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/runtime_warning_budget.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 usage() {
@@ -226,91 +229,9 @@ if [ "$skip_log_budget" -eq 1 ]; then
   exit 0
 fi
 
-if [[ ! -f "$warning_budget_file" ]]; then
-  fail "missing warning budget file: ${warning_budget_file}"
+if ! runtime_warning_budget_scan "$scope" "$warning_budget_file" "$tmp_log" "$strict_logs" warning_overruns budget_expired; then
+  exit 1
 fi
-if ! jq -e '.version == 1 and (.failPatterns | type == "array") and (.warningThresholds | type == "array")' "$warning_budget_file" >/dev/null; then
-  fail "invalid warning budget schema in ${warning_budget_file}"
-fi
-
-count_pattern() {
-  local pattern="$1"
-  (rg -F "$pattern" "$tmp_log" || true) | wc -l | tr -d ' '
-}
-
-fail_if_pattern_seen() {
-  local id="$1"
-  local pattern="$2"
-  local count
-  count="$(count_pattern "$pattern")"
-  if [ "$count" -gt 0 ]; then
-    fail "${id}: found ${count} occurrences of '${pattern}'"
-  fi
-  ok "${id}: no occurrences for '${pattern}'"
-}
-
-warn_or_fail_threshold() {
-  local id="$1"
-  local pattern="$2"
-  local max="$3"
-  local owner="$4"
-  local expires_on="$5"
-  local count
-  local today_utc
-  count="$(count_pattern "$pattern")"
-
-  if [[ -n "$expires_on" ]]; then
-    today_utc="$(date -u +%F)"
-    if [[ "$expires_on" < "$today_utc" ]]; then
-      if [ "$strict_logs" -eq 1 ]; then
-        fail "${id}: accepted warning budget expired on ${expires_on} (owner: ${owner})"
-      fi
-      warn "${id}: accepted warning budget expired on ${expires_on} (owner: ${owner})"
-      budget_expired=$((budget_expired + 1))
-    fi
-  fi
-
-  if [ "$count" -gt "$max" ]; then
-    if [ "$strict_logs" -eq 1 ]; then
-      fail "${id}: count ${count} exceeds max ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
-    fi
-    warn "${id}: count ${count} exceeds max ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
-    warning_overruns=$((warning_overruns + 1))
-    return 0
-  fi
-  ok "${id}: count ${count} <= ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
-}
-
-# New/unaccepted warning classes (must be zero).
-while IFS= read -r entry; do
-  [[ -z "$entry" ]] && continue
-  id="$(jq -r '.id' <<<"$entry")"
-  pattern="$(jq -r '.pattern' <<<"$entry")"
-  owner="$(jq -r '.owner // "unowned"' <<<"$entry")"
-  fail_if_pattern_seen "$id" "$pattern"
-  ok "${id}: owner=${owner}"
-done < <(jq -c '.failPatterns[]' "$warning_budget_file")
-
-# Known accepted warnings with threshold budgets.
-while IFS= read -r entry; do
-  [[ -z "$entry" ]] && continue
-  id="$(jq -r '.id' <<<"$entry")"
-  pattern="$(jq -r '.pattern' <<<"$entry")"
-  default_max="$(jq -r '.defaultMax' <<<"$entry")"
-  env_override="$(jq -r '.envOverride // ""' <<<"$entry")"
-  owner="$(jq -r '.owner // "unowned"' <<<"$entry")"
-  expires_on="$(jq -r '.expiresOn // ""' <<<"$entry")"
-
-  max="$default_max"
-  if [[ -n "$env_override" ]]; then
-    override_value="${!env_override:-}"
-    if [[ -n "$override_value" ]]; then
-      max="$override_value"
-    fi
-  fi
-
-  warn_or_fail_threshold "$id" "$pattern" "$max" "$owner" "$expires_on"
-done < <(jq -c '.warningThresholds[]' "$warning_budget_file")
 
 if [ "$warning_overruns" -gt 0 ]; then
   warn "known warning budget overruns detected: ${warning_overruns}"
