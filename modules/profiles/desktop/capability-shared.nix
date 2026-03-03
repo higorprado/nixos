@@ -50,14 +50,8 @@ in
 
     # Uinput for keyrs (conditional on feature flag)
     (lib.mkIf cfg.keyrs.enable {
-      # Uinput kernel module + udev rules for the uinput group.
       # Required by keyrs to create virtual keyboard devices via /dev/uinput.
       hardware.uinput.enable = true;
-
-      # Override uinput group to "input" — the user is already in the input group
-      services.udev.extraRules = ''
-        SUBSYSTEM=="misc", KERNEL=="uinput", GROUP="input", MODE="0660"
-      '';
     })
 
     # DMS capability shared settings (dms + dms-hyprland)

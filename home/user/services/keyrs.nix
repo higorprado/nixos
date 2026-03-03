@@ -1,6 +1,5 @@
 {
   lib,
-  customPkgs,
   osConfig,
   ...
 }:
@@ -29,26 +28,4 @@ lib.mkIf osConfig.custom.desktop.keyrs.enable {
     # Remove empty bin directory if it exists
     $DRY_RUN_CMD rmdir "$HOME/.local/bin" 2>/dev/null || true
   '';
-
-  systemd.user.services.keyrs = {
-    Unit = {
-      Description = "keyrs keyboard remapper";
-      # Only start inside a live Wayland/graphical session so that
-      # WAYLAND_DISPLAY, XDG_RUNTIME_DIR, etc. are already in the environment.
-      After = [ "graphical-session.target" ];
-      ConditionPathExists = [ "%h/.config/keyrs/config.toml" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${customPkgs.keyrs}/bin/keyrs --config %h/.config/keyrs/config.toml";
-      Restart = "on-failure";
-      RestartSec = 2;
-      # KEYRS_LOG controls verbosity; set to "info" while debugging.
-      Environment = [ "KEYRS_LOG=warn" ];
-      StandardOutput = "journal";
-      StandardError = "journal";
-    };
-    # Tied to the graphical session: starts with it, stops when it ends.
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 }

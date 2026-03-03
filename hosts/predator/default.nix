@@ -26,6 +26,11 @@
   # Feature flags
   custom.desktop.keyrs.enable = true;
 
+  services.keyrs = {
+    enable = true;
+    enableUdevRules = true;
+  };
+
   # khal 0.13.0 docs fail to build with sphinx-9.x (sphinxcontrib-newsfeed bug).
   nixpkgs.overlays = [
     (_: prev: {

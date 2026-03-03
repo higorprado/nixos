@@ -58,9 +58,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    keyrs-src = {
+    keyrs = {
       url = "github:higorprado/keyrs";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dms-awww-src = {
@@ -116,6 +116,7 @@
           inputs.dms.nixosModules.dank-material-shell
           inputs.dms.nixosModules.greeter
           inputs.home-manager.nixosModules.home-manager
+          inputs.keyrs.nixosModules.default
 
           ./hosts/predator/default.nix
         ];
