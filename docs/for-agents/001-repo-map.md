@@ -4,8 +4,10 @@
 
 1. `flake.nix`: entrypoint, inputs, host wiring, home-manager module wiring.
    - Host composition registry lives in `flake.nix` (`hostRegistry`).
+   - `keyrs` is consumed as an upstream flake module (`inputs.keyrs.nixosModules.default`), wired at host level.
 2. `hosts/<host>/`: host-specific imports and selections.
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
+   - Desktop hosts enable `services.keyrs` when keyrs remapping is required.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).
    - Option declarations live under `modules/options/`.
    - Option migration registry and module wiring live under `modules/options/migration-registry.nix` and `modules/options/option-migrations.nix`.
