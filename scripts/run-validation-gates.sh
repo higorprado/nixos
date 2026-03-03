@@ -11,6 +11,7 @@ run_structure_gates() {
   ./scripts/check-desktop-capability-usage.sh
   ./scripts/check-option-declaration-boundary.sh
   ./scripts/check-validation-source-of-truth.sh
+  ./scripts/check-docs-drift.sh
 }
 
 run_predator_gates() {
@@ -18,6 +19,7 @@ run_predator_gates() {
   local hm_user
   hm_user="$(nix eval --raw "path:$PWD#nixosConfigurations.predator.config.custom.user.name")"
 
+  ./scripts/check-config-contracts.sh
   ./scripts/check-profile-matrix.sh
   nix flake metadata
   nix eval "path:$PWD#nixosConfigurations.predator.config.system.stateVersion"

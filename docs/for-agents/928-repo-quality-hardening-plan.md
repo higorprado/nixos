@@ -304,3 +304,43 @@ When desktop/session code is touched, also run:
     - `./scripts/check-runtime-smoke.sh --allow-non-graphical`: PASS
     - `./scripts/run-full-validation.sh`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+15. 2026-03-03: Phase 4 completed (contract tests for invariants).
+16. Phase 4 changes:
+    - Added `scripts/check-config-contracts.sh`.
+    - Enforced invariants:
+      - `custom.host.role` expectations (`predator=desktop`, `server-example=server`).
+      - default predator capability contract (`niri=true`, `hyprland=false`, `dms=true`).
+      - server-example capabilities all false.
+      - no hardcoded current HM username in tracked CI/scripts/docs paths.
+    - Integrated contract check into predator gates in `scripts/run-validation-gates.sh`.
+17. Phase 4 validation evidence:
+    - `shellcheck scripts/check-config-contracts.sh scripts/run-validation-gates.sh`: PASS
+    - `./scripts/check-config-contracts.sh`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+18. 2026-03-03: Phase 5 completed (legacy shim cleanup).
+19. Phase 5 changes:
+    - Removed legacy transition shims:
+      - `modules/profiles/desktop.nix`
+      - `modules/profiles/desktop-base.nix`
+      - `modules/profiles/desktop-capability-shared.nix`
+    - Updated `scripts/check-desktop-capability-usage.sh` allowlist to remove stale shim reference.
+20. Phase 5 validation evidence:
+    - `shellcheck scripts/check-desktop-capability-usage.sh`: PASS
+    - `./scripts/check-desktop-capability-usage.sh`: PASS
+    - `./scripts/check-flake-pattern.sh`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+21. 2026-03-03: Phase 6 completed (fast changed-file quality gate).
+22. Phase 6 changes:
+    - Added `scripts/check-changed-files-quality.sh`.
+    - Gate behavior:
+      - runs `shellcheck` only for changed `*.sh`,
+      - runs `nix-instantiate --parse` only for changed `*.nix`,
+      - targets diff from merge-base against `origin/main` (fallbacks included).
+    - Integrated into CI lint-structure job in `.github/workflows/validate.yml`.
+23. Phase 6 validation evidence:
+    - `shellcheck scripts/check-changed-files-quality.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS

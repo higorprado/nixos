@@ -25,6 +25,7 @@ jobs:
 
       - name: Structure Gates
         run: |
+          ./scripts/check-changed-files-quality.sh
           ./scripts/run-validation-gates.sh structure
 
   predator-eval-build:

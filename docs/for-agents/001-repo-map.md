@@ -25,3 +25,7 @@
 
 1. `custom.desktop.profile`
 2. `custom.desktop.keyrs.enable`
+
+## Boundary Contract
+
+1. Ownership boundaries are defined in `011-module-ownership-boundaries.md`.

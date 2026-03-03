@@ -8,7 +8,6 @@ cd "$repo_root"
 # profile implementation modules.
 allowlist=(
   "modules/profiles/profile-capabilities.nix"
-  "modules/profiles/desktop.nix"
 )
 
 is_allowed() {
