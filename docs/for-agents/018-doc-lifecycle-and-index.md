@@ -31,7 +31,8 @@
 17. CI lane policy: `016-ci-lane-policy.md`
 18. Config test pyramid: `017-config-test-pyramid.md`
 19. Script architecture contract: `020-script-architecture-contract.md`
-20. Lessons learned: `999-lessons-learned.md`
+20. Maintainer change map: `021-maintainer-change-map.md`
+21. Lessons learned: `999-lessons-learned.md`
 
 ## Active Plan
 1. `932-maintainability-excellence-plan.md`

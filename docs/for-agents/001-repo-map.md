@@ -47,3 +47,4 @@
 8. Canonical vs active-plan vs historical docs lifecycle is defined in `018-doc-lifecycle-and-index.md`.
 9. Runtime warning budget policy is defined in `019-runtime-warning-budget.md`.
 10. Script layout/boundary policy is defined in `020-script-architecture-contract.md`.
+11. Maintainer edit-to-validation map is defined in `021-maintainer-change-map.md`.

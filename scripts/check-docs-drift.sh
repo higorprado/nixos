@@ -24,6 +24,7 @@ targets=(
   docs/for-agents/018-doc-lifecycle-and-index.md
   docs/for-agents/019-runtime-warning-budget.md
   docs/for-agents/020-script-architecture-contract.md
+  docs/for-agents/021-maintainer-change-map.md
   docs/for-humans/00-start-here.md
   docs/for-humans/03-multi-host-philosophy.md
   docs/for-humans/07-flake-and-structure-pattern.md
