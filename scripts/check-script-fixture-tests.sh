@@ -13,5 +13,11 @@ if [[ ! -x tests/scripts/run-validation-gates-fixture-test.sh ]]; then
   exit 1
 fi
 
+if [[ ! -x tests/scripts/gate-cli-contracts-test.sh ]]; then
+  log_fail "script-fixture-tests" "missing executable test script: tests/scripts/gate-cli-contracts-test.sh"
+  exit 1
+fi
+
 ./tests/scripts/run-validation-gates-fixture-test.sh
+./tests/scripts/gate-cli-contracts-test.sh
 log_ok "script-fixture-tests" "all fixture-based script tests passed"

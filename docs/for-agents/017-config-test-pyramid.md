@@ -45,5 +45,6 @@ Each category must map to at least one layer and one executable check, with at l
 ## Deterministic Script Fixtures
 1. Script-orchestration fixture tests are maintained in:
    - `tests/scripts/run-validation-gates-fixture-test.sh`
+   - `tests/scripts/gate-cli-contracts-test.sh`
 2. Canonical runner:
    - `./scripts/check-script-fixture-tests.sh`
