@@ -13,6 +13,7 @@
 5. `config/`: payload configs consumed by symlink/sync/copy-once logic.
 6. `pkgs/`: custom derivations.
 7. `scripts/`: shared validation/safety scripts (public-repo scope only).
+   - Canonical validation entrypoint: `scripts/run-validation-gates.sh`.
 8. `legacy/`: archived state; not active unless user explicitly requests.
 
 ## Private Script Boundary

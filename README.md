@@ -49,11 +49,18 @@ Historical/previous docs are not part of the active docs set.
 
 ## Validation Commands
 
-Run this after meaningful changes:
+Use two levels of checks:
 
-1. `./scripts/run-full-validation.sh`
+1. Fast feedback on current branch changes:
+   - `./scripts/check-changed-files-quality.sh [origin/main]`
+   - `./scripts/run-validation-gates.sh structure`
+2. Full required validation before merge:
+   - `./scripts/run-validation-gates.sh all`
+   - `./scripts/run-full-validation.sh` (compat wrapper)
+3. Desktop runtime smoke (local machine/session):
+   - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
 
-The script runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
+`all` runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
 
 ## CI
 

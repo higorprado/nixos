@@ -25,10 +25,18 @@ Define the default repo pattern so changes stay consistent and easy to reason ab
 ## Change workflow
 
 1. Make the smallest coherent slice.
-2. Run `./scripts/check-flake-pattern.sh`.
-3. Run `./scripts/run-full-validation.sh`.
-4. Ensure CI workflow `.github/workflows/validate.yml` is green (`lint-structure`, `predator-eval-build`, `server-example-eval-build`).
-5. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
+2. Run `./scripts/check-changed-files-quality.sh [origin/main]`.
+3. Run `./scripts/run-validation-gates.sh structure`.
+4. Run `./scripts/check-flake-pattern.sh`.
+5. Before merge, run `./scripts/run-validation-gates.sh all` (or `./scripts/run-full-validation.sh`).
+6. Ensure CI workflow `.github/workflows/validate.yml` is green (`lint-structure`, `predator-eval-build`, `server-example-eval-build`).
+7. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
+
+## Runtime Regression Checks
+
+1. For desktop/session-related changes, run `./scripts/check-runtime-smoke.sh --allow-non-graphical`.
+2. Treat repeated portal/session warnings as smoke-signal indicators even when builds pass.
+3. Keep warning thresholds in the smoke script explicit and versioned.
 
 ## Non-goals
 

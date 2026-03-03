@@ -16,3 +16,6 @@
 12. For local matrix/validation scripts, prefer `builtins.getFlake "path:$PWD"` over git URL refs when you need live working-tree behavior; git/index snapshots can hide unstaged fixes.
 13. Even when role-gating desktop behavior, keep option-provider modules imported (or split declarations) if shared modules reference those options; otherwise server eval can fail on unknown options.
 14. In Nix modules, use `mkIf` (not eager `optionalAttrs`) for conditions that depend on `config`, otherwise fixed-point evaluation can recurse.
+15. Keep one canonical validation runner and make CI/local wrappers delegate to it; this prevents drift and simplifies audits.
+16. Runtime smoke checks should fail only on high-confidence regressions and treat noisy warnings as thresholded signals.
+17. Docs drift checks should target a bounded "living docs" set; scanning all historical docs creates false failures and discourages maintenance.

@@ -20,11 +20,21 @@
 8. `./scripts/check-docs-drift.sh`
 9. `./scripts/check-runtime-smoke.sh` (local desktop session only)
 
+## Fast Feedback (Local Iteration)
+
+1. `./scripts/check-changed-files-quality.sh [origin/main]`
+2. `./scripts/run-validation-gates.sh structure`
+
 ## Full Local Validation
 
 1. `./scripts/run-validation-gates.sh all` (canonical stage runner)
 2. `./scripts/run-full-validation.sh` (compat wrapper for `all`)
 3. Runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
+4. Stage-level execution is supported:
+   - `./scripts/run-validation-gates.sh structure`
+   - `./scripts/run-validation-gates.sh predator`
+   - `./scripts/run-validation-gates.sh server-example`
+   - `./scripts/run-validation-gates.sh runtime-smoke`
 
 ## Rollback
 

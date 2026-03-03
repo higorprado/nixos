@@ -344,3 +344,38 @@ When desktop/session code is touched, also run:
     - `./scripts/check-changed-files-quality.sh`: PASS
     - `./scripts/run-full-validation.sh`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+24. 2026-03-03: Phase 7 completed (docs drift guard + ownership boundaries).
+25. Phase 7 changes:
+    - Added `scripts/check-docs-drift.sh` (living-doc references integrity).
+    - Added ownership boundary doc: `docs/for-agents/011-module-ownership-boundaries.md`.
+    - Linked boundary guidance from:
+      - `docs/for-agents/000-operating-rules.md`
+      - `docs/for-agents/001-repo-map.md`
+      - `docs/for-agents/006-validation-and-safety-gates.md`
+    - Integrated docs drift check into structure gates (`scripts/run-validation-gates.sh`).
+26. Phase 7 validation evidence:
+    - `shellcheck scripts/check-docs-drift.sh`: PASS
+    - `./scripts/check-docs-drift.sh`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+27. 2026-03-03: Phase 8 completed (final docs and handoff).
+28. Phase 8 changes:
+    - Updated agent docs:
+      - `docs/for-agents/001-repo-map.md`
+      - `docs/for-agents/006-validation-and-safety-gates.md`
+      - `docs/for-agents/999-lessons-learned.md`
+      - this plan log with execution outcomes.
+    - Updated human docs:
+      - `README.md`
+      - `docs/README.md`
+      - `docs/for-humans/00-start-here.md`
+      - `docs/for-humans/03-multi-host-philosophy.md`
+      - `docs/for-humans/07-flake-and-structure-pattern.md`
+      - added release note doc `docs/for-humans/08-validation-and-maintainability-release.md`.
+29. Phase 8 validation evidence:
+    - `./scripts/check-docs-drift.sh`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+30. Acceptance criteria status: COMPLETE (items 1-8 satisfied and validated).

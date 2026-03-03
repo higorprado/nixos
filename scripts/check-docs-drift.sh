@@ -8,12 +8,15 @@ enter_repo_root "${BASH_SOURCE[0]}"
 
 targets=(
   README.md
+  docs/README.md
   docs/for-agents/000-operating-rules.md
   docs/for-agents/001-repo-map.md
   docs/for-agents/006-validation-and-safety-gates.md
   docs/for-agents/011-module-ownership-boundaries.md
+  docs/for-humans/00-start-here.md
   docs/for-humans/03-multi-host-philosophy.md
   docs/for-humans/07-flake-and-structure-pattern.md
+  docs/for-humans/08-validation-and-maintainability-release.md
 )
 
 resolve_reference() {
