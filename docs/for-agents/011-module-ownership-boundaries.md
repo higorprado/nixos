@@ -26,5 +26,6 @@ Keep ownership clear so changes stay local, reviewable, and regression-safe.
 1. `./scripts/check-option-declaration-boundary.sh`
 2. `./scripts/check-config-contracts.sh`
 3. `./scripts/check-desktop-capability-usage.sh`
-4. `./scripts/check-validation-source-of-truth.sh`
-5. `./scripts/check-docs-drift.sh`
+4. `./scripts/check-extension-contracts.sh`
+5. `./scripts/check-validation-source-of-truth.sh`
+6. `./scripts/check-docs-drift.sh`

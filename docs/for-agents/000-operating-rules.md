@@ -18,3 +18,4 @@ Make correct, minimal, reversible changes with explicit validation.
 ## Required Companion Doc
 1. Read `007-private-overrides-and-public-safety.md` before touching paths, identity, networking, or secrets.
 2. Read `011-module-ownership-boundaries.md` before moving logic across `hosts/`, `modules/`, `home/`, and `scripts/`.
+3. Read `012-extensibility-contracts.md` before adding/changing hosts, desktop profiles, or desktop packs.

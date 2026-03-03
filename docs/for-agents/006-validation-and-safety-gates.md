@@ -14,11 +14,12 @@
 2. `./scripts/check-desktop-capability-usage.sh`
 3. `./scripts/check-profile-matrix.sh`
 4. `./scripts/check-option-declaration-boundary.sh`
-5. `./scripts/check-validation-source-of-truth.sh`
-6. `./scripts/check-config-contracts.sh`
-7. `./scripts/check-changed-files-quality.sh [origin/main]`
-8. `./scripts/check-docs-drift.sh`
-9. `./scripts/check-runtime-smoke.sh` (local desktop session only)
+5. `./scripts/check-extension-contracts.sh`
+6. `./scripts/check-validation-source-of-truth.sh`
+7. `./scripts/check-config-contracts.sh`
+8. `./scripts/check-changed-files-quality.sh [origin/main]`
+9. `./scripts/check-docs-drift.sh`
+10. `./scripts/check-runtime-smoke.sh` (local desktop session only)
 
 ## Fast Feedback (Local Iteration)
 

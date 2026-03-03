@@ -30,3 +30,4 @@
 ## Boundary Contract
 
 1. Ownership boundaries are defined in `011-module-ownership-boundaries.md`.
+2. Extension contracts are defined in `012-extensibility-contracts.md`.
