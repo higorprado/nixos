@@ -299,3 +299,23 @@ When desktop/session behavior is touched, also run:
     - `./scripts/run-validation-gates.sh predator`: PASS
     - `./scripts/run-validation-gates.sh server-example`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+29. 2026-03-03: Phase 8 completed (final validation, docs handoff, metrics compare).
+30. Phase 8 changes:
+    - Updated human-facing extension workflow docs:
+      - `docs/for-humans/03-multi-host-philosophy.md`
+      - `docs/for-humans/07-flake-and-structure-pattern.md`
+      - `docs/for-humans/08-validation-and-maintainability-release.md`
+    - Updated lessons learned with migration safety guidance (`docs/for-agents/999-lessons-learned.md`).
+    - Recorded final extension touch-surface comparison in `reports/nixos/artifacts/929-extensibility/07-phase8-final-metrics.txt`.
+31. Phase 8 final validation evidence:
+    - `./scripts/run-validation-gates.sh all`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`: PASS
+32. Baseline vs final metrics:
+    - Add host: `2 -> 2` mandatory tracked edits (count unchanged; determinism improved via host registry contract).
+    - Add profile: `4 -> 3` mandatory tracked edits (improved).
+    - Add pack: `2 -> 2` mandatory tracked edits (count unchanged; composition and validation contract improved).
+33. Known non-fatal deviations retained:
+    - Nix warning: `xorg.libxcb` deprecation.
+    - Home warning: catppuccin Firefox profile mismatch.
+    - Runtime smoke warning counts for portal pidns/inhibiting noise remain above warning thresholds but below fail thresholds.

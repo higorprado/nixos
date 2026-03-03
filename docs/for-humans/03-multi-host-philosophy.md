@@ -26,7 +26,21 @@
 
 1. Copy a minimal host skeleton under `hosts/<new-host>/`.
 2. Set `custom.host.role` first (`desktop` or `server`).
-3. Import shared `modules` and `home` modules only as needed for that role.
-4. Set host-only values there (hostname, hardware, profile selection when desktop).
-5. Do not fork shared logic into host files.
-6. Run `./scripts/check-config-contracts.sh` after role/profile changes.
+3. Register the host in `flake.nix` `hostRegistry`.
+4. Import shared `modules` and `home` modules only as needed for that role.
+5. Set host-only values there (hostname, hardware, profile selection when desktop).
+6. Do not fork shared logic into host files.
+7. Run `./scripts/run-validation-gates.sh structure` and `./scripts/run-validation-gates.sh server-example`.
+
+## Extension Touch Surface
+
+1. Add host:
+   - `hosts/<host>/default.nix`
+   - `flake.nix` (`hostRegistry` only)
+2. Add desktop profile:
+   - `modules/profiles/desktop/profile-<name>.nix`
+   - `modules/profiles/desktop/profile-registry.nix`
+   - `modules/profiles/desktop/profile-metadata.nix`
+3. Add desktop pack:
+   - `home/user/desktop/<pack>.nix`
+   - `home/user/desktop/pack-registry.nix`

@@ -32,6 +32,14 @@ Define the default repo pattern so changes stay consistent and easy to reason ab
 6. Ensure CI workflow `.github/workflows/validate.yml` is green (`lint-structure`, `predator-eval-build`, `server-example-eval-build`).
 7. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
 
+## Extension Registries
+
+1. Hosts are declared only in `flake.nix` `hostRegistry`.
+2. Desktop profiles are declared only in `modules/profiles/desktop/profile-registry.nix`.
+3. Profile metadata (capabilities/integrations/pack sets) is declared only in `modules/profiles/desktop/profile-metadata.nix`.
+4. Desktop packs and pack sets are declared only in `home/user/desktop/pack-registry.nix`.
+5. Option rename/removal compatibility is declared only in `modules/options/migration-registry.nix`.
+
 ## Runtime Regression Checks
 
 1. For desktop/session-related changes, run `./scripts/check-runtime-smoke.sh --allow-non-graphical`.

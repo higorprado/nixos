@@ -6,8 +6,10 @@
 2. Core invariants are enforced by `./scripts/check-config-contracts.sh`.
 3. Docs drift is checked by `./scripts/check-docs-drift.sh`.
 4. A fast branch gate exists: `./scripts/check-changed-files-quality.sh [origin/main]`.
-5. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
-6. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
+5. Option deprecation/removal safety is enforced by `./scripts/check-option-migrations.sh`.
+6. Synthetic extension checks are enforced by `./scripts/check-extension-simulations.sh`.
+7. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
+8. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
 
 ## What Is Enforced Now
 
@@ -15,6 +17,8 @@
 2. Critical docs references in living docs cannot silently break.
 3. CI and local validation share one execution path through the stage runner.
 4. Contributor fast feedback and full pre-merge checks are clearly separated.
+5. Option removals without migration entries fail structure checks.
+6. Synthetic host/profile extension regressions fail predator checks.
 
 ## Full vs Fast Checks
 
