@@ -4,6 +4,9 @@ set -euo pipefail
 # shellcheck source=lib/common.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+# shellcheck source=lib/nix_eval.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/nix_eval.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
@@ -13,15 +16,13 @@ report_fail() {
   fail=1
 }
 
-require_cmd "option-migrations" "rg"
+require_cmds "option-migrations" "jq" "nix" "rg"
 
 if ! rg -q './option-migrations.nix' modules/options/default.nix; then
   report_fail "modules/options/default.nix must import ./option-migrations.nix"
 fi
 
-registry_json="$(
-  nix eval --json --impure --expr "import ${PWD}/modules/options/migration-registry.nix"
-)"
+registry_json="$(nix_eval_json_expr "import ${PWD}/modules/options/migration-registry.nix")"
 
 if ! jq -e 'has("renamed") and has("aliases") and has("removed")' <<<"$registry_json" >/dev/null; then
   report_fail "modules/options/migration-registry.nix must expose renamed, aliases, and removed arrays"

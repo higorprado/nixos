@@ -3,9 +3,10 @@
 ## Active Topology
 
 1. `flake.nix`: entrypoint, inputs, host wiring, home-manager module wiring.
-   - Host composition registry lives in `flake.nix` (`hostRegistry`).
+   - Host composition registry is derived from `hosts/host-descriptors.nix` via `hostRegistry`.
    - `keyrs` is consumed as an upstream flake module (`inputs.keyrs.nixosModules.default`), wired at host level.
 2. `hosts/<host>/`: host-specific imports and selections.
+   - `hosts/host-descriptors.nix` is the canonical host descriptor registry.
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
    - Desktop hosts enable `services.keyrs` when keyrs remapping is required.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).
@@ -39,3 +40,9 @@
 1. Ownership boundaries are defined in `011-module-ownership-boundaries.md`.
 2. Extension contracts are defined in `012-extensibility-contracts.md`.
 3. Option migration/deprecation workflow is defined in `013-option-migration-playbook.md`.
+4. User resolution and username indirection contract is defined in `014-user-resolution-contract.md`.
+5. Profile/pack schema and versioning contract is defined in `015-profile-pack-schema.md`.
+6. CI lane trigger policy is defined in `016-ci-lane-policy.md`.
+7. Config test-pyramid contract is defined in `017-config-test-pyramid.md`.
+8. Canonical vs active-plan vs historical docs lifecycle is defined in `018-doc-lifecycle-and-index.md`.
+9. Runtime warning budget policy is defined in `019-runtime-warning-budget.md`.

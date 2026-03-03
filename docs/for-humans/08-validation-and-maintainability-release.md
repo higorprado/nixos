@@ -8,8 +8,10 @@
 4. A fast branch gate exists: `./scripts/check-changed-files-quality.sh [origin/main]`.
 5. Option deprecation/removal safety is enforced by `./scripts/check-option-migrations.sh`.
 6. Synthetic extension checks are enforced by `./scripts/check-extension-simulations.sh`.
-7. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
-8. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
+7. Test-pyramid layer/category coverage is enforced by `./scripts/check-test-pyramid-contracts.sh`.
+8. Runtime warning budgets are governed by `config/validation/runtime-warning-budget.json`.
+9. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
+10. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
 
 ## What Is Enforced Now
 
@@ -25,8 +27,13 @@
 1. Fast local feedback (during development):
    - `./scripts/check-changed-files-quality.sh [origin/main]`
    - `./scripts/run-validation-gates.sh structure`
-2. Full pre-merge validation:
+2. Fast CI lane (default on push/PR):
+   - `.github/workflows/validate.yml` job: `lint-structure`
+3. Full pre-merge validation:
    - `./scripts/run-validation-gates.sh all`
    - `./scripts/check-repo-public-safety.sh`
-3. Desktop runtime regression checks (when relevant):
+   - CI full lane via manual dispatch (`run_full = true`) or weekday schedule.
+4. Desktop runtime regression checks (when relevant):
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
+5. Runtime warning artifact capture (when relevant):
+   - `./scripts/capture-runtime-warning-report.sh`

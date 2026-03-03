@@ -26,4 +26,4 @@ Track mutable copy-once runtime config targets in one place so refactors preserv
 ## Maintenance Rules
 1. When adding a new mutable target, add a row in this file in the same change.
 2. If overwrite policy changes, update this file and mention migration/rollback.
-3. Keep this file aligned with `925-maintainability-improvement-plan.md`.
+3. Keep this file aligned with canonical contracts in `017-config-test-pyramid.md` and `018-doc-lifecycle-and-index.md`.

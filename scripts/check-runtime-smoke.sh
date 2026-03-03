@@ -12,11 +12,11 @@ Usage:
   scripts/check-runtime-smoke.sh [--boot current|previous] [--allow-non-graphical] [--strict-backends] [--strict-logs]
 
 Environment:
-  RUNTIME_SMOKE_PORTAL_PIDNS_WARN_MAX=<n>   # default: 400
-  RUNTIME_SMOKE_PORTAL_INHIBIT_WARN_MAX=<n> # default: 80
-  RUNTIME_SMOKE_WPSTATE_WARN_MAX=<n>        # default: 20
-  RUNTIME_SMOKE_GKR_WARN_MAX=<n>            # default: 10
-  RUNTIME_SMOKE_NM_P2P_WARN_MAX=<n>         # default: 10
+  RUNTIME_SMOKE_PORTAL_PIDNS_WARN_MAX=<n>   # override L101 max from warning budget file
+  RUNTIME_SMOKE_PORTAL_INHIBIT_WARN_MAX=<n> # override L102 max from warning budget file
+  RUNTIME_SMOKE_WPSTATE_WARN_MAX=<n>        # override L103 max from warning budget file
+  RUNTIME_SMOKE_GKR_WARN_MAX=<n>            # override L104 max from warning budget file
+  RUNTIME_SMOKE_NM_P2P_WARN_MAX=<n>         # override L105 max from warning budget file
 EOF
 }
 
@@ -24,6 +24,8 @@ boot="current"
 allow_non_graphical=0
 strict_backends=0
 strict_logs=0
+warning_overruns=0
+budget_expired=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -119,6 +121,9 @@ fi
 if ! command -v jq >/dev/null 2>&1; then
   fail "jq is required for runtime smoke checks"
 fi
+if ! command -v rg >/dev/null 2>&1; then
+  fail "rg is required for runtime smoke checks"
+fi
 
 case "${boot}" in
   current|previous) ;;
@@ -213,6 +218,14 @@ if [ "$sys_code" -ne 0 ] && [ "$usr_code" -ne 0 ]; then
   fail "unable to read both system and user journals for smoke log scan"
 fi
 
+warning_budget_file="config/validation/runtime-warning-budget.json"
+if [[ ! -f "$warning_budget_file" ]]; then
+  fail "missing warning budget file: ${warning_budget_file}"
+fi
+if ! jq -e '.version == 1 and (.failPatterns | type == "array") and (.warningThresholds | type == "array")' "$warning_budget_file" >/dev/null; then
+  fail "invalid warning budget schema in ${warning_budget_file}"
+fi
+
 count_pattern() {
   local pattern="$1"
   (rg -F "$pattern" "$tmp_log" || true) | wc -l | tr -d ' '
@@ -233,27 +246,70 @@ warn_or_fail_threshold() {
   local id="$1"
   local pattern="$2"
   local max="$3"
+  local owner="$4"
+  local expires_on="$5"
   local count
+  local today_utc
   count="$(count_pattern "$pattern")"
+
+  if [[ -n "$expires_on" ]]; then
+    today_utc="$(date -u +%F)"
+    if [[ "$expires_on" < "$today_utc" ]]; then
+      if [ "$strict_logs" -eq 1 ]; then
+        fail "${id}: accepted warning budget expired on ${expires_on} (owner: ${owner})"
+      fi
+      warn "${id}: accepted warning budget expired on ${expires_on} (owner: ${owner})"
+      budget_expired=$((budget_expired + 1))
+    fi
+  fi
+
   if [ "$count" -gt "$max" ]; then
     if [ "$strict_logs" -eq 1 ]; then
-      fail "${id}: count ${count} exceeds max ${max} for '${pattern}'"
+      fail "${id}: count ${count} exceeds max ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
     fi
-    warn "${id}: count ${count} exceeds max ${max} for '${pattern}'"
+    warn "${id}: count ${count} exceeds max ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
+    warning_overruns=$((warning_overruns + 1))
     return 0
   fi
-  ok "${id}: count ${count} <= ${max} for '${pattern}'"
+  ok "${id}: count ${count} <= ${max} for '${pattern}' (owner: ${owner}, expiresOn: ${expires_on})"
 }
 
-# High-confidence regressions should fail immediately.
-fail_if_pattern_seen "L001" "dsearch.service: Failed with result 'exit-code'"
-fail_if_pattern_seen "L002" "Configuration file /etc/systemd/user/dsearch.service is marked executable"
+# New/unaccepted warning classes (must be zero).
+while IFS= read -r entry; do
+  [[ -z "$entry" ]] && continue
+  id="$(jq -r '.id' <<<"$entry")"
+  pattern="$(jq -r '.pattern' <<<"$entry")"
+  owner="$(jq -r '.owner // "unowned"' <<<"$entry")"
+  fail_if_pattern_seen "$id" "$pattern"
+  ok "${id}: owner=${owner}"
+done < <(jq -c '.failPatterns[]' "$warning_budget_file")
 
-# Noisy patterns are warning-threshold based by default.
-warn_or_fail_threshold "L101" "Realtime error: Could not get pidns" "${RUNTIME_SMOKE_PORTAL_PIDNS_WARN_MAX:-400}"
-warn_or_fail_threshold "L102" "A backend call failed: Inhibiting other than idle not supported" "${RUNTIME_SMOKE_PORTAL_INHIBIT_WARN_MAX:-80}"
-warn_or_fail_threshold "L103" "wp-state: failed to create directory /var/empty/.local/state/wireplumber" "${RUNTIME_SMOKE_WPSTATE_WARN_MAX:-20}"
-warn_or_fail_threshold "L104" "gkr-pam: unable to locate daemon control file" "${RUNTIME_SMOKE_GKR_WARN_MAX:-10}"
-warn_or_fail_threshold "L105" "error setting IPv4 forwarding to '1': Resource temporarily unavailable" "${RUNTIME_SMOKE_NM_P2P_WARN_MAX:-10}"
+# Known accepted warnings with threshold budgets.
+while IFS= read -r entry; do
+  [[ -z "$entry" ]] && continue
+  id="$(jq -r '.id' <<<"$entry")"
+  pattern="$(jq -r '.pattern' <<<"$entry")"
+  default_max="$(jq -r '.defaultMax' <<<"$entry")"
+  env_override="$(jq -r '.envOverride // ""' <<<"$entry")"
+  owner="$(jq -r '.owner // "unowned"' <<<"$entry")"
+  expires_on="$(jq -r '.expiresOn // ""' <<<"$entry")"
+
+  max="$default_max"
+  if [[ -n "$env_override" ]]; then
+    override_value="${!env_override:-}"
+    if [[ -n "$override_value" ]]; then
+      max="$override_value"
+    fi
+  fi
+
+  warn_or_fail_threshold "$id" "$pattern" "$max" "$owner" "$expires_on"
+done < <(jq -c '.warningThresholds[]' "$warning_budget_file")
+
+if [ "$warning_overruns" -gt 0 ]; then
+  warn "known warning budget overruns detected: ${warning_overruns}"
+fi
+if [ "$budget_expired" -gt 0 ]; then
+  warn "warning budget entries past expiration date: ${budget_expired}"
+fi
 
 ok "runtime smoke passed"

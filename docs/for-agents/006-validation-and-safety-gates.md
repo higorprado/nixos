@@ -8,6 +8,13 @@
 4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
 5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 
+Use username indirection in automation/scripts:
+```bash
+hm_user="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
+nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"
+nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.path"
+```
+
 ## Optional Pattern Gates
 
 1. `./scripts/check-flake-pattern.sh`
@@ -16,12 +23,14 @@
 4. `./scripts/check-option-declaration-boundary.sh`
 5. `./scripts/check-option-migrations.sh`
 6. `./scripts/check-extension-contracts.sh`
-7. `./scripts/check-validation-source-of-truth.sh`
-8. `./scripts/check-config-contracts.sh`
-9. `./scripts/check-extension-simulations.sh`
-10. `./scripts/check-changed-files-quality.sh [origin/main]`
-11. `./scripts/check-docs-drift.sh`
-12. `./scripts/check-runtime-smoke.sh` (local desktop session only)
+7. `./scripts/check-test-pyramid-contracts.sh`
+8. `./scripts/check-validation-source-of-truth.sh`
+9. `./scripts/check-config-contracts.sh`
+10. `./scripts/check-extension-simulations.sh`
+11. `./scripts/check-changed-files-quality.sh [origin/main]`
+12. `./scripts/check-docs-drift.sh`
+13. `./scripts/check-runtime-smoke.sh` (local desktop session only)
+14. `./scripts/capture-runtime-warning-report.sh` (local artifact capture for warning governance)
 
 ## Fast Feedback (Local Iteration)
 
@@ -38,6 +47,7 @@
    - `./scripts/run-validation-gates.sh predator`
    - `./scripts/run-validation-gates.sh server-example`
    - `./scripts/run-validation-gates.sh runtime-smoke`
+5. CI trigger policy for fast/full lanes is defined in `016-ci-lane-policy.md`.
 
 ## Rollback
 

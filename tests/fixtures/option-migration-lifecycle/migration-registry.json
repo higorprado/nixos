@@ -1,0 +1,45 @@
+{
+  "renamed": [
+    {
+      "from": [
+        "custom",
+        "desktop",
+        "oldFlag"
+      ],
+      "to": [
+        "custom",
+        "desktop",
+        "newFlag"
+      ],
+      "removeAfter": "2026-12",
+      "note": "Synthetic rename fixture"
+    }
+  ],
+  "aliases": [
+    {
+      "from": [
+        "custom",
+        "desktop",
+        "legacyAlias"
+      ],
+      "to": [
+        "custom",
+        "desktop",
+        "newFlag"
+      ],
+      "removeAfter": "2026-12",
+      "note": "Synthetic alias fixture"
+    }
+  ],
+  "removed": [
+    {
+      "path": [
+        "custom",
+        "desktop",
+        "removedFlag"
+      ],
+      "removeAfter": "2026-12",
+      "message": "Synthetic removed option fixture"
+    }
+  ]
+}

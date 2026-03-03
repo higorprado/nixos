@@ -20,3 +20,9 @@ Make correct, minimal, reversible changes with explicit validation.
 2. Read `011-module-ownership-boundaries.md` before moving logic across `hosts/`, `modules/`, `home/`, and `scripts/`.
 3. Read `012-extensibility-contracts.md` before adding/changing hosts, desktop profiles, or desktop packs.
 4. Read `013-option-migration-playbook.md` before renaming/removing options in `modules/options/` or `home/user/options/`.
+5. Read `014-user-resolution-contract.md` before changing host identity/user wiring, CI username references, or private override behavior.
+6. Read `015-profile-pack-schema.md` before changing profile metadata or desktop pack registry structures.
+7. Read `016-ci-lane-policy.md` before changing CI/workflow behavior or validation trigger conditions.
+8. Read `017-config-test-pyramid.md` before changing validation layering, fixture coverage, or regression policy.
+9. Read `018-doc-lifecycle-and-index.md` before reorganizing docs or changing source-of-truth references.
+10. Read `019-runtime-warning-budget.md` before changing runtime-smoke warning thresholds or warning acceptance policy.

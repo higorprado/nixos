@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "layers": {
+    "A": {
+      "name": "static-structure",
+      "owner": "repo-maintainers",
+      "budgetSeconds": 120,
+      "checks": [
+        "./scripts/check-changed-files-quality.sh",
+        "./scripts/check-desktop-capability-usage.sh",
+        "./scripts/check-option-declaration-boundary.sh",
+        "./scripts/check-option-migrations.sh",
+        "./scripts/check-extension-contracts.sh",
+        "./scripts/check-test-pyramid-contracts.sh"
+      ]
+    },
+    "B": {
+      "name": "eval-matrix",
+      "owner": "repo-maintainers",
+      "budgetSeconds": 900,
+      "checks": [
+        "./scripts/check-config-contracts.sh",
+        "./scripts/check-profile-matrix.sh",
+        "./scripts/check-extension-simulations.sh",
+        "./scripts/run-validation-gates.sh"
+      ]
+    },
+    "C": {
+      "name": "build-runtime-smoke",
+      "owner": "repo-maintainers",
+      "budgetSeconds": 1500,
+      "checks": [
+        "./scripts/run-validation-gates.sh",
+        "./scripts/check-runtime-smoke.sh"
+      ]
+    }
+  },
+  "categories": {
+    "host_addition": {
+      "layers": [
+        "A",
+        "B"
+      ],
+      "checks": [
+        "./scripts/check-extension-contracts.sh",
+        "./scripts/check-extension-simulations.sh",
+        "./scripts/run-validation-gates.sh"
+      ],
+      "fixtures": [
+        "tests/fixtures/host-addition/host-descriptor.json"
+      ]
+    },
+    "profile_addition": {
+      "layers": [
+        "A",
+        "B",
+        "C"
+      ],
+      "checks": [
+        "./scripts/check-extension-contracts.sh",
+        "./scripts/check-profile-matrix.sh",
+        "./scripts/run-validation-gates.sh"
+      ],
+      "fixtures": [
+        "tests/fixtures/profile-addition/profile-metadata.json"
+      ]
+    },
+    "pack_addition": {
+      "layers": [
+        "A",
+        "B"
+      ],
+      "checks": [
+        "./scripts/check-extension-contracts.sh",
+        "./scripts/check-extension-simulations.sh",
+        "./scripts/run-validation-gates.sh"
+      ],
+      "fixtures": [
+        "tests/fixtures/pack-addition/pack-registry.json",
+        "tests/fixtures/pack-addition/synthetic-pack.nix"
+      ]
+    },
+    "option_migration_lifecycle": {
+      "layers": [
+        "A",
+        "B"
+      ],
+      "checks": [
+        "./scripts/check-option-migrations.sh",
+        "./scripts/check-config-contracts.sh",
+        "./scripts/run-validation-gates.sh"
+      ],
+      "fixtures": [
+        "tests/fixtures/option-migration-lifecycle/migration-registry.json"
+      ]
+    }
+  }
+}
