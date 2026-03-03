@@ -223,7 +223,7 @@ When desktop/session behavior is touched, also run:
 10. 2026-03-03: Phase 2 slice 2 completed (optional pack registry).
 11. Phase 2 slice 2 changes:
     - Added optional desktop pack registry: `home/user/desktop/pack-registry.nix`.
-    - Refactored `home/user/desktop/default.nix` imports to compose with `packRegistry.packModules`.
+    - Refactored `home/user/desktop/default.nix` imports to compose through pack-registry-managed packs.
     - Extended `scripts/check-extension-contracts.sh` to enforce pack registry wiring/integrity.
 12. Phase 2 slice 2 validation evidence:
     - `shellcheck scripts/check-extension-contracts.sh`: PASS
@@ -252,6 +252,19 @@ When desktop/session behavior is touched, also run:
     - Added checks for required `hosts/<host>/default.nix` and corresponding registry path reference.
 19. Phase 5 slice 1 validation evidence:
     - `shellcheck scripts/check-extension-contracts.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
+20. 2026-03-03: Phase 4 slice 1 completed (pack-set composition).
+21. Phase 4 slice 1 changes:
+    - Extended `home/user/desktop/pack-registry.nix` with named pack sets.
+    - Added profile `packSets` metadata in `modules/profiles/desktop/profile-metadata.nix`.
+    - Refactored `home/user/desktop/default.nix` to select/import pack modules by profile metadata pack sets.
+    - Extended `scripts/check-extension-contracts.sh` to enforce pack/pack-set/metadata consistency.
+22. Phase 4 slice 1 validation evidence:
+    - `shellcheck scripts/check-extension-contracts.sh scripts/check-profile-matrix.sh`: PASS
     - `./scripts/check-changed-files-quality.sh origin/main`: PASS
     - `./scripts/run-validation-gates.sh structure`: PASS
     - `./scripts/run-validation-gates.sh predator`: PASS

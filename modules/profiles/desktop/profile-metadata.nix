@@ -14,6 +14,11 @@
       "dms"
     ];
     optionalIntegrations = [ ];
+    packSets = [
+      "base"
+      "desktop-user"
+      "desktop-files"
+    ];
   };
 
   niri-only = {
@@ -28,6 +33,7 @@
     };
     requiredIntegrations = [ "niri" ];
     optionalIntegrations = [ ];
+    packSets = [ "base" ];
   };
 
   noctalia = {
@@ -42,6 +48,11 @@
     };
     requiredIntegrations = [ "niri" ];
     optionalIntegrations = [ "noctalia-shell" ];
+    packSets = [
+      "base"
+      "desktop-user"
+      "desktop-files"
+    ];
   };
 
   dms-hyprland = {
@@ -59,6 +70,11 @@
       "dms"
     ];
     optionalIntegrations = [ ];
+    packSets = [
+      "base"
+      "desktop-user"
+      "desktop-files"
+    ];
   };
 
   caelestia-hyprland = {
@@ -73,5 +89,10 @@
     };
     requiredIntegrations = [ "hyprland" ];
     optionalIntegrations = [ "caelestia-shell" ];
+    packSets = [
+      "base"
+      "desktop-user"
+      "desktop-files"
+    ];
   };
 }

@@ -67,23 +67,64 @@ check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.p
 if ! rg -q 'packRegistry = import ./pack-registry.nix;' home/user/desktop/default.nix; then
   report_fail "home/user/desktop/default.nix must import pack-registry.nix"
 fi
-if ! rg -q '\+\+ packRegistry\.packModules;' home/user/desktop/default.nix; then
-  report_fail "home/user/desktop/default.nix must compose imports with packRegistry.packModules"
+if ! rg -q 'profilePackSets[[:space:]]*=' home/user/desktop/default.nix; then
+  report_fail "home/user/desktop/default.nix must derive profilePackSets from profile metadata"
+fi
+if ! rg -q '\+\+ selectedPackModules;' home/user/desktop/default.nix; then
+  report_fail "home/user/desktop/default.nix must compose imports with selectedPackModules"
 fi
 
-mapfile -t pack_modules < <(
-  sed -nE 's/^[[:space:]]*\.\/([a-z0-9-]+\.nix)[[:space:]]*$/\1/p' home/user/desktop/pack-registry.nix \
+mapfile -t pack_names < <(
+  awk '
+    /^[[:space:]]*packs = \{/ { in_packs = 1; next }
+    in_packs && /^[[:space:]]*packSets = \{/ { in_packs = 0 }
+    in_packs { print }
+  ' home/user/desktop/pack-registry.nix \
+    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\{/\1/p' \
     | sort -u
 )
 
-for module in "${pack_modules[@]}"; do
-  if [[ ! -f "home/user/desktop/${module}" ]]; then
-    report_fail "pack registry references missing module: home/user/desktop/${module}"
-  fi
-done
+mapfile -t pack_set_names < <(
+  awk '
+    /^[[:space:]]*packSets = \{/ { in_sets = 1; next }
+    in_sets && /^[[:space:]]*};/ { in_sets = 0 }
+    in_sets { print }
+  ' home/user/desktop/pack-registry.nix \
+    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\[.*/\1/p' \
+    | sort -u
+)
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+mkset "$tmpdir/pack_names" "${pack_names[@]}"
+mkset "$tmpdir/pack_set_names" "${pack_set_names[@]}"
+
+for pack in "${pack_names[@]}"; do
+  block="$(
+    awk "/^[[:space:]]*${pack}[[:space:]]*=[[:space:]]*\\{/,/^[[:space:]]*\\};/" home/user/desktop/pack-registry.nix
+  )"
+  module_rel="$(sed -nE 's/^[[:space:]]*module[[:space:]]*=[[:space:]]*\.\/([a-z0-9-]+\.nix);/\1/p' <<<"$block" | head -n 1)"
+  if [[ -z "$module_rel" ]]; then
+    report_fail "pack '${pack}' missing module path in pack-registry.nix"
+    continue
+  fi
+  if [[ ! -f "home/user/desktop/${module_rel}" ]]; then
+    report_fail "pack '${pack}' references missing module: home/user/desktop/${module_rel}"
+  fi
+done
+
+for set_name in "${pack_set_names[@]}"; do
+  set_block="$(
+    awk "/^[[:space:]]*${set_name}[[:space:]]*=[[:space:]]*\\[/,/\\];/" home/user/desktop/pack-registry.nix
+  )"
+  mapfile -t set_entries < <(rg -o '"[a-z0-9-]+"' <<<"$set_block" | tr -d '"' | sort -u)
+  for pack in "${set_entries[@]}"; do
+    if ! grep -Fxq "$pack" "$tmpdir/pack_names"; then
+      report_fail "pack set '${set_name}' references unknown pack '${pack}'"
+    fi
+  done
+done
 
 mapfile -t host_dirs < <(
   find hosts -mindepth 1 -maxdepth 1 -type d -printf '%f\n' \
@@ -186,6 +227,20 @@ for profile in "${registry_profiles[@]}"; do
   if ! rg -q 'optionalIntegrations = ' <<<"$block"; then
     report_fail "profile '${profile}' metadata missing optionalIntegrations"
   fi
+  if ! rg -q 'packSets = ' <<<"$block"; then
+    report_fail "profile '${profile}' metadata missing packSets"
+  fi
+
+  pack_set_block="$(awk '/packSets = \[/,/\];/' <<<"$block")"
+  mapfile -t profile_pack_sets < <(rg -o '"[a-z0-9-]+"' <<<"$pack_set_block" | tr -d '"' | sort -u)
+  if [[ "${#profile_pack_sets[@]}" -eq 0 ]]; then
+    report_fail "profile '${profile}' packSets must declare at least one set"
+  fi
+  for set_name in "${profile_pack_sets[@]}"; do
+    if ! grep -Fxq "$set_name" "$tmpdir/pack_set_names"; then
+      report_fail "profile '${profile}' references unknown pack set '${set_name}'"
+    fi
+  done
 
   for key in "${required_capability_keys[@]}"; do
     if ! rg -q "${key}[[:space:]]*=" <<<"$block"; then

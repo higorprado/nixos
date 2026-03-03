@@ -1,7 +1,25 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  osConfig,
+  ...
+}:
 let
   mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
   packRegistry = import ./pack-registry.nix;
+  profileMetadata = import ../../../modules/profiles/desktop/profile-metadata.nix;
+  profileName = osConfig.custom.desktop.profile;
+  profilePackSets =
+    if builtins.hasAttr profileName profileMetadata then
+      (profileMetadata.${profileName}.packSets or [ ])
+    else
+      [ ];
+  selectedPackNames = lib.unique (
+    lib.concatMap
+      (setName: packRegistry.packSets.${setName} or [ ])
+      profilePackSets
+  );
+  selectedPackModules = map (packName: packRegistry.packs.${packName}.module) selectedPackNames;
 in
 {
   imports =
@@ -14,7 +32,7 @@ in
       ./shells.nix # niri/custom.kdl, caelestia, noctalia configs
       ./profile-integrations.nix # Profile-specific shell integrations
     ]
-    ++ packRegistry.packModules;
+    ++ selectedPackModules;
 
   xdg.enable = true;
 

@@ -32,8 +32,10 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 ### Optional Pack Extension Contract
 1. Pack implementation lives in a dedicated `home/user/desktop/<pack>.nix` module.
 2. Pack registration is centralized in `home/user/desktop/pack-registry.nix`.
-3. Pack wiring must be visible in `home/user/desktop/default.nix` via `packRegistry.packModules`.
-4. If a pack needs new capability gating, add it via profile capability source; do not add ad-hoc host conditionals.
+3. Pack-set definitions in `home/user/desktop/pack-registry.nix` are the only source for pack grouping.
+4. Profile-to-pack-set selection is declared in `modules/profiles/desktop/profile-metadata.nix`.
+5. Pack wiring must be visible in `home/user/desktop/default.nix` via selected pack modules from metadata pack sets.
+6. If a pack needs new capability gating, add it via profile capability source; do not add ad-hoc host conditionals.
 
 ## Enforcement
 1. `./scripts/check-extension-contracts.sh`
