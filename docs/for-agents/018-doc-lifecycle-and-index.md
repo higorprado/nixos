@@ -1,43 +1,73 @@
-# Doc Lifecycle and Canonical Index
+# Doc Lifecycle and Index
 
-## Lifecycle States
-1. `canonical`
-   - Stable source-of-truth for behavior, contracts, and operating rules.
-   - Kept in `docs/for-agents/` root.
-2. `active-plan`
-   - Current execution roadmap for an in-flight program.
-   - Keep only the active plan in root.
-3. `historical`
-   - Completed/superseded plans, audits, and execution logs.
-   - Stored under `docs/for-agents/historical/`.
+## Folder Model
+1. `docs/for-agents/` root:
+   - critical operating docs only.
+2. `docs/for-agents/reference/`:
+   - supporting contracts/guides used by agents.
+3. `docs/for-agents/plans/`:
+   - active plans.
+4. `docs/for-agents/current-work/`:
+   - in-flight execution logs/status notes.
+5. `docs/for-agents/historical/`:
+   - completed/superseded plans, audits, and execution notes.
 
-## Canonical Topic Index (Single Source of Truth)
-1. Operating rules: `000-operating-rules.md`
-2. Repo topology: `001-repo-map.md`
-3. Decision algorithm: `002-change-decision-algorithm.md`
-4. Multi-host model: `003-multi-host-model.md`
-5. Dev environment model: `004-dev-environment-model.md`
-6. Nvim ops: `005-nvim-ops-guide.md`
-7. Validation and safety: `006-validation-and-safety-gates.md`
-8. Private overrides/public safety: `007-private-overrides-and-public-safety.md`
-9. Flake structure pattern: `008-flake-and-structure-pattern.md`
-10. Private ops scripts boundary: `009-private-ops-scripts.md`
-11. Greeter/profile switch safety: `010-profile-switch-and-greeter-safety.md`
-12. Module ownership boundaries: `011-module-ownership-boundaries.md`
-13. Extensibility contracts: `012-extensibility-contracts.md`
-14. Option migration playbook: `013-option-migration-playbook.md`
-15. User-resolution contract: `014-user-resolution-contract.md`
-16. Profile/pack schema contract: `015-profile-pack-schema.md`
-17. CI lane policy: `016-ci-lane-policy.md`
-18. Config test pyramid: `017-config-test-pyramid.md`
-19. Script architecture contract: `020-script-architecture-contract.md`
-20. Maintainer change map: `021-maintainer-change-map.md`
-21. Lessons learned: `999-lessons-learned.md`
+## Placement Decision Tree
+1. Is it a durable operating rule every agent must read first?
+   - Put in root.
+2. Is it a supporting contract or technical guide?
+   - Put in `reference/`.
+3. Is it an active roadmap or implementation plan?
+   - Put in `plans/`.
+4. Is it an active execution log/status tracker?
+   - Put in `current-work/`.
+5. Is it completed/superseded/context-only?
+   - Put in `historical/`.
 
-## Active Plan
-1. `932-maintainability-excellence-plan.md`
+## Naming Rules
+1. Use `NNN-name` in all agent-doc folders.
+2. Keep stable numbering; do not renumber existing files unless required by a migration plan.
+3. If adding a new doc, choose the next available number within the target folder context.
 
-## Historical Plan Rule
-1. When a plan is complete or superseded, move it to `docs/for-agents/historical/`.
-2. Keep references from canonical docs pointing to canonical docs whenever possible.
-3. Use historical docs for context, not as authoritative policy.
+## Templates
+1. Agent plan template: `docs/templates/for-agents-plan-template.md`
+2. Agent current-work template: `docs/templates/for-agents-current-work-template.md`
+3. Human workflow template: `docs/templates/for-humans-workflow-template.md`
+
+## Root Critical Docs
+1. `000-operating-rules.md`
+2. `001-repo-map.md`
+3. `006-validation-and-safety-gates.md`
+4. `007-private-overrides-and-public-safety.md`
+5. `009-private-ops-scripts.md`
+6. `018-doc-lifecycle-and-index.md`
+7. `999-lessons-learned.md`
+
+## Active Plan Index
+1. `docs/for-agents/plans/905-system-up-to-date-audit-plan.md`
+2. `docs/for-agents/plans/934-docs-tidy-and-workflow-plan.md`
+
+## Reference Index
+1. `docs/for-agents/reference/002-change-decision-algorithm.md`
+2. `docs/for-agents/reference/003-multi-host-model.md`
+3. `docs/for-agents/reference/004-dev-environment-model.md`
+4. `docs/for-agents/reference/005-nvim-ops-guide.md`
+5. `docs/for-agents/reference/008-flake-and-structure-pattern.md`
+6. `docs/for-agents/reference/010-profile-switch-and-greeter-safety.md`
+7. `docs/for-agents/reference/011-module-ownership-boundaries.md`
+8. `docs/for-agents/reference/012-extensibility-contracts.md`
+9. `docs/for-agents/reference/013-option-migration-playbook.md`
+10. `docs/for-agents/reference/014-user-resolution-contract.md`
+11. `docs/for-agents/reference/015-profile-pack-schema.md`
+12. `docs/for-agents/reference/016-ci-lane-policy.md`
+13. `docs/for-agents/reference/017-config-test-pyramid.md`
+14. `docs/for-agents/reference/019-runtime-warning-budget.md`
+15. `docs/for-agents/reference/020-script-architecture-contract.md`
+16. `docs/for-agents/reference/021-maintainer-change-map.md`
+17. `docs/for-agents/reference/924-catppuccin-gtk-theme-policy.md`
+18. `docs/for-agents/reference/926-mutable-config-registry.md`
+
+## Historical Rule
+1. Never delete historical docs to tidy root noise.
+2. Move to `historical/` and keep links valid.
+3. Historical docs are context only, not source-of-truth policy.

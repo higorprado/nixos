@@ -3,7 +3,7 @@
 ## Objective
 Reorganize documentation so it is easier to use and maintain:
 1. Human docs focus on clear explanation plus practical workflows for common tasks.
-2. Agent docs are split by intent (`core`, `plans`, `current-work`, `historical`) with root containing only critical operating docs.
+2. Agent docs are split by intent (`core`, `reference`, `plans`, `current-work`, `historical`) with root containing only critical operating docs.
 3. Core docs are rewritten for clarity and consistency, not only moved.
 4. New agents get explicit rules for where new docs belong and how to name them.
 
@@ -11,11 +11,11 @@ Reorganize documentation so it is easier to use and maintain:
 1. Keep existing safety rules and validation requirements intact.
 2. Do not delete historical knowledge; move and relink instead.
 3. Every move/rename must preserve discoverability (indexes + backlinks updated in same slice).
-4. Use numbered filenames (`NNN-name.md`) for all agent docs, including subfolders.
+4. Use numbered filenames (`NNN-name`) for all agent docs, including subfolders.
 
 ## Success Criteria
-1. `docs/for-agents/` root has only super-important docs and one active plan.
-2. `docs/for-agents/plans/` contains active execution plans other than the current root plan.
+1. `docs/for-agents/` root has only super-important docs.
+2. `docs/for-agents/plans/` contains active execution plans.
 3. `docs/for-agents/current-work/` exists and tracks in-flight execution/status notes.
 4. Human docs include a workflow-oriented section for key operations.
 5. A new agent can determine doc placement rules without guessing.
@@ -32,8 +32,8 @@ Reorganize documentation so it is easier to use and maintain:
   - `009-private-ops-scripts.md`
   - `018-doc-lifecycle-and-index.md`
   - `999-lessons-learned.md`
-  - current active plan (`934-...`) until complete
 - New folders:
+  - `docs/for-agents/reference/` for supporting contracts/guides
   - `docs/for-agents/plans/` for active plan docs
   - `docs/for-agents/current-work/` for active execution journals/status docs
   - `docs/for-agents/historical/` for completed/superseded docs (already exists)
@@ -82,6 +82,7 @@ Reorganize documentation so it is easier to use and maintain:
 
 ### Tasks
 1. Create folders:
+   - `docs/for-agents/reference/`
    - `docs/for-agents/plans/`
    - `docs/for-agents/current-work/`
 2. Move non-critical plan docs from root into `plans/`.
@@ -89,7 +90,7 @@ Reorganize documentation so it is easier to use and maintain:
 4. Keep only critical docs in root; update all internal links and indexes.
 
 ### Exit Criteria
-1. Root contains only critical docs + one active plan.
+1. Root contains only critical docs.
 2. `plans/` and `current-work/` are populated and indexed.
 3. No broken links in docs-drift checks.
 

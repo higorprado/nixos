@@ -14,18 +14,29 @@ targets=(
   docs/for-agents/000-operating-rules.md
   docs/for-agents/001-repo-map.md
   docs/for-agents/006-validation-and-safety-gates.md
-  docs/for-agents/011-module-ownership-boundaries.md
-  docs/for-agents/012-extensibility-contracts.md
-  docs/for-agents/013-option-migration-playbook.md
-  docs/for-agents/014-user-resolution-contract.md
-  docs/for-agents/015-profile-pack-schema.md
-  docs/for-agents/016-ci-lane-policy.md
-  docs/for-agents/017-config-test-pyramid.md
+  docs/for-agents/007-private-overrides-and-public-safety.md
+  docs/for-agents/009-private-ops-scripts.md
   docs/for-agents/018-doc-lifecycle-and-index.md
-  docs/for-agents/019-runtime-warning-budget.md
-  docs/for-agents/020-script-architecture-contract.md
-  docs/for-agents/021-maintainer-change-map.md
+  docs/for-agents/plans/900-plans-index.md
+  docs/for-agents/current-work/900-current-work-index.md
+  docs/for-agents/reference/900-reference-index.md
+  docs/for-agents/reference/011-module-ownership-boundaries.md
+  docs/for-agents/reference/012-extensibility-contracts.md
+  docs/for-agents/reference/013-option-migration-playbook.md
+  docs/for-agents/reference/014-user-resolution-contract.md
+  docs/for-agents/reference/015-profile-pack-schema.md
+  docs/for-agents/reference/016-ci-lane-policy.md
+  docs/for-agents/reference/017-config-test-pyramid.md
+  docs/for-agents/reference/019-runtime-warning-budget.md
+  docs/for-agents/reference/020-script-architecture-contract.md
+  docs/for-agents/reference/021-maintainer-change-map.md
   docs/for-humans/00-start-here.md
+  docs/for-humans/workflows/100-workflows-index.md
+  docs/for-humans/workflows/101-host-and-profile-changes.md
+  docs/for-humans/workflows/102-switch-and-rollback.md
+  docs/for-humans/workflows/103-private-overrides.md
+  docs/for-humans/workflows/104-validation-before-merge.md
+  docs/for-humans/workflows/105-session-recovery.md
   docs/for-humans/03-multi-host-philosophy.md
   docs/for-humans/07-flake-and-structure-pattern.md
   docs/for-humans/08-validation-and-maintainability-release.md
@@ -54,10 +65,22 @@ resolve_reference() {
 
   # Common docs shorthand: same collection filename only.
   if [[ "$ref" == *.md && "$ref" != */* ]]; then
-    if [[ "$source_dir" == docs/for-agents && -e "docs/for-agents/$ref" ]]; then
+    if [[ "$source_dir" == docs/for-agents* && -e "docs/for-agents/$ref" ]]; then
       return 0
     fi
-    if [[ "$source_dir" == docs/for-humans && -e "docs/for-humans/$ref" ]]; then
+    if [[ "$source_dir" == docs/for-humans* && -e "docs/for-humans/$ref" ]]; then
+      return 0
+    fi
+    if [[ "$source_dir" == docs/for-humans* && -e "docs/for-humans/workflows/$ref" ]]; then
+      return 0
+    fi
+    if [[ "$source_dir" == docs/for-agents* && -e "docs/for-agents/reference/$ref" ]]; then
+      return 0
+    fi
+    if [[ "$source_dir" == docs/for-agents* && -e "docs/for-agents/plans/$ref" ]]; then
+      return 0
+    fi
+    if [[ "$source_dir" == docs/for-agents* && -e "docs/for-agents/current-work/$ref" ]]; then
       return 0
     fi
   fi

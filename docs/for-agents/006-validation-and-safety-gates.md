@@ -1,62 +1,24 @@
 # Validation and Safety Gates
 
-## Mandatory Gates
-
-1. `nix flake metadata`
-2. `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-3. `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
-4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
-5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
-
-Use username indirection in automation/scripts:
-```bash
-hm_user="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
-nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"
-nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.path"
-```
-
-## Optional Pattern Gates
-
-1. `./scripts/check-flake-pattern.sh`
-2. `./scripts/check-desktop-capability-usage.sh`
-3. `./scripts/check-profile-matrix.sh`
-4. `./scripts/check-option-declaration-boundary.sh`
-5. `./scripts/check-option-migrations.sh`
-6. `./scripts/check-extension-contracts.sh`
-7. `./scripts/check-test-pyramid-contracts.sh`
-8. `./scripts/check-validation-source-of-truth.sh`
-9. `./scripts/check-config-contracts.sh`
-10. `./scripts/check-extension-simulations.sh`
-11. `./scripts/check-changed-files-quality.sh [origin/main]`
-12. `./scripts/check-docs-drift.sh`
-13. `./scripts/check-runtime-smoke.sh` (local desktop session only)
-14. `./scripts/capture-runtime-warning-report.sh` (local artifact capture for warning governance)
-15. `./scripts/report-maintainability-kpis.sh` (capture maintainability KPI baseline artifacts)
-16. `./scripts/check-script-fixture-tests.sh` (deterministic fixture-based checks for script orchestration behavior)
-
-## Fast Feedback (Local Iteration)
-
+## Fast Feedback (Every Slice)
 1. `./scripts/check-changed-files-quality.sh [origin/main]`
 2. `./scripts/run-validation-gates.sh structure`
 
-## Full Local Validation
+## Full Validation (Before Merge)
+1. `./scripts/run-validation-gates.sh all`
+2. `./scripts/check-repo-public-safety.sh`
 
-1. `./scripts/run-validation-gates.sh all` (canonical stage runner)
-2. `./scripts/run-full-validation.sh` (compat wrapper for `all`)
-3. Runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
-4. Stage-level execution is supported:
-   - `./scripts/run-validation-gates.sh structure`
-   - `./scripts/run-validation-gates.sh predator`
-   - `./scripts/run-validation-gates.sh server-example`
-   - `./scripts/run-validation-gates.sh runtime-smoke`
-5. CI trigger policy for fast/full lanes is defined in `016-ci-lane-policy.md`.
+## Runtime Validation (When Session/Desktop Is Touched)
+1. `./scripts/check-runtime-smoke.sh --allow-non-graphical`
+2. Optional artifact capture: `./scripts/capture-runtime-warning-report.sh`
 
-## Rollback
+## Canonical Runner
+1. Use `./scripts/run-validation-gates.sh` as source of truth.
+2. Stage options: `structure`, `predator`, `server-example`, `runtime-smoke`, `all`.
 
-1. Prefer reverting the last slice rather than broad resets.
-2. If migration/cleanup, ensure backup exists before deletion.
-3. Keep a written move/remove ledger for recoverability.
-
-## Destructive Change Rule
-
-If ownership/reference is ambiguous, stop and ask user.
+## Username-Resolution Safe Pattern
+1. Resolve Home Manager username through config instead of hardcoding:
+```bash
+hm_user="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
+nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"
+```

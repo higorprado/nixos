@@ -347,7 +347,7 @@ When desktop/session code is touched, also run:
 24. 2026-03-03: Phase 7 completed (docs drift guard + ownership boundaries).
 25. Phase 7 changes:
     - Added `scripts/check-docs-drift.sh` (living-doc references integrity).
-    - Added ownership boundary doc: `docs/for-agents/011-module-ownership-boundaries.md`.
+    - Added ownership boundary doc: `docs/for-agents/reference/011-module-ownership-boundaries.md`.
     - Linked boundary guidance from:
       - `docs/for-agents/000-operating-rules.md`
       - `docs/for-agents/001-repo-map.md`
