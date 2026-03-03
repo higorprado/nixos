@@ -25,3 +25,4 @@ Make correct, minimal, reversible changes with explicit validation.
 7. Read `016-ci-lane-policy.md` before changing CI/workflow behavior or validation trigger conditions.
 8. Read `017-config-test-pyramid.md` before changing validation layering, fixture coverage, or regression policy.
 9. Read `018-doc-lifecycle-and-index.md` before reorganizing docs or changing source-of-truth references.
+10. Read `019-runtime-warning-budget.md` before changing runtime-smoke warning thresholds or warning acceptance policy.

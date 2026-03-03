@@ -9,8 +9,9 @@
 5. Option deprecation/removal safety is enforced by `./scripts/check-option-migrations.sh`.
 6. Synthetic extension checks are enforced by `./scripts/check-extension-simulations.sh`.
 7. Test-pyramid layer/category coverage is enforced by `./scripts/check-test-pyramid-contracts.sh`.
-8. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
-9. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
+8. Runtime warning budgets are governed by `config/validation/runtime-warning-budget.json`.
+9. Runtime session checks are automated by `./scripts/check-runtime-smoke.sh`.
+10. Legacy desktop shim modules were removed in favor of canonical desktop profile paths.
 
 ## What Is Enforced Now
 
@@ -34,3 +35,5 @@
    - CI full lane via manual dispatch (`run_full = true`) or weekday schedule.
 4. Desktop runtime regression checks (when relevant):
    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`
+5. Runtime warning artifact capture (when relevant):
+   - `./scripts/capture-runtime-warning-report.sh`

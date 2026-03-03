@@ -10,7 +10,8 @@
 7. `docs/for-agents/016-ci-lane-policy.md`
 8. `docs/for-agents/017-config-test-pyramid.md`
 9. `docs/for-agents/018-doc-lifecycle-and-index.md`
-10. `docs/for-agents/999-lessons-learned.md`
+10. `docs/for-agents/019-runtime-warning-budget.md`
+11. `docs/for-agents/999-lessons-learned.md`
 
 ## Docs Naming Rule
 1. Agent docs use `NNN-name.md` (three digits), for example `000-...`, `009-...`, `903-...`.

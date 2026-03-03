@@ -45,3 +45,4 @@
 6. CI lane trigger policy is defined in `016-ci-lane-policy.md`.
 7. Config test-pyramid contract is defined in `017-config-test-pyramid.md`.
 8. Canonical vs active-plan vs historical docs lifecycle is defined in `018-doc-lifecycle-and-index.md`.
+9. Runtime warning budget policy is defined in `019-runtime-warning-budget.md`.

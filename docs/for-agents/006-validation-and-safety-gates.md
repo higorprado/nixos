@@ -30,6 +30,7 @@ nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.
 11. `./scripts/check-changed-files-quality.sh [origin/main]`
 12. `./scripts/check-docs-drift.sh`
 13. `./scripts/check-runtime-smoke.sh` (local desktop session only)
+14. `./scripts/capture-runtime-warning-report.sh` (local artifact capture for warning governance)
 
 ## Fast Feedback (Local Iteration)
 
