@@ -7,7 +7,8 @@ let
   profile = config.custom.desktop.profile;
   hostRole = config.custom.host.role;
   isDesktopHost = hostRole == "desktop";
-  profileMetadata = import ./desktop/profile-metadata.nix;
+  profileMetadataRoot = import ./desktop/profile-metadata.nix;
+  profileMetadata = profileMetadataRoot.profiles or profileMetadataRoot;
   defaultCapabilities = {
     desktopFiles = false;
     desktopUserApps = false;

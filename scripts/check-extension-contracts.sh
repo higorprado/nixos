@@ -7,6 +7,9 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 # shellcheck source=lib/set_ops.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/set_ops.sh"
+# shellcheck source=lib/nix_eval.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/nix_eval.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
@@ -63,6 +66,22 @@ check_set_sync() {
 check_assignment_scope "custom.host.role" '^[[:space:]]*custom\.host\.role[[:space:]]*=' is_allowed_host_role_assignment
 check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.profile[[:space:]]*=' is_allowed_desktop_profile_assignment
 
+profile_metadata_root_json="$(nix_eval_json_expr "import ${PWD}/modules/profiles/desktop/profile-metadata.nix")"
+if ! jq -e 'has("schemaVersion") and has("profiles") and (.profiles | type == "object")' <<<"$profile_metadata_root_json" >/dev/null; then
+  report_fail "profile-metadata.nix must expose schemaVersion and profiles attrset"
+fi
+if [[ "$(jq -r '.schemaVersion // ""' <<<"$profile_metadata_root_json")" != "1" ]]; then
+  report_fail "profile-metadata.nix schemaVersion must be 1"
+fi
+
+pack_registry_root_json="$(nix_eval_json_expr "import ${PWD}/home/user/desktop/pack-registry.nix")"
+if ! jq -e 'has("schemaVersion") and has("packs") and has("packSets") and (.packs | type == "object") and (.packSets | type == "object")' <<<"$pack_registry_root_json" >/dev/null; then
+  report_fail "pack-registry.nix must expose schemaVersion, packs, and packSets attrsets"
+fi
+if [[ "$(jq -r '.schemaVersion // ""' <<<"$pack_registry_root_json")" != "1" ]]; then
+  report_fail "pack-registry.nix schemaVersion must be 1"
+fi
+
 if ! rg -q 'packRegistry = import ./pack-registry.nix;' home/user/desktop/default.nix; then
   report_fail "home/user/desktop/default.nix must import pack-registry.nix"
 fi
@@ -74,22 +93,14 @@ if ! rg -q '\+\+ selectedPackModules;' home/user/desktop/default.nix; then
 fi
 
 mapfile -t pack_names < <(
-  awk '
-    /^[[:space:]]*packs = \{/ { in_packs = 1; next }
-    in_packs && /^[[:space:]]*packSets = \{/ { in_packs = 0 }
-    in_packs { print }
-  ' home/user/desktop/pack-registry.nix \
-    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\{/\1/p' \
+  nix_eval_json_expr "builtins.attrNames (import ${PWD}/home/user/desktop/pack-registry.nix).packs" \
+    | jq -r '.[]' \
     | sort -u
 )
 
 mapfile -t pack_set_names < <(
-  awk '
-    /^[[:space:]]*packSets = \{/ { in_sets = 1; next }
-    in_sets && /^[[:space:]]*};/ { in_sets = 0 }
-    in_sets { print }
-  ' home/user/desktop/pack-registry.nix \
-    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\[.*/\1/p' \
+  nix_eval_json_expr "builtins.attrNames (import ${PWD}/home/user/desktop/pack-registry.nix).packSets" \
+    | jq -r '.[]' \
     | sort -u
 )
 
@@ -100,24 +111,24 @@ mkset "$tmpdir/pack_names" "${pack_names[@]}"
 mkset "$tmpdir/pack_set_names" "${pack_set_names[@]}"
 
 for pack in "${pack_names[@]}"; do
-  block="$(
-    awk "/^[[:space:]]*${pack}[[:space:]]*=[[:space:]]*\\{/,/^[[:space:]]*\\};/" home/user/desktop/pack-registry.nix
+  module_path="$(
+    nix eval --raw --impure --expr "toString ((import ${PWD}/home/user/desktop/pack-registry.nix).packs.\"${pack}\".module)" 2>/dev/null || true
   )"
-  module_rel="$(sed -nE 's/^[[:space:]]*module[[:space:]]*=[[:space:]]*\.\/([a-z0-9-]+\.nix);/\1/p' <<<"$block" | head -n 1)"
-  if [[ -z "$module_rel" ]]; then
+  if [[ -z "$module_path" ]]; then
     report_fail "pack '${pack}' missing module path in pack-registry.nix"
     continue
   fi
-  if [[ ! -f "home/user/desktop/${module_rel}" ]]; then
-    report_fail "pack '${pack}' references missing module: home/user/desktop/${module_rel}"
+  if [[ ! -f "$module_path" ]]; then
+    report_fail "pack '${pack}' references missing module: ${module_path}"
   fi
 done
 
 for set_name in "${pack_set_names[@]}"; do
-  set_block="$(
-    awk "/^[[:space:]]*${set_name}[[:space:]]*=[[:space:]]*\\[/,/\\];/" home/user/desktop/pack-registry.nix
-  )"
-  mapfile -t set_entries < <(rg -o '"[a-z0-9-]+"' <<<"$set_block" | tr -d '"' | sort -u)
+  mapfile -t set_entries < <(
+    nix_eval_json_expr "(import ${PWD}/home/user/desktop/pack-registry.nix).packSets.\"${set_name}\"" \
+      | jq -r '.[]?' \
+      | sort -u
+  )
   for pack in "${set_entries[@]}"; do
     if ! grep -Fxq "$pack" "$tmpdir/pack_names"; then
       report_fail "pack set '${set_name}' references unknown pack '${pack}'"
@@ -200,7 +211,14 @@ done < <(
 )
 
 mapfile -t metadata_profiles < <(
-  sed -nE 's/^  ([a-z0-9-]+) = \{/\1/p' modules/profiles/desktop/profile-metadata.nix \
+  nix_eval_json_expr "
+    let
+      metadataRoot = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
+      metadata = metadataRoot.profiles or metadataRoot;
+    in
+      builtins.attrNames metadata
+  " \
+    | jq -r '.[]' \
     | sort -u
 )
 
@@ -219,8 +237,11 @@ mkset "$tmpdir/metadata" "${metadata_profiles[@]}"
 check_set_sync "profile registry" "$tmpdir/expected" "profile modules" "$tmpdir/modules"
 check_set_sync "profile registry" "$tmpdir/expected" "profile metadata keys" "$tmpdir/metadata"
 
-if ! rg -q 'builtins\.attrNames \(import .*profile-metadata\.nix' scripts/check-profile-matrix.sh; then
-  report_fail "scripts/check-profile-matrix.sh must derive profile list from profile metadata"
+if ! rg -q 'profileMetadataRoot = import .*profile-metadata\.nix' scripts/check-profile-matrix.sh; then
+  report_fail "scripts/check-profile-matrix.sh must import profile metadata root"
+fi
+if ! rg -q 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' scripts/check-profile-matrix.sh; then
+  report_fail "scripts/check-profile-matrix.sh must support schema-based profile metadata"
 fi
 if ! rg -q 'expected = profileMetadata\..*capabilities;' scripts/check-profile-matrix.sh; then
   report_fail "scripts/check-profile-matrix.sh must derive expected capabilities from profile metadata"
@@ -237,27 +258,26 @@ required_capability_keys=(
 )
 
 for profile in "${registry_profiles[@]}"; do
-  block="$(awk "/^  ${profile} = \\{/,/^  \\};/" modules/profiles/desktop/profile-metadata.nix)"
-  if [[ -z "$block" ]]; then
-    report_fail "profile '${profile}' missing metadata block in modules/profiles/desktop/profile-metadata.nix"
+  profile_json="$(
+    nix_eval_json_expr "
+      let
+        metadataRoot = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
+        metadata = metadataRoot.profiles or metadataRoot;
+      in
+        metadata.\"${profile}\" or null
+    "
+  )"
+
+  if [[ "$(jq -r 'type' <<<"$profile_json")" != "object" ]]; then
+    report_fail "profile '${profile}' missing metadata object in modules/profiles/desktop/profile-metadata.nix"
     continue
   fi
 
-  if ! rg -q 'capabilities = \{' <<<"$block"; then
-    report_fail "profile '${profile}' metadata missing capabilities block"
-  fi
-  if ! rg -q 'requiredIntegrations = ' <<<"$block"; then
-    report_fail "profile '${profile}' metadata missing requiredIntegrations"
-  fi
-  if ! rg -q 'optionalIntegrations = ' <<<"$block"; then
-    report_fail "profile '${profile}' metadata missing optionalIntegrations"
-  fi
-  if ! rg -q 'packSets = ' <<<"$block"; then
-    report_fail "profile '${profile}' metadata missing packSets"
+  if ! jq -e 'has("capabilities") and has("requiredIntegrations") and has("optionalIntegrations") and has("packSets")' <<<"$profile_json" >/dev/null; then
+    report_fail "profile '${profile}' metadata missing required fields"
   fi
 
-  pack_set_block="$(awk '/packSets = \[/,/\];/' <<<"$block")"
-  mapfile -t profile_pack_sets < <(rg -o '"[a-z0-9-]+"' <<<"$pack_set_block" | tr -d '"' | sort -u)
+  mapfile -t profile_pack_sets < <(jq -r '.packSets[]?' <<<"$profile_json" | sort -u)
   if [[ "${#profile_pack_sets[@]}" -eq 0 ]]; then
     report_fail "profile '${profile}' packSets must declare at least one set"
   fi
@@ -268,14 +288,17 @@ for profile in "${registry_profiles[@]}"; do
   done
 
   for key in "${required_capability_keys[@]}"; do
-    if ! rg -q "${key}[[:space:]]*=" <<<"$block"; then
+    if ! jq -e ".capabilities | has(\"${key}\")" <<<"$profile_json" >/dev/null; then
       report_fail "profile '${profile}' capabilities missing key '${key}'"
     fi
   done
 done
 
-if ! rg -q 'profileMetadata = import ./desktop/profile-metadata.nix;' modules/profiles/profile-capabilities.nix; then
-  report_fail "modules/profiles/profile-capabilities.nix must import profile metadata"
+if ! rg -q 'profileMetadataRoot = import ./desktop/profile-metadata\.nix;' modules/profiles/profile-capabilities.nix; then
+  report_fail "modules/profiles/profile-capabilities.nix must import profile metadata root"
+fi
+if ! rg -q 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' modules/profiles/profile-capabilities.nix; then
+  report_fail "modules/profiles/profile-capabilities.nix must support schema-based profile metadata"
 fi
 if ! rg -q 'defaultCapabilities // selectedProfile\.capabilities' modules/profiles/profile-capabilities.nix; then
   report_fail "modules/profiles/profile-capabilities.nix must derive capabilities from selectedProfile.capabilities"

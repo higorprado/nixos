@@ -21,3 +21,4 @@ Make correct, minimal, reversible changes with explicit validation.
 3. Read `012-extensibility-contracts.md` before adding/changing hosts, desktop profiles, or desktop packs.
 4. Read `013-option-migration-playbook.md` before renaming/removing options in `modules/options/` or `home/user/options/`.
 5. Read `014-user-resolution-contract.md` before changing host identity/user wiring, CI username references, or private override behavior.
+6. Read `015-profile-pack-schema.md` before changing profile metadata or desktop pack registry structures.

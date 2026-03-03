@@ -55,7 +55,8 @@ profile_json="$(
   nix eval --json --impure --expr "
     let
       registry = import ${PWD}/modules/profiles/desktop/profile-registry.nix;
-      metadata = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
+      metadataRoot = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
+      metadata = metadataRoot.profiles or metadataRoot;
       packRegistry = import ${PWD}/home/user/desktop/pack-registry.nix;
       synthetic = \"synthetic-profile\";
 

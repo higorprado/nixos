@@ -34,6 +34,7 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
    - `modules/profiles/profile-capabilities.nix`
 7. Validation profile matrix derives expected capabilities from metadata:
    - `scripts/check-profile-matrix.sh`
+8. Metadata shape/version contract is defined in `015-profile-pack-schema.md`.
 
 ### Optional Pack Extension Contract
 1. Pack implementation lives in a dedicated `home/user/desktop/<pack>.nix` module.
@@ -42,6 +43,7 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
 4. Profile-to-pack-set selection is declared in `modules/profiles/desktop/profile-metadata.nix`.
 5. Pack wiring must be visible in `home/user/desktop/default.nix` via selected pack modules from metadata pack sets.
 6. If a pack needs new capability gating, add it via profile capability source; do not add ad-hoc host conditionals.
+7. Pack registry shape/version contract is defined in `015-profile-pack-schema.md`.
 
 ## Enforcement
 1. `./scripts/check-extension-contracts.sh`

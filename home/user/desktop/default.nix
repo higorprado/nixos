@@ -7,7 +7,8 @@
 let
   mutableCopy = import ../lib/mutable-copy.nix { inherit lib; };
   packRegistry = import ./pack-registry.nix;
-  profileMetadata = import ../../../modules/profiles/desktop/profile-metadata.nix;
+  profileMetadataRoot = import ../../../modules/profiles/desktop/profile-metadata.nix;
+  profileMetadata = profileMetadataRoot.profiles or profileMetadataRoot;
   profileName = osConfig.custom.desktop.profile;
   profilePackSets =
     if builtins.hasAttr profileName profileMetadata then

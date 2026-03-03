@@ -1,4 +1,6 @@
 {
+  schemaVersion = 1;
+
   packs = {
     apps = {
       module = ./apps.nix;

@@ -36,8 +36,8 @@ Define the default repo pattern so changes stay consistent and easy to reason ab
 
 1. Hosts are declared in `hosts/host-descriptors.nix`; `flake.nix` derives `hostRegistry` from descriptors.
 2. Desktop profiles are declared only in `modules/profiles/desktop/profile-registry.nix`.
-3. Profile metadata (capabilities/integrations/pack sets) is declared only in `modules/profiles/desktop/profile-metadata.nix`.
-4. Desktop packs and pack sets are declared only in `home/user/desktop/pack-registry.nix`.
+3. Profile metadata (capabilities/integrations/pack sets) is declared only in `modules/profiles/desktop/profile-metadata.nix` (`schemaVersion` + `profiles`).
+4. Desktop packs and pack sets are declared only in `home/user/desktop/pack-registry.nix` (`schemaVersion` + `packs` + `packSets`).
 5. Option rename/removal compatibility is declared only in `modules/options/migration-registry.nix`.
 
 ## Runtime Regression Checks

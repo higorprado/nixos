@@ -17,7 +17,12 @@ report_fail() {
 require_cmds "profile-matrix" "jq" "nix"
 
 mapfile -t profiles < <(
-  nix_eval_json_expr "builtins.attrNames (import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\")" \
+  nix_eval_json_expr "
+    let
+      metadataRoot = import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\";
+      metadata = metadataRoot.profiles or metadataRoot;
+    in builtins.attrNames metadata
+  " \
     | jq -r '.[]'
 )
 
@@ -39,7 +44,8 @@ check_profile() {
             }
           ];
         }).config;
-        profileMetadata = import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\";
+        profileMetadataRoot = import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\";
+        profileMetadata = profileMetadataRoot.profiles or profileMetadataRoot;
         expected = profileMetadata.\"${profile}\".capabilities;
         user = cfg.custom.user.name;
       in
