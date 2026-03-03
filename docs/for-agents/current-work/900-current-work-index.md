@@ -1,7 +1,7 @@
 # Current Work Index
 
 ## Active Execution Notes
-1. None currently.
+1. None.
 
 ## Rule
 1. Add a current-work note here when a non-trivial plan starts.

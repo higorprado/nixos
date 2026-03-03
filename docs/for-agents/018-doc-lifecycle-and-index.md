@@ -66,16 +66,11 @@
 6. `018-doc-lifecycle-and-index.md`
 7. `999-lessons-learned.md`
 
-## Active Plan Index
-1. `docs/for-agents/plans/905-system-up-to-date-audit-plan.md`
-
-## Active Current-Work Index
-1. See `docs/for-agents/current-work/900-current-work-index.md`.
-
-## Recently Completed
-1. `docs/for-agents/historical/934-docs-tidy-and-workflow-plan.md`
-2. `docs/for-agents/historical/940-docs-tidy-execution-log.md`
-3. `docs/for-agents/historical/941-docs-tidy-migration-table.md`
+## Canonical Active Indexes
+1. Active plans are listed only in `docs/for-agents/plans/900-plans-index.md`.
+2. Active execution notes are listed only in `docs/for-agents/current-work/900-current-work-index.md`.
+3. Do not duplicate mutable active/recent lists in root docs.
+4. Completed records live in `docs/for-agents/historical/`.
 
 ## Reference Index
 1. `docs/for-agents/reference/002-change-decision-algorithm.md`
