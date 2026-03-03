@@ -10,6 +10,7 @@ run_structure_gates() {
   echo "[validation-gates] structure gates"
   ./scripts/check-desktop-capability-usage.sh
   ./scripts/check-option-declaration-boundary.sh
+  ./scripts/check-option-migrations.sh
   ./scripts/check-extension-contracts.sh
   ./scripts/check-validation-source-of-truth.sh
   ./scripts/check-docs-drift.sh

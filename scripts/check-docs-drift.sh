@@ -14,6 +14,7 @@ targets=(
   docs/for-agents/006-validation-and-safety-gates.md
   docs/for-agents/011-module-ownership-boundaries.md
   docs/for-agents/012-extensibility-contracts.md
+  docs/for-agents/013-option-migration-playbook.md
   docs/for-agents/929-extensibility-maximization-plan.md
   docs/for-humans/00-start-here.md
   docs/for-humans/03-multi-host-philosophy.md

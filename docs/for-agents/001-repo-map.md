@@ -8,6 +8,7 @@
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).
    - Option declarations live under `modules/options/`.
+   - Option migration registry and module wiring live under `modules/options/migration-registry.nix` and `modules/options/option-migrations.nix`.
    - Desktop profile implementation lives under `modules/profiles/desktop/`.
    - Desktop profile registry lives in `modules/profiles/desktop/profile-registry.nix`.
    - Desktop profile metadata lives in `modules/profiles/desktop/profile-metadata.nix`.
@@ -35,3 +36,4 @@
 
 1. Ownership boundaries are defined in `011-module-ownership-boundaries.md`.
 2. Extension contracts are defined in `012-extensibility-contracts.md`.
+3. Option migration/deprecation workflow is defined in `013-option-migration-playbook.md`.

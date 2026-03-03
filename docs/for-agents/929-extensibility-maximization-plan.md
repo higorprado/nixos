@@ -282,3 +282,20 @@ When desktop/session behavior is touched, also run:
     - `./scripts/run-validation-gates.sh predator`: PASS
     - `./scripts/run-validation-gates.sh server-example`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+26. 2026-03-03: Phase 7 slice 1 completed (option migration/deprecation safety).
+27. Phase 7 slice 1 changes:
+    - Added registry-driven option migration framework:
+      - `modules/options/migration-registry.nix`
+      - `modules/options/option-migrations.nix`
+      - `modules/options/default.nix` import wiring
+    - Added migration contract gate: `scripts/check-option-migrations.sh`.
+    - Integrated migration gate into structure stage (`scripts/run-validation-gates.sh`).
+    - Added migration playbook doc: `docs/for-agents/013-option-migration-playbook.md`.
+28. Phase 7 slice 1 validation evidence:
+    - `shellcheck scripts/check-option-migrations.sh scripts/run-validation-gates.sh`: PASS
+    - `./scripts/check-option-migrations.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
