@@ -85,6 +85,30 @@ done
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
+mapfile -t host_dirs < <(
+  find hosts -mindepth 1 -maxdepth 1 -type d -printf '%f\n' \
+    | sort -u
+)
+
+mapfile -t host_registry_entries < <(
+  awk '/hostRegistry = \{/,/^[[:space:]]*\};/' flake.nix \
+    | sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*\[.*/\1/p' \
+    | sort -u
+)
+
+mkset "$tmpdir/host_dirs" "${host_dirs[@]}"
+mkset "$tmpdir/host_registry" "${host_registry_entries[@]}"
+check_set_sync "host directories" "$tmpdir/host_dirs" "host registry entries" "$tmpdir/host_registry"
+
+for host in "${host_dirs[@]}"; do
+  if [[ ! -f "hosts/${host}/default.nix" ]]; then
+    report_fail "host '${host}' missing hosts/${host}/default.nix"
+  fi
+  if ! rg -q "\./hosts/${host}/default\.nix" flake.nix; then
+    report_fail "host '${host}' missing ./hosts/${host}/default.nix reference in flake hostRegistry"
+  fi
+done
+
 mapfile -t module_profiles < <(
   find modules/profiles/desktop -maxdepth 1 -type f -name 'profile-*.nix' ! -name 'profile-registry.nix' ! -name 'profile-metadata.nix' -printf '%f\n' \
     | sed -E 's/^profile-(.*)\.nix$/\1/' \

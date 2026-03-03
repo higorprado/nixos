@@ -246,3 +246,14 @@ When desktop/session behavior is touched, also run:
     - `./scripts/run-validation-gates.sh predator`: PASS
     - `./scripts/run-validation-gates.sh server-example`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+17. 2026-03-03: Phase 5 slice 1 completed (host registry consistency guard).
+18. Phase 5 slice 1 changes:
+    - Extended `scripts/check-extension-contracts.sh` to enforce host directory <-> `flake.nix` `hostRegistry` consistency.
+    - Added checks for required `hosts/<host>/default.nix` and corresponding registry path reference.
+19. Phase 5 slice 1 validation evidence:
+    - `shellcheck scripts/check-extension-contracts.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS
