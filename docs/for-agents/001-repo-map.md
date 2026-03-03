@@ -39,3 +39,4 @@
 1. Ownership boundaries are defined in `011-module-ownership-boundaries.md`.
 2. Extension contracts are defined in `012-extensibility-contracts.md`.
 3. Option migration/deprecation workflow is defined in `013-option-migration-playbook.md`.
+4. User resolution and username indirection contract is defined in `014-user-resolution-contract.md`.

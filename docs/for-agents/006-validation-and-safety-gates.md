@@ -8,6 +8,13 @@
 4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
 5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 
+Use username indirection in automation/scripts:
+```bash
+hm_user="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
+nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"
+nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.path"
+```
+
 ## Optional Pattern Gates
 
 1. `./scripts/check-flake-pattern.sh`

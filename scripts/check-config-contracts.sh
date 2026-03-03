@@ -4,6 +4,9 @@ set -euo pipefail
 # shellcheck source=lib/common.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+# shellcheck source=lib/nix_eval.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/nix_eval.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
@@ -22,6 +25,8 @@ expect_equal() {
   fi
 }
 
+require_cmds "config-contracts" "jq" "nix" "rg"
+
 predator_role="$(nix eval --raw "path:$PWD#nixosConfigurations.predator.config.custom.host.role")"
 server_role="$(nix eval --raw "path:$PWD#nixosConfigurations.server-example.config.custom.host.role")"
 expect_equal "predator host role" "$predator_role" "desktop"
@@ -38,12 +43,30 @@ for key in niri hyprland dms noctalia caelestiaHyprland desktopFiles desktopUser
   expect_equal "server-example capability ${key}" "$(jq -r ".${key}" <<<"$server_caps_json")" "false"
 done
 
-hm_user="$(nix eval --raw "path:$PWD#nixosConfigurations.predator.config.custom.user.name")"
-if [[ "$hm_user" != "user" ]]; then
+mapfile -t declared_hosts < <(
+  nix_eval_json_expr "builtins.attrNames (builtins.getFlake \"path:${PWD}\").nixosConfigurations" \
+    | jq -r '.[]'
+)
+
+declare -A resolved_users=()
+for host in "${declared_hosts[@]}"; do
+  [[ -z "$host" ]] && continue
+  host_user="$(nix eval --raw "path:$PWD#nixosConfigurations.${host}.config.custom.user.name")"
+  case "$host_user" in
+    ""|"root"|"user")
+      report_fail "host '${host}' resolved unsafe custom.user.name='${host_user}'"
+      ;;
+    *)
+      resolved_users["$host_user"]=1
+      ;;
+  esac
+done
+
+for hm_user in "${!resolved_users[@]}"; do
   if rg -n "home-manager\\.users\\.${hm_user}\\." .github scripts docs/for-agents docs/for-humans README.md >/dev/null; then
     report_fail "found hardcoded home-manager user '${hm_user}' in tracked CI/script/docs paths"
   fi
-fi
+done
 
 if [ "$fail" -ne 0 ]; then
   exit 1
