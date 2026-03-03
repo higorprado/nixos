@@ -10,10 +10,11 @@ echo "[full-validation] structure gates"
 
 echo "[full-validation] predator gates"
 ./scripts/check-profile-matrix.sh
+HM_USER="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
 nix flake metadata
 nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion
-nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion
-nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path
+nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.stateVersion
+nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.path
 nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel
 
 echo "[full-validation] server-example gates"

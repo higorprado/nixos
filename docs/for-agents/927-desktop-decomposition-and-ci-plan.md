@@ -37,8 +37,8 @@ All phases must be regression-safe and validated after each slice.
 2. `./scripts/check-profile-matrix.sh`
 3. `nix flake metadata`
 4. `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-5. `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion`
-6. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path`
+5. `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
+6. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
 7. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
 8. `nix eval path:$PWD#nixosConfigurations.server-example.config.custom.host.role`
 9. `nix eval --json path:$PWD#nixosConfigurations.server-example.config.custom.desktop.capabilities`

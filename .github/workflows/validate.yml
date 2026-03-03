@@ -45,11 +45,12 @@ jobs:
 
       - name: Predator Validation Gates
         run: |
+          HM_USER="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
           ./scripts/check-profile-matrix.sh
           nix flake metadata
           nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion
-          nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion
-          nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path
+          nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.stateVersion
+          nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.path
           nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel
 
   server-example-eval-build:

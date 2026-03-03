@@ -1,6 +1,7 @@
 # Repo Map
 
 ## Active Topology
+
 1. `flake.nix`: entrypoint, inputs, host wiring, home-manager module wiring.
 2. `hosts/<host>/`: host-specific imports and selections.
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
@@ -15,10 +16,12 @@
 8. `legacy/`: archived state; not active unless user explicitly requests.
 
 ## Private Script Boundary
+
 1. Personal/host-specific ops scripts live outside this repo:
    - `~/ops/nixos-private-scripts/bin`
 2. See `009-private-ops-scripts.md`.
 
 ## Critical Options
+
 1. `custom.desktop.profile`
 2. `custom.desktop.keyrs.enable`
