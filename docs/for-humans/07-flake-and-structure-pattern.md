@@ -29,7 +29,7 @@ Define the default repo pattern so changes stay consistent and easy to reason ab
 3. Run `./scripts/run-validation-gates.sh structure`.
 4. Run `./scripts/check-flake-pattern.sh`.
 5. Before merge, run `./scripts/run-validation-gates.sh all` (or `./scripts/run-full-validation.sh`).
-6. Ensure CI workflow `.github/workflows/validate.yml` is green (`lint-structure`, `predator-eval-build`, `server-example-eval-build`).
+6. Ensure CI workflow `.github/workflows/validate.yml` is green (`lint-structure` by default; heavy eval/build jobs are manual-dispatch).
 7. If a change intentionally breaks a rule, add an exception entry (with reason and revisit date) in [919-flake-and-structure-pattern-execution.md](docs/for-agents/919-flake-and-structure-pattern-execution.md).
 
 ## Extension Registries

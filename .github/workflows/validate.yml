@@ -8,6 +8,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-structure:
     runs-on: ubuntu-latest
@@ -34,6 +38,7 @@ jobs:
           ./scripts/run-validation-gates.sh structure
 
   predator-eval-build:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: lint-structure
     timeout-minutes: 90
@@ -58,6 +63,7 @@ jobs:
           ./scripts/run-validation-gates.sh predator
 
   server-example-eval-build:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: lint-structure
     timeout-minutes: 60

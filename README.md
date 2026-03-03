@@ -65,10 +65,13 @@ Use two levels of checks:
 ## CI
 
 1. CI workflow: `.github/workflows/validate.yml`
-2. Enforced jobs:
+2. Default automatic job (push/PR fast feedback):
    - `lint-structure`
+3. Heavy eval/build jobs are manual-dispatch only:
    - `predator-eval-build`
    - `server-example-eval-build`
+4. Full validation remains mandatory locally before merge:
+   - `./scripts/run-validation-gates.sh all`
 
 ## Troubleshooting
 
