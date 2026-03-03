@@ -10,6 +10,9 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/set_ops.sh"
 # shellcheck source=lib/nix_eval.sh
 # shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/nix_eval.sh"
+# shellcheck source=lib/extension_contracts_eval.sh
+# shellcheck disable=SC1091
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/extension_contracts_eval.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
@@ -99,7 +102,7 @@ require_pattern_in_file() {
 check_assignment_scope "custom.host.role" '^[[:space:]]*custom\.host\.role[[:space:]]*=' is_allowed_host_role_assignment
 check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.profile[[:space:]]*=' is_allowed_desktop_profile_assignment
 
-profile_metadata_root_json="$(nix_eval_json_expr "import ${PWD}/modules/profiles/desktop/profile-metadata.nix")"
+profile_metadata_root_json="$(extc_profile_metadata_root_json)"
 if ! jq -e 'has("schemaVersion") and has("profiles") and (.profiles | type == "object")' <<<"$profile_metadata_root_json" >/dev/null; then
   report_fail "profile-metadata.nix must expose schemaVersion and profiles attrset"
 fi
@@ -107,7 +110,7 @@ if [[ "$(jq -r '.schemaVersion // ""' <<<"$profile_metadata_root_json")" != "1" 
   report_fail "profile-metadata.nix schemaVersion must be 1"
 fi
 
-pack_registry_root_json="$(nix_eval_json_expr "import ${PWD}/home/user/desktop/pack-registry.nix")"
+pack_registry_root_json="$(extc_pack_registry_root_json)"
 if ! jq -e 'has("schemaVersion") and has("packs") and has("packSets") and (.packs | type == "object") and (.packSets | type == "object")' <<<"$pack_registry_root_json" >/dev/null; then
   report_fail "pack-registry.nix must expose schemaVersion, packs, and packSets attrsets"
 fi
@@ -119,17 +122,8 @@ require_pattern_in_file 'packRegistry = import ./pack-registry.nix;' home/user/d
 require_pattern_in_file 'profilePackSets[[:space:]]*=' home/user/desktop/default.nix "home/user/desktop/default.nix must derive profilePackSets from profile metadata"
 require_pattern_in_file '\+\+ selectedPackModules;' home/user/desktop/default.nix "home/user/desktop/default.nix must compose imports with selectedPackModules"
 
-mapfile -t pack_names < <(
-  nix_eval_json_expr "builtins.attrNames (import ${PWD}/home/user/desktop/pack-registry.nix).packs" \
-    | jq -r '.[]' \
-    | sort -u
-)
-
-mapfile -t pack_set_names < <(
-  nix_eval_json_expr "builtins.attrNames (import ${PWD}/home/user/desktop/pack-registry.nix).packSets" \
-    | jq -r '.[]' \
-    | sort -u
-)
+mapfile -t pack_names < <(extc_pack_names)
+mapfile -t pack_set_names < <(extc_pack_set_names)
 
 tmpdir="$(mktemp_dir_scoped extension-contracts)"
 trap 'rm -rf "$tmpdir"' EXIT
@@ -139,7 +133,7 @@ mkset "$tmpdir/pack_set_names" "${pack_set_names[@]}"
 
 for pack in "${pack_names[@]}"; do
   module_path="$(
-    nix_eval_raw_expr "toString ((import ${PWD}/home/user/desktop/pack-registry.nix).packs.\"${pack}\".module)" 2>/dev/null || true
+    extc_pack_module_path "${pack}" 2>/dev/null || true
   )"
   if [[ -z "$module_path" ]]; then
     report_fail "pack '${pack}' missing module path in pack-registry.nix"
@@ -152,9 +146,7 @@ done
 
 for set_name in "${pack_set_names[@]}"; do
   mapfile -t set_entries < <(
-    nix_eval_json_expr "(import ${PWD}/home/user/desktop/pack-registry.nix).packSets.\"${set_name}\"" \
-      | jq -r '.[]?' \
-      | sort -u
+    extc_pack_set_entries "${set_name}"
   )
   for pack in "${set_entries[@]}"; do
     if ! grep -Fxq "$pack" "$tmpdir/pack_names"; then
@@ -168,11 +160,7 @@ mapfile -t host_dirs < <(
     | sort -u
 )
 
-mapfile -t host_descriptor_entries < <(
-  nix eval --json --impure --expr "builtins.attrNames (import ${PWD}/hosts/host-descriptors.nix)" \
-    | jq -r '.[]' \
-    | sort -u
-)
+mapfile -t host_descriptor_entries < <(extc_host_descriptor_names)
 
 mkset "$tmpdir/host_dirs" "${host_dirs[@]}"
 mkset "$tmpdir/host_descriptors" "${host_descriptor_entries[@]}"
@@ -190,10 +178,10 @@ for host in "${host_dirs[@]}"; do
   fi
 
   descriptor_role="$(
-    nix_eval_raw_expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".role" 2>/dev/null || true
+    extc_host_descriptor_role "${host}" 2>/dev/null || true
   )"
   descriptor_profile="$(
-    nix_eval_raw_expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".desktopProfile" 2>/dev/null || true
+    extc_host_descriptor_desktop_profile "${host}" 2>/dev/null || true
   )"
 
   if [[ -z "$descriptor_role" ]]; then
@@ -233,17 +221,7 @@ done < <(
   sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*(\.\/profile-[a-z0-9-]+\.nix);/\1=\2/p' modules/profiles/desktop/profile-registry.nix
 )
 
-mapfile -t metadata_profiles < <(
-  nix_eval_json_expr "
-    let
-      metadataRoot = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
-      metadata = metadataRoot.profiles or metadataRoot;
-    in
-      builtins.attrNames metadata
-  " \
-    | jq -r '.[]' \
-    | sort -u
-)
+mapfile -t metadata_profiles < <(extc_metadata_profile_names)
 
 require_pattern_in_file 'profileModules = import ../profiles/desktop/profile-registry.nix;' modules/options/desktop-options.nix "modules/options/desktop-options.nix must import desktop profile registry"
 require_pattern_in_file 'type = lib.types.enum profileNames;' modules/options/desktop-options.nix "modules/options/desktop-options.nix must derive enum from profileNames"
@@ -272,13 +250,7 @@ required_capability_keys=(
 
 for profile in "${registry_profiles[@]}"; do
   profile_json="$(
-    nix_eval_json_expr "
-      let
-        metadataRoot = import ${PWD}/modules/profiles/desktop/profile-metadata.nix;
-        metadata = metadataRoot.profiles or metadataRoot;
-      in
-        metadata.\"${profile}\" or null
-    "
+    extc_profile_json "${profile}"
   )"
 
   if [[ "$(jq -r 'type' <<<"$profile_json")" != "object" ]]; then
