@@ -1,7 +1,7 @@
 # Definitive Excellence Audit
 
 ## Scope
-Audit the `930-definitive-maintainability-extensibility-plan.md` execution against baseline metrics and quality targets.
+Audit the `historical/930-definitive-maintainability-extensibility-plan.md` execution against baseline metrics and quality targets.
 
 Date: `2026-03-03`
 Branch: `plan/definitive-maintainability-extensibility`
