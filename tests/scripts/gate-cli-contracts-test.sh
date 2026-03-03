@@ -64,4 +64,12 @@ ec="$(run_and_capture extension_contracts_default ./scripts/check-extension-cont
 assert_exit_code "$ec" "0" "extension-contracts default run"
 assert_output_contains "$tmpdir/extension_contracts_default.out" "[extension-contracts] ok: host/profile extension contracts hold" "extension-contracts default run"
 
+ec="$(run_and_capture extension_contracts_help ./scripts/check-extension-contracts.sh --help)"
+assert_exit_code "$ec" "0" "extension-contracts --help"
+assert_output_contains "$tmpdir/extension_contracts_help.out" "Usage:" "extension-contracts --help"
+
+ec="$(run_and_capture extension_contracts_invalid ./scripts/check-extension-contracts.sh --not-a-real-flag)"
+assert_exit_code "$ec" "2" "extension-contracts invalid arg"
+assert_output_contains "$tmpdir/extension_contracts_invalid.out" "[extension-contracts] fail: unknown argument: --not-a-real-flag" "extension-contracts invalid arg"
+
 log_ok "$scope" "CLI/contract tests passed"

@@ -14,6 +14,30 @@ enter_repo_root "${BASH_SOURCE[0]}"
 
 fail=0
 
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/check-extension-contracts.sh
+
+Description:
+  Validates host/profile/pack extension contracts and schema invariants.
+EOF
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      log_fail "extension-contracts" "unknown argument: $1"
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
 report_fail() {
   log_fail "extension-contracts" "$1"
   fail=1
