@@ -22,9 +22,11 @@ Keep extension work local and predictable: adding hosts, desktop profiles, and o
    - `modules/options/desktop-options.nix` enum
 4. Desktop profile aggregator consumes the registry:
    - `modules/profiles/desktop/default.nix`
-5. Every profile is represented in capability mapping:
+5. Every profile has metadata contract:
+   - `modules/profiles/desktop/profile-metadata.nix`
+6. Capability mapping derives from metadata:
    - `modules/profiles/profile-capabilities.nix`
-6. Validation profile matrix list must stay synchronized:
+7. Validation profile matrix derives expected capabilities from metadata:
    - `scripts/check-profile-matrix.sh`
 
 ### Optional Pack Extension Contract

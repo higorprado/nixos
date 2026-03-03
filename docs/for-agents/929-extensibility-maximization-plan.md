@@ -233,3 +233,16 @@ When desktop/session behavior is touched, also run:
     - `./scripts/run-validation-gates.sh server-example`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
 13. Phase 2 status: COMPLETE (host/profile/pack registries established).
+14. 2026-03-03: Phase 3 slice 1 completed (profile metadata normalization).
+15. Phase 3 slice 1 changes:
+    - Added profile metadata contract file: `modules/profiles/desktop/profile-metadata.nix`.
+    - Refactored `modules/profiles/profile-capabilities.nix` to derive capabilities from metadata.
+    - Refactored `scripts/check-profile-matrix.sh` to derive profiles and expected capabilities from metadata.
+    - Extended `scripts/check-extension-contracts.sh` to enforce profile metadata completeness and wiring.
+16. Phase 3 slice 1 validation evidence:
+    - `shellcheck scripts/check-extension-contracts.sh scripts/check-profile-matrix.sh`: PASS
+    - `./scripts/check-changed-files-quality.sh origin/main`: PASS
+    - `./scripts/run-validation-gates.sh structure`: PASS
+    - `./scripts/run-validation-gates.sh predator`: PASS
+    - `./scripts/run-validation-gates.sh server-example`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS

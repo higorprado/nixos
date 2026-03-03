@@ -7,12 +7,9 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 repo_root="$(repo_root_from_script "${BASH_SOURCE[0]}")"
 cd "$repo_root"
 
-profiles=(
-  "dms"
-  "niri-only"
-  "noctalia"
-  "dms-hyprland"
-  "caelestia-hyprland"
+mapfile -t profiles < <(
+  nix eval --json --impure --expr "builtins.attrNames (import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\")" \
+    | jq -r '.[]'
 )
 
 check_profile() {
@@ -33,56 +30,41 @@ check_profile() {
             }
           ];
         }).config;
+        profileMetadata = import \"${repo_root}/modules/profiles/desktop/profile-metadata.nix\";
+        expected = profileMetadata.\"${profile}\".capabilities;
         user = cfg.custom.user.name;
       in
       {
         capabilities = cfg.custom.desktop.capabilities;
+        expected = expected;
         systemDrv = cfg.system.build.toplevel.drvPath;
         homeDrv = cfg.home-manager.users.\${user}.home.path.drvPath;
       }
     "
   )"
 
-  local cap_niri cap_hyprland cap_dms cap_noctalia cap_caelestia
-  cap_niri="$(jq -r '.capabilities.niri' <<<"$json")"
-  cap_hyprland="$(jq -r '.capabilities.hyprland' <<<"$json")"
-  cap_dms="$(jq -r '.capabilities.dms' <<<"$json")"
-  cap_noctalia="$(jq -r '.capabilities.noctalia' <<<"$json")"
-  cap_caelestia="$(jq -r '.capabilities.caelestiaHyprland' <<<"$json")"
-
-  case "$profile" in
-    dms)
-      [ "$cap_niri" = "true" ] || return 1
-      [ "$cap_hyprland" = "false" ] || return 1
-      [ "$cap_dms" = "true" ] || return 1
-      ;;
-    niri-only)
-      [ "$cap_niri" = "true" ] || return 1
-      [ "$cap_hyprland" = "false" ] || return 1
-      [ "$cap_dms" = "false" ] || return 1
-      ;;
-    noctalia)
-      [ "$cap_niri" = "true" ] || return 1
-      [ "$cap_hyprland" = "false" ] || return 1
-      [ "$cap_dms" = "false" ] || return 1
-      [ "$cap_noctalia" = "true" ] || return 1
-      ;;
-    dms-hyprland)
-      [ "$cap_niri" = "false" ] || return 1
-      [ "$cap_hyprland" = "true" ] || return 1
-      [ "$cap_dms" = "true" ] || return 1
-      ;;
-    caelestia-hyprland)
-      [ "$cap_niri" = "false" ] || return 1
-      [ "$cap_hyprland" = "true" ] || return 1
-      [ "$cap_dms" = "false" ] || return 1
-      [ "$cap_caelestia" = "true" ] || return 1
-      ;;
-    *)
-      echo "[profile-matrix] unknown profile '$profile'" >&2
+  mapfile -t expected_keys < <(jq -r '.expected | keys[]' <<<"$json")
+  for key in "${expected_keys[@]}"; do
+    local expected actual
+    expected="$(jq -r ".expected.${key}" <<<"$json")"
+    actual="$(jq -r ".capabilities.${key}" <<<"$json")"
+    if [[ "$actual" != "$expected" ]]; then
+      echo "[profile-matrix] fail: ${profile} capability '${key}' expected '${expected}', got '${actual}'" >&2
       return 1
-      ;;
-  esac
+    fi
+  done
+
+  local missing_keys extra_keys
+  missing_keys="$(jq -r '[.expected | keys[]] - [.capabilities | keys[]] | join(",")' <<<"$json")"
+  extra_keys="$(jq -r '[.capabilities | keys[]] - [.expected | keys[]] | join(",")' <<<"$json")"
+  if [[ -n "$missing_keys" ]]; then
+    echo "[profile-matrix] fail: ${profile} missing capability keys: ${missing_keys}" >&2
+    return 1
+  fi
+  if [[ -n "$extra_keys" ]]; then
+    echo "[profile-matrix] fail: ${profile} unexpected capability keys: ${extra_keys}" >&2
+    return 1
+  fi
 
   local system_drv home_drv
   system_drv="$(jq -r '.systemDrv' <<<"$json")"

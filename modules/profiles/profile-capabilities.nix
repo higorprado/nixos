@@ -7,41 +7,26 @@ let
   profile = config.custom.desktop.profile;
   hostRole = config.custom.host.role;
   isDesktopHost = hostRole == "desktop";
+  profileMetadata = import ./desktop/profile-metadata.nix;
+  defaultCapabilities = {
+    desktopFiles = false;
+    desktopUserApps = false;
+    niri = false;
+    hyprland = false;
+    dms = false;
+    noctalia = false;
+    caelestiaHyprland = false;
+  };
+  selectedProfile =
+    if builtins.hasAttr profile profileMetadata then
+      profileMetadata.${profile}
+    else
+      null;
 in
 {
-  config.custom.desktop.capabilities = {
-    desktopFiles = isDesktopHost && lib.elem profile [
-      "dms"
-      "dms-hyprland"
-      "caelestia-hyprland"
-      "noctalia"
-    ];
-
-    desktopUserApps = isDesktopHost && lib.elem profile [
-      "dms"
-      "dms-hyprland"
-      "caelestia-hyprland"
-      "noctalia"
-    ];
-
-    niri = isDesktopHost && lib.elem profile [
-      "dms"
-      "niri-only"
-      "noctalia"
-    ];
-
-    hyprland = isDesktopHost && lib.elem profile [
-      "dms-hyprland"
-      "caelestia-hyprland"
-    ];
-
-    dms = isDesktopHost && lib.elem profile [
-      "dms"
-      "dms-hyprland"
-    ];
-
-    noctalia = isDesktopHost && profile == "noctalia";
-
-    caelestiaHyprland = isDesktopHost && profile == "caelestia-hyprland";
-  };
+  config.custom.desktop.capabilities =
+    if !isDesktopHost || selectedProfile == null then
+      defaultCapabilities
+    else
+      defaultCapabilities // selectedProfile.capabilities;
 }

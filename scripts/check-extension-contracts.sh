@@ -86,7 +86,7 @@ tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
 mapfile -t module_profiles < <(
-  find modules/profiles/desktop -maxdepth 1 -type f -name 'profile-*.nix' ! -name 'profile-registry.nix' -printf '%f\n' \
+  find modules/profiles/desktop -maxdepth 1 -type f -name 'profile-*.nix' ! -name 'profile-registry.nix' ! -name 'profile-metadata.nix' -printf '%f\n' \
     | sed -E 's/^profile-(.*)\.nix$/\1/' \
     | sort -u
 )
@@ -109,10 +109,8 @@ done < <(
   sed -nE 's/^[[:space:]]*([a-z0-9-]+)[[:space:]]*=[[:space:]]*(\.\/profile-[a-z0-9-]+\.nix);/\1=\2/p' modules/profiles/desktop/profile-registry.nix
 )
 
-mapfile -t matrix_profiles < <(
-  awk '/profiles=\(/,/\)/' scripts/check-profile-matrix.sh \
-    | rg -o '"[a-z0-9-]+"' \
-    | tr -d '"' \
+mapfile -t metadata_profiles < <(
+  sed -nE 's/^  ([a-z0-9-]+) = \{/\1/p' modules/profiles/desktop/profile-metadata.nix \
     | sort -u
 )
 
@@ -126,16 +124,58 @@ fi
 mkset "$tmpdir/expected" "${registry_profiles[@]}"
 mkset "$tmpdir/modules" "${module_profiles[@]}"
 mkset "$tmpdir/registry" "${registry_profiles[@]}"
-mkset "$tmpdir/matrix" "${matrix_profiles[@]}"
+mkset "$tmpdir/metadata" "${metadata_profiles[@]}"
 
 check_set_sync "profile registry" "$tmpdir/expected" "profile modules" "$tmpdir/modules"
-check_set_sync "profile registry" "$tmpdir/expected" "profile matrix list" "$tmpdir/matrix"
+check_set_sync "profile registry" "$tmpdir/expected" "profile metadata keys" "$tmpdir/metadata"
+
+if ! rg -q 'builtins\.attrNames \(import .*profile-metadata\.nix' scripts/check-profile-matrix.sh; then
+  report_fail "scripts/check-profile-matrix.sh must derive profile list from profile metadata"
+fi
+if ! rg -q 'expected = profileMetadata\..*capabilities;' scripts/check-profile-matrix.sh; then
+  report_fail "scripts/check-profile-matrix.sh must derive expected capabilities from profile metadata"
+fi
+
+required_capability_keys=(
+  "desktopFiles"
+  "desktopUserApps"
+  "niri"
+  "hyprland"
+  "dms"
+  "noctalia"
+  "caelestiaHyprland"
+)
 
 for profile in "${registry_profiles[@]}"; do
-  if ! rg -q "\"${profile}\"" modules/profiles/profile-capabilities.nix; then
-    report_fail "profile '${profile}' missing from modules/profiles/profile-capabilities.nix"
+  block="$(awk "/^  ${profile} = \\{/,/^  \\};/" modules/profiles/desktop/profile-metadata.nix)"
+  if [[ -z "$block" ]]; then
+    report_fail "profile '${profile}' missing metadata block in modules/profiles/desktop/profile-metadata.nix"
+    continue
   fi
+
+  if ! rg -q 'capabilities = \{' <<<"$block"; then
+    report_fail "profile '${profile}' metadata missing capabilities block"
+  fi
+  if ! rg -q 'requiredIntegrations = ' <<<"$block"; then
+    report_fail "profile '${profile}' metadata missing requiredIntegrations"
+  fi
+  if ! rg -q 'optionalIntegrations = ' <<<"$block"; then
+    report_fail "profile '${profile}' metadata missing optionalIntegrations"
+  fi
+
+  for key in "${required_capability_keys[@]}"; do
+    if ! rg -q "${key}[[:space:]]*=" <<<"$block"; then
+      report_fail "profile '${profile}' capabilities missing key '${key}'"
+    fi
+  done
 done
+
+if ! rg -q 'profileMetadata = import ./desktop/profile-metadata.nix;' modules/profiles/profile-capabilities.nix; then
+  report_fail "modules/profiles/profile-capabilities.nix must import profile metadata"
+fi
+if ! rg -q 'defaultCapabilities // selectedProfile\.capabilities' modules/profiles/profile-capabilities.nix; then
+  report_fail "modules/profiles/profile-capabilities.nix must derive capabilities from selectedProfile.capabilities"
+fi
 
 if [[ "$fail" -ne 0 ]]; then
   exit 1
