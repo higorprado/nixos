@@ -22,6 +22,8 @@ Keep repo scripts easy to evolve by enforcing clear responsibilities and shared 
    - `enter_repo_root`
    - `require_cmd` / `require_cmds`
    - `log_fail`
+   - `log_warn` / `log_ok`
+   - `mktemp_dir_scoped` / `mktemp_file_scoped`
 3. Emit stable machine-readable prefixes on errors and major statuses:
    - `[$scope] fail: ...`
    - `[$scope] ok: ...`

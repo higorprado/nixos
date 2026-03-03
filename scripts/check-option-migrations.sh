@@ -33,7 +33,7 @@ valid_month() {
   [[ "$month" =~ ^[0-9]{4}-(0[1-9]|1[0-2])$ ]]
 }
 
-tmpdir="$(mktemp -d)"
+tmpdir="$(mktemp_dir_scoped option-migrations)"
 trap 'rm -rf "$tmpdir"' EXIT
 
 : >"$tmpdir/registered_paths"

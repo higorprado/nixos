@@ -104,7 +104,7 @@ mapfile -t pack_set_names < <(
     | sort -u
 )
 
-tmpdir="$(mktemp -d)"
+tmpdir="$(mktemp_dir_scoped extension-contracts)"
 trap 'rm -rf "$tmpdir"' EXIT
 
 mkset "$tmpdir/pack_names" "${pack_names[@]}"
@@ -112,7 +112,7 @@ mkset "$tmpdir/pack_set_names" "${pack_set_names[@]}"
 
 for pack in "${pack_names[@]}"; do
   module_path="$(
-    nix eval --raw --impure --expr "toString ((import ${PWD}/home/user/desktop/pack-registry.nix).packs.\"${pack}\".module)" 2>/dev/null || true
+    nix_eval_raw_expr "toString ((import ${PWD}/home/user/desktop/pack-registry.nix).packs.\"${pack}\".module)" 2>/dev/null || true
   )"
   if [[ -z "$module_path" ]]; then
     report_fail "pack '${pack}' missing module path in pack-registry.nix"
@@ -167,10 +167,10 @@ for host in "${host_dirs[@]}"; do
   fi
 
   descriptor_role="$(
-    nix eval --raw --impure --expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".role" 2>/dev/null || true
+    nix_eval_raw_expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".role" 2>/dev/null || true
   )"
   descriptor_profile="$(
-    nix eval --raw --impure --expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".desktopProfile" 2>/dev/null || true
+    nix_eval_raw_expr "(import ${PWD}/hosts/host-descriptors.nix).\"${host}\".desktopProfile" 2>/dev/null || true
   )"
 
   if [[ -z "$descriptor_role" ]]; then

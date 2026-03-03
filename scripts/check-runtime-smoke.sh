@@ -26,6 +26,7 @@ strict_backends=0
 strict_logs=0
 warning_overruns=0
 budget_expired=0
+scope="runtime-smoke"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -50,7 +51,7 @@ while [ "$#" -gt 0 ]; do
       exit 0
       ;;
     *)
-      log_fail "runtime-smoke" "unknown argument: $1"
+      log_fail "$scope" "unknown argument: $1"
       usage >&2
       exit 2
       ;;
@@ -58,15 +59,15 @@ while [ "$#" -gt 0 ]; do
 done
 
 ok() {
-  printf '[runtime-smoke] ok: %s\n' "$1"
+  log_ok "$scope" "$1"
 }
 
 warn() {
-  printf '[runtime-smoke] warn: %s\n' "$1" >&2
+  log_warn "$scope" "$1"
 }
 
 fail() {
-  log_fail "runtime-smoke" "$1"
+  log_fail "$scope" "$1"
   exit 1
 }
 
@@ -118,12 +119,7 @@ if ! [ -f /etc/os-release ] || ! grep -q '^ID=nixos$' /etc/os-release; then
   fail "this smoke check must run on a NixOS host"
 fi
 
-if ! command -v jq >/dev/null 2>&1; then
-  fail "jq is required for runtime smoke checks"
-fi
-if ! command -v rg >/dev/null 2>&1; then
-  fail "rg is required for runtime smoke checks"
-fi
+require_cmds "$scope" "jq" "rg"
 
 case "${boot}" in
   current|previous) ;;
@@ -204,7 +200,7 @@ if [ "$cap_dms" = "true" ]; then
   require_user_unit_enabled "dms-awww.service"
 fi
 
-tmp_log="$(mktemp "${TMPDIR:-/tmp}/runtime-smoke-log-XXXXXX.log")"
+tmp_log="$(mktemp_file_scoped runtime-smoke-log)"
 trap 'rm -f "$tmp_log"' EXIT
 
 set +e
