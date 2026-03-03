@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# shellcheck source=scripts/lib/common.sh
+# shellcheck source=lib/common.sh
+# shellcheck disable=SC1091
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
@@ -34,12 +35,13 @@ run_server_example_gates() {
 
 usage() {
   cat <<'EOF'
-Usage: scripts/run-validation-gates.sh [structure|predator|server-example|all]
+Usage: scripts/run-validation-gates.sh [structure|predator|server-example|runtime-smoke|all]
 
 Commands:
   structure       Run structure/policy gates only.
   predator        Run predator eval/build gates only.
   server-example  Run server-example eval/build gates only.
+  runtime-smoke   Run profile-aware runtime smoke checks on the local host session.
   all             Run structure + predator + server-example gates (default).
 EOF
 }
@@ -55,6 +57,9 @@ case "$stage" in
     ;;
   server-example)
     run_server_example_gates
+    ;;
+  runtime-smoke)
+    ./scripts/check-runtime-smoke.sh
     ;;
   all)
     run_structure_gates

@@ -291,3 +291,16 @@ When desktop/session code is touched, also run:
     - `./scripts/run-validation-gates.sh structure`: PASS
     - `./scripts/run-full-validation.sh`: PASS
     - `./scripts/check-repo-public-safety.sh`: PASS
+12. 2026-03-03: Phase 3 completed (runtime smoke entrypoint).
+13. Phase 3 changes:
+    - Added `scripts/check-runtime-smoke.sh` (profile-aware runtime checks).
+    - Added `runtime-smoke` stage to `scripts/run-validation-gates.sh`.
+    - Implemented non-flaky log scanning:
+      - fail-only for high-confidence regressions,
+      - warning-threshold checks for known noisy patterns (`pidns`, inhibit, wp-state, gkr-pam, nm p2p),
+      - optional strict mode via `--strict-logs`.
+14. Phase 3 validation evidence:
+    - `shellcheck scripts/check-runtime-smoke.sh`: PASS
+    - `./scripts/check-runtime-smoke.sh --allow-non-graphical`: PASS
+    - `./scripts/run-full-validation.sh`: PASS
+    - `./scripts/check-repo-public-safety.sh`: PASS

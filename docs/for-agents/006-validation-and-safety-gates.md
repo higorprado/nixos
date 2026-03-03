@@ -15,6 +15,7 @@
 3. `./scripts/check-profile-matrix.sh`
 4. `./scripts/check-option-declaration-boundary.sh`
 5. `./scripts/check-validation-source-of-truth.sh`
+6. `./scripts/check-runtime-smoke.sh` (local desktop session only)
 
 ## Full Local Validation
 
