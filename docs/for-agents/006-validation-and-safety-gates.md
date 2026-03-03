@@ -14,11 +14,13 @@
 2. `./scripts/check-desktop-capability-usage.sh`
 3. `./scripts/check-profile-matrix.sh`
 4. `./scripts/check-option-declaration-boundary.sh`
+5. `./scripts/check-validation-source-of-truth.sh`
 
 ## Full Local Validation
 
-1. `./scripts/run-full-validation.sh`
-2. Runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
+1. `./scripts/run-validation-gates.sh all` (canonical stage runner)
+2. `./scripts/run-full-validation.sh` (compat wrapper for `all`)
+3. Runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
 
 ## Rollback
 

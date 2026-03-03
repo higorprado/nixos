@@ -25,8 +25,7 @@ jobs:
 
       - name: Structure Gates
         run: |
-          ./scripts/check-desktop-capability-usage.sh
-          ./scripts/check-option-declaration-boundary.sh
+          ./scripts/run-validation-gates.sh structure
 
   predator-eval-build:
     runs-on: ubuntu-latest
@@ -45,13 +44,7 @@ jobs:
 
       - name: Predator Validation Gates
         run: |
-          HM_USER="$(nix eval --raw path:$PWD#nixosConfigurations.predator.config.custom.user.name)"
-          ./scripts/check-profile-matrix.sh
-          nix flake metadata
-          nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion
-          nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.stateVersion
-          nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.${HM_USER}.home.path
-          nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel
+          ./scripts/run-validation-gates.sh predator
 
   server-example-eval-build:
     runs-on: ubuntu-latest
@@ -70,6 +63,4 @@ jobs:
 
       - name: Server Example Validation Gates
         run: |
-          nix eval path:$PWD#nixosConfigurations.server-example.config.custom.host.role
-          nix eval --json path:$PWD#nixosConfigurations.server-example.config.custom.desktop.capabilities
-          nix build --no-link path:$PWD#nixosConfigurations.server-example.config.system.build.toplevel
+          ./scripts/run-validation-gates.sh server-example

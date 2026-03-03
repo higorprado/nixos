@@ -262,3 +262,14 @@ When desktop/session code is touched, also run:
    - `xorg.libxcb` deprecation warning during evaluation.
    - Firefox Catppuccin warning in `niri-only` profile matrix evaluation.
 5. Note: `reports/` artifacts are local runtime evidence (gitignored) by design.
+6. 2026-03-03: Phase 1 completed (single validation source of truth).
+7. Validation source-of-truth changes:
+   - Added canonical stage runner: `scripts/run-validation-gates.sh`.
+   - Updated `scripts/run-full-validation.sh` to delegate to canonical runner (`all`).
+   - Updated CI workflow `.github/workflows/validate.yml` jobs to call stage runner (`structure`, `predator`, `server-example`).
+   - Added drift guard: `scripts/check-validation-source-of-truth.sh`.
+8. Validation status after Phase 1:
+   - `./scripts/check-validation-source-of-truth.sh`: PASS
+   - `./scripts/run-validation-gates.sh structure`: PASS
+   - `./scripts/run-full-validation.sh`: PASS
+   - `./scripts/check-repo-public-safety.sh`: PASS
