@@ -63,6 +63,15 @@ check_set_sync() {
   fi
 }
 
+require_pattern_in_file() {
+  local pattern="$1"
+  local file="$2"
+  local message="$3"
+  if ! rg -q "$pattern" "$file"; then
+    report_fail "$message"
+  fi
+}
+
 check_assignment_scope "custom.host.role" '^[[:space:]]*custom\.host\.role[[:space:]]*=' is_allowed_host_role_assignment
 check_assignment_scope "custom.desktop.profile" '^[[:space:]]*custom\.desktop\.profile[[:space:]]*=' is_allowed_desktop_profile_assignment
 
@@ -82,15 +91,9 @@ if [[ "$(jq -r '.schemaVersion // ""' <<<"$pack_registry_root_json")" != "1" ]];
   report_fail "pack-registry.nix schemaVersion must be 1"
 fi
 
-if ! rg -q 'packRegistry = import ./pack-registry.nix;' home/user/desktop/default.nix; then
-  report_fail "home/user/desktop/default.nix must import pack-registry.nix"
-fi
-if ! rg -q 'profilePackSets[[:space:]]*=' home/user/desktop/default.nix; then
-  report_fail "home/user/desktop/default.nix must derive profilePackSets from profile metadata"
-fi
-if ! rg -q '\+\+ selectedPackModules;' home/user/desktop/default.nix; then
-  report_fail "home/user/desktop/default.nix must compose imports with selectedPackModules"
-fi
+require_pattern_in_file 'packRegistry = import ./pack-registry.nix;' home/user/desktop/default.nix "home/user/desktop/default.nix must import pack-registry.nix"
+require_pattern_in_file 'profilePackSets[[:space:]]*=' home/user/desktop/default.nix "home/user/desktop/default.nix must derive profilePackSets from profile metadata"
+require_pattern_in_file '\+\+ selectedPackModules;' home/user/desktop/default.nix "home/user/desktop/default.nix must compose imports with selectedPackModules"
 
 mapfile -t pack_names < <(
   nix_eval_json_expr "builtins.attrNames (import ${PWD}/home/user/desktop/pack-registry.nix).packs" \
@@ -151,12 +154,8 @@ mkset "$tmpdir/host_dirs" "${host_dirs[@]}"
 mkset "$tmpdir/host_descriptors" "${host_descriptor_entries[@]}"
 check_set_sync "host directories" "$tmpdir/host_dirs" "host descriptor entries" "$tmpdir/host_descriptors"
 
-if ! rg -q 'hostDescriptors = import ./hosts/host-descriptors.nix;' flake.nix; then
-  report_fail "flake.nix must import hosts/host-descriptors.nix"
-fi
-if ! rg -q 'hostRegistry = lib.mapAttrs mkHostModules hostDescriptors;' flake.nix; then
-  report_fail "flake.nix must derive hostRegistry from hostDescriptors via mkHostModules"
-fi
+require_pattern_in_file 'hostDescriptors = import ./hosts/host-descriptors.nix;' flake.nix "flake.nix must import hosts/host-descriptors.nix"
+require_pattern_in_file 'hostRegistry = lib.mapAttrs mkHostModules hostDescriptors;' flake.nix "flake.nix must derive hostRegistry from hostDescriptors via mkHostModules"
 if [[ ! -x scripts/new-host-skeleton.sh ]]; then
   report_fail "scripts/new-host-skeleton.sh must exist and be executable"
 fi
@@ -222,12 +221,8 @@ mapfile -t metadata_profiles < <(
     | sort -u
 )
 
-if ! rg -q 'profileModules = import ../profiles/desktop/profile-registry.nix;' modules/options/desktop-options.nix; then
-  report_fail "modules/options/desktop-options.nix must import desktop profile registry"
-fi
-if ! rg -q 'type = lib.types.enum profileNames;' modules/options/desktop-options.nix; then
-  report_fail "modules/options/desktop-options.nix must derive enum from profileNames"
-fi
+require_pattern_in_file 'profileModules = import ../profiles/desktop/profile-registry.nix;' modules/options/desktop-options.nix "modules/options/desktop-options.nix must import desktop profile registry"
+require_pattern_in_file 'type = lib.types.enum profileNames;' modules/options/desktop-options.nix "modules/options/desktop-options.nix must derive enum from profileNames"
 
 mkset "$tmpdir/expected" "${registry_profiles[@]}"
 mkset "$tmpdir/modules" "${module_profiles[@]}"
@@ -237,15 +232,9 @@ mkset "$tmpdir/metadata" "${metadata_profiles[@]}"
 check_set_sync "profile registry" "$tmpdir/expected" "profile modules" "$tmpdir/modules"
 check_set_sync "profile registry" "$tmpdir/expected" "profile metadata keys" "$tmpdir/metadata"
 
-if ! rg -q 'profileMetadataRoot = import .*profile-metadata\.nix' scripts/check-profile-matrix.sh; then
-  report_fail "scripts/check-profile-matrix.sh must import profile metadata root"
-fi
-if ! rg -q 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' scripts/check-profile-matrix.sh; then
-  report_fail "scripts/check-profile-matrix.sh must support schema-based profile metadata"
-fi
-if ! rg -q 'expected = profileMetadata\..*capabilities;' scripts/check-profile-matrix.sh; then
-  report_fail "scripts/check-profile-matrix.sh must derive expected capabilities from profile metadata"
-fi
+require_pattern_in_file 'profileMetadataRoot = import .*profile-metadata\.nix' scripts/check-profile-matrix.sh "scripts/check-profile-matrix.sh must import profile metadata root"
+require_pattern_in_file 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' scripts/check-profile-matrix.sh "scripts/check-profile-matrix.sh must support schema-based profile metadata"
+require_pattern_in_file 'expected = profileMetadata\..*capabilities;' scripts/check-profile-matrix.sh "scripts/check-profile-matrix.sh must derive expected capabilities from profile metadata"
 
 required_capability_keys=(
   "desktopFiles"
@@ -294,15 +283,9 @@ for profile in "${registry_profiles[@]}"; do
   done
 done
 
-if ! rg -q 'profileMetadataRoot = import ./desktop/profile-metadata\.nix;' modules/profiles/profile-capabilities.nix; then
-  report_fail "modules/profiles/profile-capabilities.nix must import profile metadata root"
-fi
-if ! rg -q 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' modules/profiles/profile-capabilities.nix; then
-  report_fail "modules/profiles/profile-capabilities.nix must support schema-based profile metadata"
-fi
-if ! rg -q 'defaultCapabilities // selectedProfile\.capabilities' modules/profiles/profile-capabilities.nix; then
-  report_fail "modules/profiles/profile-capabilities.nix must derive capabilities from selectedProfile.capabilities"
-fi
+require_pattern_in_file 'profileMetadataRoot = import ./desktop/profile-metadata\.nix;' modules/profiles/profile-capabilities.nix "modules/profiles/profile-capabilities.nix must import profile metadata root"
+require_pattern_in_file 'profileMetadata = profileMetadataRoot\.profiles or profileMetadataRoot;' modules/profiles/profile-capabilities.nix "modules/profiles/profile-capabilities.nix must support schema-based profile metadata"
+require_pattern_in_file 'defaultCapabilities // selectedProfile\.capabilities' modules/profiles/profile-capabilities.nix "modules/profiles/profile-capabilities.nix must derive capabilities from selectedProfile.capabilities"
 
 if [[ "$fail" -ne 0 ]]; then
   exit 1
