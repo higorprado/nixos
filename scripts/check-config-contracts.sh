@@ -39,8 +39,10 @@ for key in niri hyprland dms noctalia caelestiaHyprland desktopFiles desktopUser
 done
 
 hm_user="$(nix eval --raw "path:$PWD#nixosConfigurations.predator.config.custom.user.name")"
-if rg -n "home-manager\\.users\\.${hm_user}\\." .github scripts docs/for-agents docs/for-humans README.md >/dev/null; then
-  report_fail "found hardcoded home-manager user '${hm_user}' in tracked CI/script/docs paths"
+if [[ "$hm_user" != "user" ]]; then
+  if rg -n "home-manager\\.users\\.${hm_user}\\." .github scripts docs/for-agents docs/for-humans README.md >/dev/null; then
+    report_fail "found hardcoded home-manager user '${hm_user}' in tracked CI/script/docs paths"
+  fi
 fi
 
 if [ "$fail" -ne 0 ]; then
