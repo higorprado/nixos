@@ -8,7 +8,11 @@ Keep default CI feedback fast while preserving deep confidence checks through ex
    - Triggers on `push` and `pull_request`.
    - Runs changed-file quality + structure gates.
    - Expected use: every PR and routine commits.
-2. Full lane (`predator-eval-build` + `server-example-eval-build`):
+2. Docs-only lane (`docs-drift-only`):
+   - Triggers on `push` and `pull_request` when changed paths are only under `docs/**`.
+   - Runs docs drift validation only.
+   - Expected use: low-cost feedback for documentation-only changes.
+3. Full lane (`predator-eval-build` + `server-example-eval-build`):
    - Triggers on:
      - manual dispatch with `run_full = true`,
      - weekday scheduled run.
@@ -23,5 +27,5 @@ Keep default CI feedback fast while preserving deep confidence checks through ex
 
 ## Spend/Time Controls
 1. Full-lane jobs have dedicated concurrency groups with cancellation enabled.
-2. Fast lane remains the default required signal for normal PR iteration.
+2. Docs-only changes bypass `lint-structure` and use the docs-only lane.
 3. Full lane is opt-in for PR iteration and always available for release-level confidence.
