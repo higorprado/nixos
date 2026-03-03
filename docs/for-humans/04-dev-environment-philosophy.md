@@ -15,7 +15,6 @@
 2. `devenv` integration is centralized in `home/<user>/dev/devenv.nix`.
 3. AI/dev assistant tooling is isolated from core system modules.
 
-## Adding a New Dev Tool
-1. Needed everywhere: add to user-level dev/core package modules.
-2. Needed for one project: add to that project `devenv`.
-3. If uncertain, start project-local first.
+## Related Workflows
+1. Safe switch/rollback after env changes: `workflows/102-switch-and-rollback.md`
+2. Validation before merge: `workflows/104-validation-before-merge.md`

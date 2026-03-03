@@ -25,9 +25,4 @@ Use this flow when adding any package/config.
 2. App only reads config: declarative source/sync.
 
 ## Step 5: Validate
-Run all gates after each slice:
-1. `nix flake metadata`
-2. `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-3. `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
-4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
-5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
+Use workflow: `workflows/104-validation-before-merge.md`.

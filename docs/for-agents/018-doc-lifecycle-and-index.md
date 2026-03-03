@@ -45,7 +45,9 @@
 
 ## Active Plan Index
 1. `docs/for-agents/plans/905-system-up-to-date-audit-plan.md`
-2. `docs/for-agents/plans/934-docs-tidy-and-workflow-plan.md`
+
+## Recently Completed
+1. `docs/for-agents/historical/934-docs-tidy-and-workflow-plan.md`
 
 ## Reference Index
 1. `docs/for-agents/reference/002-change-decision-algorithm.md`
