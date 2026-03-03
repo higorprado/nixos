@@ -6,3 +6,4 @@
 3. `103-private-overrides.md`
 4. `104-validation-before-merge.md`
 5. `105-session-recovery.md`
+6. `106-pack-and-app-replacement.md`

@@ -8,6 +8,7 @@ This documentation is workflow-first.
 3. Configure private local values: `workflows/103-private-overrides.md`
 4. Validate before commit/merge: `workflows/104-validation-before-merge.md`
 5. Recover desktop/session failures: `workflows/105-session-recovery.md`
+6. Replace desktop apps or packs (for example Nemo -> Nautilus): `workflows/106-pack-and-app-replacement.md`
 
 ## Concepts (Why Things Are Structured This Way)
 1. `01-repo-philosophy.md`

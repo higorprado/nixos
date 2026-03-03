@@ -19,6 +19,10 @@
 3. Active plans go in `docs/for-agents/plans/`.
 4. Active execution notes go in `docs/for-agents/current-work/`.
 5. Completed/superseded docs go in `docs/for-agents/historical/`.
+6. Non-trivial work must be document-driven:
+   - create/update a plan doc + matching current-work log before major execution,
+   - update current-work after each validated slice,
+   - move both to historical when complete.
 
 ## Docs Naming Rule
 1. Agent docs use `NNN-name.md` (three digits).

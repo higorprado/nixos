@@ -12,17 +12,40 @@
 5. `docs/for-agents/historical/`:
    - completed/superseded plans, audits, and execution notes.
 
-## Placement Decision Tree
-1. Is it a durable operating rule every agent must read first?
-   - Put in root.
-2. Is it a supporting contract or technical guide?
-   - Put in `reference/`.
-3. Is it an active roadmap or implementation plan?
-   - Put in `plans/`.
-4. Is it an active execution log/status tracker?
-   - Put in `current-work/`.
-5. Is it completed/superseded/context-only?
-   - Put in `historical/`.
+## Document-Driven Workflow (Mandatory)
+1. Work must be documented before and during execution for non-trivial changes.
+2. If work spans multiple slices, multiple files, or structural moves:
+   - create/update a plan in `docs/for-agents/plans/`,
+   - create/update a matching execution log in `docs/for-agents/current-work/`.
+3. Each completed slice must update the execution log with:
+   - what changed,
+   - validation commands run,
+   - result summary.
+4. When work is complete:
+   - move plan and execution log to `docs/for-agents/historical/`,
+   - update indexes in the same commit.
+
+## Placement Decision System
+1. `root`:
+   - only durable, must-read operating policy.
+2. `reference/`:
+   - stable supporting contracts/guides.
+3. `plans/`:
+   - active roadmap docs (what will be done).
+4. `current-work/`:
+   - active execution logs (what is being done now).
+5. `historical/`:
+   - completed/superseded plans, logs, audits (context only).
+
+## Transition Rules
+1. `plans/` -> `historical/`:
+   - move when objective is completed or superseded.
+2. `current-work/` -> `historical/`:
+   - move when no further execution is expected.
+3. `reference/`:
+   - stays reference unless superseded.
+4. `root`:
+   - only promote docs with long-lived, universal operational importance.
 
 ## Naming Rules
 1. Use `NNN-name` in all agent-doc folders.
@@ -46,8 +69,13 @@
 ## Active Plan Index
 1. `docs/for-agents/plans/905-system-up-to-date-audit-plan.md`
 
+## Active Current-Work Index
+1. See `docs/for-agents/current-work/900-current-work-index.md`.
+
 ## Recently Completed
 1. `docs/for-agents/historical/934-docs-tidy-and-workflow-plan.md`
+2. `docs/for-agents/historical/940-docs-tidy-execution-log.md`
+3. `docs/for-agents/historical/941-docs-tidy-migration-table.md`
 
 ## Reference Index
 1. `docs/for-agents/reference/002-change-decision-algorithm.md`

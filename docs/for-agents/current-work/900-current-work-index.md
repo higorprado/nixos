@@ -1,5 +1,8 @@
 # Current Work Index
 
-## Execution Notes
-1. `940-docs-tidy-execution-log.md`
-2. `941-docs-tidy-migration-table.md`
+## Active Execution Notes
+1. None currently.
+
+## Rule
+1. Add a current-work note here when a non-trivial plan starts.
+2. Move completed notes to `docs/for-agents/historical/` in the completion commit.

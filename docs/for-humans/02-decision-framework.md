@@ -26,3 +26,14 @@ Use this flow when adding any package/config.
 
 ## Step 5: Validate
 Use workflow: `workflows/104-validation-before-merge.md`.
+
+## Common Placement Examples
+1. Replace file manager (Nemo -> Nautilus):
+   - package/config owner: `home/user/desktop/files.nix`
+   - default open behavior: `home/user/desktop/default.nix`
+   - optional profile pack targeting: `home/user/desktop/pack-registry.nix` + `modules/profiles/desktop/profile-metadata.nix`
+   - full workflow: `workflows/106-pack-and-app-replacement.md`
+2. Add a new desktop pack:
+   - create module: `home/user/desktop/<pack>.nix`
+   - register pack and sets: `home/user/desktop/pack-registry.nix`
+   - attach to profiles: `modules/profiles/desktop/profile-metadata.nix`
