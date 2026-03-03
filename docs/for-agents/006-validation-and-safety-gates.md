@@ -13,6 +13,10 @@
 3. `./scripts/check-profile-matrix.sh`
 4. `./scripts/check-option-declaration-boundary.sh`
 
+## Full Local Validation
+1. `./scripts/run-full-validation.sh`
+2. Runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
+
 ## Rollback
 1. Prefer reverting the last slice rather than broad resets.
 2. If migration/cleanup, ensure backup exists before deletion.

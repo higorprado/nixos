@@ -5,7 +5,10 @@
 2. `hosts/<host>/`: host-specific imports and selections.
    - Includes `hosts/server-example/` as a minimal server-role skeleton for non-desktop eval/build checks.
 3. `modules/`: shared NixOS behavior (core/hardware/packages/profiles/services/options).
+   - Option declarations live under `modules/options/`.
+   - Desktop profile implementation lives under `modules/profiles/desktop/`.
 4. `home/<user>/`: user environment (core, shell, programs, desktop, dev, services).
+   - Home option declarations live under `home/user/options/`.
 5. `config/`: payload configs consumed by symlink/sync/copy-once logic.
 6. `pkgs/`: custom derivations.
 7. `scripts/`: shared validation/safety scripts (public-repo scope only).

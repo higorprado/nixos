@@ -193,3 +193,16 @@ All phases must be regression-safe and validated after each slice.
    - `home/user/shell/terminal.nix` and `home/user/desktop/catppuccin-targets.nix` no longer declare options
 10. Added `scripts/check-option-declaration-boundary.sh` to enforce declaration boundaries.
 11. Validation results: all required gates pass including new option-boundary gate.
+12. 2026-03-02: Phase C completed.
+13. Added CI workflow `.github/workflows/validate.yml` with jobs:
+    - `lint-structure`
+    - `predator-eval-build`
+    - `server-example-eval-build`
+14. Added `scripts/run-full-validation.sh` as local CI-equivalent validation entrypoint.
+15. Verified local CI-equivalent run: `./scripts/run-full-validation.sh` passes.
+16. 2026-03-02: Phase D (docs update) completed.
+17. Updated for-agents docs (`001`, `006`) and for-humans docs (`03`, `07`) plus top-level `README.md` to reflect:
+    - role model (`custom.host.role`)
+    - decomposed desktop module layout
+    - CI workflow and local full validation command
+    - known warning context

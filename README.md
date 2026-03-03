@@ -24,6 +24,12 @@ The goal is reproducible, explicit, and maintainable configuration with clear ow
 7. `scripts/`: helper and verification scripts
 8. `docs/`: active documentation
 
+## Host Role Model
+
+1. `custom.host.role = "desktop" | "server"` controls desktop stack activation.
+2. Desktop profile selection is still done with `custom.desktop.profile`.
+3. `hosts/server-example/` is a minimal server-role reference host.
+
 ## Documentation
 
 Documentation is split by audience:
@@ -43,10 +49,21 @@ Historical/previous docs are not part of the active docs set.
 
 ## Validation Commands
 
-Run these after meaningful changes:
+Run this after meaningful changes:
 
-1. `nix flake metadata`
-2. `nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion`
-3. `nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.stateVersion`
-4. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.<user>.home.path`
-5. `nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel`
+1. `./scripts/run-full-validation.sh`
+
+The script runs structure checks, Predator mandatory gates, and `server-example` eval/build checks.
+
+## CI
+
+1. CI workflow: `.github/workflows/validate.yml`
+2. Enforced jobs:
+   - `lint-structure`
+   - `predator-eval-build`
+   - `server-example-eval-build`
+
+## Troubleshooting
+
+1. Known warning: `catppuccin.firefox` warning in `niri-only` profile when Firefox HM module is intentionally disabled.
+2. Known warning: `xorg.libxcb` deprecation rename warning during eval/build.

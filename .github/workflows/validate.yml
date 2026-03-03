@@ -1,0 +1,74 @@
+name: validate
+
+on:
+  push:
+    branches:
+      - main
+      - feat/**
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-structure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Structure Gates
+        run: |
+          ./scripts/check-desktop-capability-usage.sh
+          ./scripts/check-option-declaration-boundary.sh
+
+  predator-eval-build:
+    runs-on: ubuntu-latest
+    needs: lint-structure
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Predator Validation Gates
+        run: |
+          ./scripts/check-profile-matrix.sh
+          nix flake metadata
+          nix eval path:$PWD#nixosConfigurations.predator.config.system.stateVersion
+          nix eval path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.stateVersion
+          nix build --no-link path:$PWD#nixosConfigurations.predator.config.home-manager.users.higorprado.home.path
+          nix build --no-link path:$PWD#nixosConfigurations.predator.config.system.build.toplevel
+
+  server-example-eval-build:
+    runs-on: ubuntu-latest
+    needs: lint-structure
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Server Example Validation Gates
+        run: |
+          nix eval path:$PWD#nixosConfigurations.server-example.config.custom.host.role
+          nix eval --json path:$PWD#nixosConfigurations.server-example.config.custom.desktop.capabilities
+          nix build --no-link path:$PWD#nixosConfigurations.server-example.config.system.build.toplevel
