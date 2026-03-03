@@ -32,6 +32,7 @@ nix build --no-link "path:$PWD#nixosConfigurations.predator.config.home-manager.
 13. `./scripts/check-runtime-smoke.sh` (local desktop session only)
 14. `./scripts/capture-runtime-warning-report.sh` (local artifact capture for warning governance)
 15. `./scripts/report-maintainability-kpis.sh` (capture maintainability KPI baseline artifacts)
+16. `./scripts/check-script-fixture-tests.sh` (deterministic fixture-based checks for script orchestration behavior)
 
 ## Fast Feedback (Local Iteration)
 

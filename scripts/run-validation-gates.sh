@@ -6,15 +6,22 @@ set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 enter_repo_root "${BASH_SOURCE[0]}"
 
+scripts_dir="${VALIDATION_GATES_SCRIPTS_DIR:-./scripts}"
+
+run_check_script() {
+  local script_name="$1"
+  "${scripts_dir}/${script_name}"
+}
+
 run_structure_gates() {
   echo "[validation-gates] structure gates"
-  ./scripts/check-desktop-capability-usage.sh
-  ./scripts/check-option-declaration-boundary.sh
-  ./scripts/check-option-migrations.sh
-  ./scripts/check-extension-contracts.sh
-  ./scripts/check-test-pyramid-contracts.sh
-  ./scripts/check-validation-source-of-truth.sh
-  ./scripts/check-docs-drift.sh
+  run_check_script "check-desktop-capability-usage.sh"
+  run_check_script "check-option-declaration-boundary.sh"
+  run_check_script "check-option-migrations.sh"
+  run_check_script "check-extension-contracts.sh"
+  run_check_script "check-test-pyramid-contracts.sh"
+  run_check_script "check-validation-source-of-truth.sh"
+  run_check_script "check-docs-drift.sh"
 }
 
 run_predator_gates() {
@@ -22,9 +29,9 @@ run_predator_gates() {
   local hm_user
   hm_user="$(nix eval --raw "path:$PWD#nixosConfigurations.predator.config.custom.user.name")"
 
-  ./scripts/check-config-contracts.sh
-  ./scripts/check-profile-matrix.sh
-  ./scripts/check-extension-simulations.sh
+  run_check_script "check-config-contracts.sh"
+  run_check_script "check-profile-matrix.sh"
+  run_check_script "check-extension-simulations.sh"
   nix flake metadata
   nix eval "path:$PWD#nixosConfigurations.predator.config.system.stateVersion"
   nix eval "path:$PWD#nixosConfigurations.predator.config.home-manager.users.${hm_user}.home.stateVersion"
@@ -65,7 +72,7 @@ case "$stage" in
     run_server_example_gates
     ;;
   runtime-smoke)
-    ./scripts/check-runtime-smoke.sh
+    run_check_script "check-runtime-smoke.sh"
     ;;
   all)
     run_structure_gates
