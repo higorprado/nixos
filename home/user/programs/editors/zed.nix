@@ -1,10 +1,14 @@
 {
   pkgs,
+  inputs,
   ...
 }:
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
 {
   home.packages = [
-    pkgs.zed-editor
+    inputs.zed-editor.packages.${system}.zed-editor-bin
   ];
 
 }

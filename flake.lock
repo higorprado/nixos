@@ -163,11 +163,11 @@
         "quickshell": "quickshell_2"
       },
       "locked": {
-        "lastModified": 1772576851,
-        "narHash": "sha256-yRPlhHvRjsluTrH7EjJe3EFv3m0NftwoZGfhswSqQyA=",
+        "lastModified": 1772592465,
+        "narHash": "sha256-6P9VpAsT5ps/3IX/DY2IqDrKWUyXuCxFjYlOvU0Ztd4=",
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
-        "rev": "e04c919d7841d5ccb1ff981b76f0d863396c1885",
+        "rev": "27c26d35ab22cc69a0525aab0aa0da8b753284ec",
         "type": "github"
       },
       "original": {
@@ -386,11 +386,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1772571633,
-        "narHash": "sha256-Cw640aE/u1LARtXI6aS468WbJLeG98X041fi6r9xXYw=",
+        "lastModified": 1772624024,
+        "narHash": "sha256-ZDMuXoeKpyaZye8zKPnTuND0VRwqRNbf1Zt/fHVBWzo=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "c11cadd8d6f7b8ea0dc3d49424dd7c4f7efa4bd7",
+        "rev": "8271cfc97b76d573f9122032d6cf5db256d63470",
         "type": "github"
       },
       "original": {
@@ -660,11 +660,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1772548355,
-        "narHash": "sha256-gZxgYEus1trPpVpM7SzB7TY6X4+9RT1vy1EyFzzGTME=",
+        "lastModified": 1772605697,
+        "narHash": "sha256-VOvCw5I28nIcy3mFs88M/Unzj4uKiUrIJK6S69kHOCU=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "9a0576dbea3dda5db55ec0dc9d68982ac96f3a3c",
+        "rev": "705bb4900230a4e7bdd42bd8f34cb3a4558e593b",
         "type": "github"
       },
       "original": {
@@ -824,11 +824,11 @@
         "noctalia-qs": "noctalia-qs"
       },
       "locked": {
-        "lastModified": 1772565447,
-        "narHash": "sha256-3oPgLP54zZyAMomElJz5FwlGgA6caW4v4rI2lC5WqvY=",
+        "lastModified": 1772624996,
+        "narHash": "sha256-aP0587epeG8kCMJbyZscRNcj1J8DIHq1BVGlfJKXUO8=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "ba5f933c582080083f849dcd52fa19133d83b85a",
+        "rev": "0a7e81c345a9aa20d41084dda69b31a1fba987ef",
         "type": "github"
       },
       "original": {
@@ -933,11 +933,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772571239,
-        "narHash": "sha256-nJRNLUJIJVOFcaiidHdU1lRTEU7YvsbWH3BMiOjZDE0=",
+        "lastModified": 1772580671,
+        "narHash": "sha256-ctJKMz8wLbt8ESIPypzlvV+NeBpyH3hvMhnEPPBQCe8=",
         "owner": "mierak",
         "repo": "rmpc",
-        "rev": "327855151d964c31a98c5e29e2b29dd48811c694",
+        "rev": "8c4d34c140e44809ee75f2cfa329ae4ad7d0f453",
         "type": "github"
       },
       "original": {
@@ -962,6 +962,7 @@
         "nixpkgs": "nixpkgs_2",
         "noctalia": "noctalia",
         "rmpc": "rmpc",
+        "zed-editor": "zed-editor",
         "zen-browser": "zen-browser"
       }
     },
@@ -979,6 +980,27 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "zed-editor",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772507320,
+        "narHash": "sha256-GdGXniFvtIfRiakc+ncdQYnoQjKbTCv9Imjfl4ggquI=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "1775eafa1879ac098ee436849bc9c3d963206f89",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
         "type": "github"
       }
     },
@@ -1119,6 +1141,27 @@
       "original": {
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
+        "type": "github"
+      }
+    },
+    "zed-editor": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1772617543,
+        "narHash": "sha256-9XrOFtHZCkgdDKfWToM9IEO3fQU2gqkSsXTk6peQaDk=",
+        "owner": "Rishabh5321",
+        "repo": "custom-packages-flake",
+        "rev": "f2c1f6ca3f2399150f23f5c786aaaa2cdba55728",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Rishabh5321",
+        "repo": "custom-packages-flake",
         "type": "github"
       }
     },
