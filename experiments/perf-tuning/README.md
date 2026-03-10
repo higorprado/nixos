@@ -12,6 +12,12 @@ It collects four buckets:
 - runtime desktop health (gate only)
 - targeted runtime signals (`50%`)
 
+The targeted runtime bucket currently samples:
+- CPU pressure via `stress-ng --cpu`
+- memory pressure via `stress-ng --vm`
+- current governor / zram / selected sysctl state
+- idle NVIDIA snapshot via `nvidia-smi`
+
 ## Usage
 
 Run a baseline:

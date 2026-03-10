@@ -128,6 +128,21 @@ In progress
   - runtime benchmark written to
     `experiments/perf-tuning/results/after-cpu-governor-performance-20260310`
 - commit:
+  - `11b8495` `docs(perf): record rejected cpu governor experiment`
+
+### Slice 4
+
+- improved the harness after the rejected governor test
+- reason:
+  - the current targeted runtime bucket was too CPU-centric and did not
+    discriminate well for subtle policy changes on top of `intel_pstate=active`
+    plus `balanced-performance` platform profile
+- added a second targeted runtime probe:
+  - `stress-ng --vm 8 --vm-bytes 70% --vm-keep --timeout 20s --metrics-brief`
+- next tuning slices in the memory/scheduler area can now be judged against both:
+  - CPU pressure
+  - memory pressure
+- commit:
   - pending
 
 ## Final State

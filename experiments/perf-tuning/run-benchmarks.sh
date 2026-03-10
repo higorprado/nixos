@@ -104,6 +104,11 @@ nix shell nixpkgs#stress-ng -c bash -lc "
   stress-ng --cpu 0 --timeout 20s --metrics-brief
 " >"$results_dir/runtime-signals/stress-ng.txt" 2>&1 || true
 
+nix shell nixpkgs#stress-ng -c bash -lc "
+  set -euo pipefail
+  stress-ng --vm 8 --vm-bytes 70% --vm-keep --timeout 20s --metrics-brief
+" >"$results_dir/runtime-signals/stress-ng-vm.txt" 2>&1 || true
+
 printf '## Targeted Runtime Signals\n\n' >>"$results_dir/summary.md"
 printf '```text\n' >>"$results_dir/summary.md"
 sed -n '1,20p' "$results_dir/runtime-signals/system.txt" >>"$results_dir/summary.md" || true
@@ -113,5 +118,11 @@ if [ -f "$results_dir/runtime-signals/nvidia-smi.txt" ]; then
   sed -n '1,5p' "$results_dir/runtime-signals/nvidia-smi.txt" >>"$results_dir/summary.md" || true
   printf '```\n\n' >>"$results_dir/summary.md"
 fi
+printf '```text\n' >>"$results_dir/summary.md"
+sed -n '1,12p' "$results_dir/runtime-signals/stress-ng.txt" >>"$results_dir/summary.md" || true
+printf '```\n\n' >>"$results_dir/summary.md"
+printf '```text\n' >>"$results_dir/summary.md"
+sed -n '1,12p' "$results_dir/runtime-signals/stress-ng-vm.txt" >>"$results_dir/summary.md" || true
+printf '```\n\n' >>"$results_dir/summary.md"
 
 echo "[${scope}] benchmark results written to $results_dir"
