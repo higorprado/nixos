@@ -94,6 +94,42 @@ In progress
 - commit:
   - pending
 
+### Slice 3
+
+- tested the first real tuning hypothesis:
+  - `powerManagement.cpuFreqGovernor = "powersave"` ->
+    `powerManagement.cpuFreqGovernor = "performance"`
+- important environment constraint:
+  - `linuwu-sense` remains the owner of Acer thermal/platform behavior
+  - `platform_profile` was already `balanced-performance`
+  - `thermald` and `power-profiles-daemon` stayed disabled
+- before/after comparison:
+  - targeted runtime (`stress-ng` cpu bogo ops/s):
+    - baseline: `34909.14`
+    - after: `34966.66`
+    - net change: negligible
+  - boot/session readiness:
+    - unchanged (`22.880s` total, `7.930s` userspace)
+  - runtime desktop health:
+    - pass before and after
+  - eval/build throughput:
+    - changed, but the system build benchmark had a large outlier after the test
+      switch and is not attributable enough to justify keeping the tuning
+- decision:
+  - reject this tuning slice
+  - revert to `powersave`
+- reason:
+  - the weighted model prioritizes runtime behavior, and the runtime gain was
+    too small to justify a permanent change
+  - with `intel_pstate=active` plus `balanced-performance` platform profile, the
+    governor swap did not buy enough value
+- validation and artifacts:
+  - pre/post system and HM closure diffs were clean
+  - runtime benchmark written to
+    `experiments/perf-tuning/results/after-cpu-governor-performance-20260310`
+- commit:
+  - pending
+
 ## Final State
 
 - experiment not started yet
