@@ -33,6 +33,11 @@ Planned
   - boot/session readiness
   - runtime desktop health
   - targeted runtime signals
+- defined the experiment weighting:
+  - targeted runtime signals: `50%`
+  - boot/session readiness: `35%`
+  - eval/build throughput: `15%`
+  - runtime desktop health: gate only, not scored
 
 ## Final State
 

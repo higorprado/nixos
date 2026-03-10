@@ -67,10 +67,26 @@ Out of scope:
 
 The experiment should measure four buckets.
 
+## Scoring Weights
+
+The experiment score should weight the buckets like this:
+
+- Targeted Runtime Signals: `50%`
+- Boot / Session Readiness: `35%`
+- Eval / Build Throughput: `15%`
+- Runtime Desktop Health: not scored
+
+`Runtime Desktop Health` is a gate, not a benchmark dimension. If that bucket
+fails, the slice should be treated as invalid regardless of improvements in the
+other measurements.
+
 ### A. Eval / Build Throughput
 
 Goal:
 - detect whether a tuning change indirectly affects day-to-day rebuild workflow
+
+Weight:
+- `15%` of the experiment score
 
 Measurements:
 - `hyperfine` over:
@@ -87,6 +103,9 @@ Notes:
 Goal:
 - detect whether boot/login path improves or regresses
 
+Weight:
+- `35%` of the experiment score
+
 Measurements:
 - `systemd-analyze time`
 - `systemd-analyze blame`
@@ -101,6 +120,12 @@ Notes:
 Goal:
 - ensure tuning does not degrade the actual desktop session
 
+Role:
+- hard prerequisite / health gate
+- not a source of score improvement
+- if this bucket regresses, reject the tuning slice even if the weighted score
+  elsewhere looks better
+
 Measurements:
 - `./scripts/check-runtime-smoke.sh --strict-backends`
 - same command with `--strict-logs` when the warning budget is expected to stay stable
@@ -112,6 +137,9 @@ Measurements:
 
 Goal:
 - test the specific subsystem being tuned
+
+Weight:
+- `50%` of the experiment score
 
 Possible measurements:
 - CPU / scheduler / memory tuning:
@@ -288,6 +316,11 @@ Targets:
 
 Changes:
 - compare baseline vs final results
+- evaluate slices with the weighted model:
+  - Targeted Runtime Signals: `50%`
+  - Boot / Session Readiness: `35%`
+  - Eval / Build Throughput: `15%`
+  - Runtime Desktop Health must pass as a non-negotiable gate
 - revert any slice with no measurable value or with ambiguous regressions
 - summarize accepted vs rejected tunings
 
