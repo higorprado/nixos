@@ -55,6 +55,9 @@
     enable = true;
     package = pkgs.ananicy-cpp;
     rulesProvider = pkgs.ananicy-rules-cachyos;
+    extraRules = [
+      { name = "keyrs"; type = "LowLatency_RT"; }
+    ];
   };
 
   # ══════════════════════════════════════════════
