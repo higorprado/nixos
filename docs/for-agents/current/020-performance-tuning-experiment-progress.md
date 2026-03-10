@@ -235,7 +235,43 @@ In progress
 - commit:
   - pending
 
+### Slice 9
+
+- tested a process-priority refinement instead of another global tuning knob:
+  - added an `ananicy-cpp` custom rule for `keyrs`
+  - rule shape:
+    - `{ name = "keyrs"; type = "LowLatency_RT"; }`
+- reason:
+  - `keyrs` sits on the keyboard input path and is desktop-only on `predator`
+  - `niri` already benefits from the same `LowLatency_RT` type in the upstream
+    CachyOS ruleset
+- validation and runtime verification:
+  - `./scripts/run-validation-gates.sh structure`
+  - `nix eval ...services.ananicy.extraRules`
+  - `nix build --no-link ...predator.config.system.build.toplevel`
+  - confirmed rule installation at:
+    - `/etc/ananicy.d/nixRules.rules`
+  - after restarting the live daemon/processes, confirmed runtime priorities:
+    - `niri`: `nice -12`
+    - `keyrs`: `nice -12`
+    - `dockerd`: `nice 0`
+- decision:
+  - keep the tuning
+- reason:
+  - this is a narrow desktop-latency improvement, not a broad speculative knob
+  - it now demonstrably applies at runtime
+- commit:
+  - pending
+
 ## Final State
 
-- experiment not started yet
-- next step is Phase 0: benchmark harness and baseline capture
+- benchmark harness is available for future experiments under
+  `experiments/perf-tuning/`
+- rejected hypotheses so far:
+  - `cpuFreqGovernor = "performance"`
+  - `vm.swappiness = 1`
+  - `vm.swappiness = 30`
+- kept tuning:
+  - `ananicy` custom `keyrs -> LowLatency_RT`
+- current baseline tuning in tracked config remains the default winner, with one
+  validated desktop-priority refinement for `keyrs`
