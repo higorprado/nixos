@@ -23,9 +23,21 @@
             { lib, pkgs, ... }:
             let
               mutableCopy = import ../../../lib/mutable-copy.nix { inherit lib; };
+              dmsPackage = host.inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.dms-shell;
+              awww = pkgs.writeShellScriptBin "awww" ''exec ${pkgs.swww}/bin/swww "$@"'';
+              runDmsAwww = pkgs.writeShellApplication {
+                name = "run-dms-awww";
+                runtimeInputs = [
+                  awww
+                  pkgs.matugen
+                ];
+                text = ''
+                  export DMS_AWWW_BIN=${lib.escapeShellArg "${host.customPkgs.dms-awww}/bin/dms-awww"}
+                  ${builtins.readFile ../../../config/apps/dms/run-dms-awww.sh}
+                '';
+              };
               provisionDmsAwwwConfig = ''
                 $DRY_RUN_CMD mkdir -p "$HOME/.config/dms-awww"
-                DMS_SHARE_PATH=$(realpath $(dirname $(readlink -f /run/current-system/sw/bin/dms))/../share/quickshell/dms)
                 $DRY_RUN_CMD cat > "$HOME/.config/dms-awww/config.toml" << EOF2
 [general]
 log_level = "info"
@@ -38,8 +50,8 @@ enabled = true
 [matugen]
 enabled = true
 default_scheme = "scheme-tonal-spot"
-# Dynamically determined from dms binary location (updated on rebuild)
-shell_dir = "$DMS_SHARE_PATH"
+# Derived from the tracked DMS package used by Home Manager
+shell_dir = "${dmsPackage}/share/quickshell/dms"
 EOF2
                 $DRY_RUN_CMD chmod 644 "$HOME/.config/dms-awww/config.toml"
               '';
@@ -87,7 +99,7 @@ EOF2
                   };
                   Service = {
                     Type = "simple";
-                    ExecStart = "${host.customPkgs.dms-awww}/bin/dms-awww";
+                    ExecStart = "${runDmsAwww}/bin/run-dms-awww";
                     Restart = "on-failure";
                     RestartSec = 5;
                     Environment = [
@@ -102,6 +114,7 @@ EOF2
                     ProtectHome = "read-only";
                     ReadWritePaths = [
                       "/tmp"
+                      "%h/.config/DankMaterialShell"
                       "%h/.cache/DankMaterialShell"
                       "/run/user/%U"
                     ];

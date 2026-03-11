@@ -13,6 +13,9 @@
         virtualisation.docker = {
           enable = true;
           enableOnBoot = true;
+          daemon.settings = {
+            data-root = "/persist/var/lib/docker";
+          };
           autoPrune = {
             enable = true;
             dates = "weekly";
